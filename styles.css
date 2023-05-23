@@ -2,6 +2,7 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
+
 }
 
 canvas {
@@ -12,6 +13,7 @@ canvas {
 
 #dev-output {
     position: fixed;
+    margin: 0;
     bottom: 0;
     right: 0;
     padding: 5px;

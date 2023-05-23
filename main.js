@@ -51,12 +51,33 @@ class Canvas{
         //this.ctx.canvas.width  = 720;
        //this.ctx.canvas.height = 1280;
 
-        this.plantGraphData ={
-            height : 20,
-            maxWidth : 200,
-            maxHeight: 300
-        
+
+        this.graphData ={
+            plant:{
+                height : 40,
+                maxWidth : 600,
+                maxHeight: 1000
+            }
         }
+
+        if(window.innerHeight < window.innerWidth){
+            this.ctx.canvas.height = 1280;
+            this.ctx.canvas.width  = 3000;
+            this.canvas.style.height = '100vh';
+            //this.graphData.interactiveZoneC.outside === 'horizontal';
+            
+        }else{
+            this.ctx.canvas.width  = 720;
+            this.ctx.canvas.height = 2200;
+            this.canvas.style.width = '100%';
+           // this.graphData.interactiveZoneC.outside === 'vertical';
+        }
+
+        //set screen in center
+        setTimeout(() => {
+            window.scrollTo( document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
+            document.querySelector('body').style.overflow = 'hidden';
+        }, 10);
     }
 
     draw(){
@@ -64,17 +85,17 @@ class Canvas{
         this.ctx.fillStyle = "#2e778f";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        this.ctx.fillStyle = "#332300";
-        this.ctx.fillRect(0, app.interactiveZone.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+        //this.ctx.fillStyle = "#332300";
+        //this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
     
         //draw interactive zone 
         this.ctx.beginPath();
         this.ctx.strokeStyle = "white";
         this.ctx.lineWidth = 3;
-        if(app.interactiveZone.rest === 'horizontal'){
-            this.ctx.rect(app.interactiveZone.posX , 0 , app.interactiveZone.width, app.interactiveZone.height);
+        if(app.interactiveZoneC.rest === 'horizontal'){
+            this.ctx.rect(app.interactiveZoneC.posX +3, 3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
         }else{
-            this.ctx.rect(0, app.interactiveZone.posY, app.interactiveZone.width, app.interactiveZone.height);
+            this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
         }
         this.ctx.stroke();
     }
@@ -87,13 +108,13 @@ class Canvas{
         this.ctx.globalAlpha = 0.2;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(app.interactiveZone.posX, app.interactiveZone.botsideDivider);
-        this.ctx.lineTo(app.interactiveZone.posX + app.interactiveZone.width, app.interactiveZone.botsideDivider);
+        this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
         this.ctx.stroke();
 
         this.ctx.beginPath();
-        this.ctx.moveTo(app.interactiveZone.werticalDivider, app.interactiveZone.botsideDivider);
-        this.ctx.lineTo(app.interactiveZone.werticalDivider, app.interactiveZone.posY);
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
         this.ctx.stroke();
     }
 
@@ -102,28 +123,28 @@ class Canvas{
         const imgRoot = new Image(10, 10);
         imgRoot.src = './asets/img/root.jpg';
         imgRoot.onload = () =>{
-            this.ctx.drawImage(imgRoot, app.interactiveZone.werticalDivider - 15, app.interactiveZone.botsideDivider, 30, 20);
+            this.ctx.drawImage(imgRoot, app.interactiveZoneC.werticalDivider - 20, app.interactiveZoneC.botsideDivider, 40, 30);
         }
 
         //leafs
         this.ctx.beginPath();
         this.ctx.globalAlpha = 1;
         this.ctx.strokeStyle = "#447629";
-       this.ctx.lineWidth = 8;
+       this.ctx.lineWidth = 15;
 
-        this.ctx.moveTo(app.interactiveZone.werticalDivider, app.interactiveZone.botsideDivider);
-        this.ctx.lineTo(app.interactiveZone.werticalDivider, app.interactiveZone.botsideDivider - this.plantGraphData.height);
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
 
-        const imgLeafRight = new Image(10, 10);
+        const imgLeafRight = new Image(100, 100);
         imgLeafRight.src = './asets/img/leaf-right.png';
         imgLeafRight.onload = () =>{
-            this.ctx.drawImage(imgLeafRight, app.interactiveZone.werticalDivider, app.interactiveZone.botsideDivider - this.plantGraphData.height, 30, 20);
+            this.ctx.drawImage(imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height - 30, 80, 50);
         }
-        const imgLeafLeft = new Image(10, 10);
+        const imgLeafLeft = new Image(100, 100);
         imgLeafLeft.src = './asets/img/leaf-left.png';
         imgLeafLeft.onload = () =>{
-            this.ctx.drawImage(imgLeafLeft, app.interactiveZone.werticalDivider - 30, app.interactiveZone.botsideDivider - this.plantGraphData.height, 30, 20);
+            this.ctx.drawImage(imgLeafLeft, app.interactiveZoneC.werticalDivider - 80, app.interactiveZoneC.botsideDivider - this.graphData.plant.height - 30, 80, 50);
 
         }
     }
@@ -133,72 +154,91 @@ class Canvas{
         const img = new Image(10, 10);
         img.src = './asets/img/root.jpg';
         img.onload = () =>{
-            this.ctx.drawImage(img, app.interactiveZone.werticalDivider - 15, app.interactiveZone.botsideDivider +plant.root.size * 10, 30, 10);
+            this.ctx.drawImage(img, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider +plant.root.size * 10, 30, 10);
         }
     }
 
     drawLeafs(){
-        this.ctx.clearRect( app.interactiveZone.werticalDivider - this.plantGraphData.maxWidth /2, app.interactiveZone.botsideDivider - this.plantGraphData.maxHeight, this.plantGraphData.maxWidth, this.plantGraphData.maxHeight)
+        this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.plantGraphData.maxWidth /2, app.interactiveZoneC.botsideDivider - this.plantGraphData.maxHeight, this.plantGraphData.maxWidth, this.plantGraphData.maxHeight)
     }
 }
 
 class App{
     constructor(){
-        this.interactiveZone = {
+        //values for scalable canvas
+        this.interactiveZoneC = {
             posX : 0,
             posY :0,
-            width : 0,
-            height : 0,
+            width : 720,
+            height : 1280,
             rest : '',
             botsideDivider : 0,
             werticalDivider: 0,
         }
-        this._adjustInteractiveZone();
+        //real values for window
+        this.interactiveZoneW = {
+            posX : 0,
+            posY :0,
+            width : 720,
+            height : 1280,
+            rest : '',
+            botsideDivider : 0,
+            werticalDivider: 0,
+        }
+        this._adjustinteractiveZoneC();
         this._adjustControls();
     }
 
-    _adjustInteractiveZone(){
-        const canvasEl = document.querySelector('canvas');
+    _adjustinteractiveZoneC(){
         if(window.innerHeight < window.innerWidth){
-            canvasEl.style.height =  `${window.innerHeight}px`;
+            this.interactiveZoneC.height = canvas.ctx.canvas.height;
+            this.interactiveZoneC.width = this.interactiveZoneC.height * (9/16);
+            this.interactiveZoneC.posX = (canvas.ctx.canvas.width - this.interactiveZoneC.width) /2;
+            this.interactiveZoneC.rest = 'horizontal';
 
-            this.interactiveZone.height = canvas.ctx.canvas.height;
-            this.interactiveZone.width = this.interactiveZone.height * (9/16);
-            this.interactiveZone.posX = (canvas.ctx.canvas.width - this.interactiveZone.width) /2;
-            this.interactiveZone.rest = 'horizontal';
-            
+            this.interactiveZoneW.height = window.innerHeight;
+            this.interactiveZoneW.width = this.interactiveZoneW.height * (9/16);
+            this.interactiveZoneW.posX = window.innerWidth /2 - this.interactiveZoneW.width /2;
+            this.interactiveZoneW.rest = 'horizontal';
+
+
         }else{
-            canvasEl.style.width = '100%';
+            this.interactiveZoneC.width = canvas.ctx.canvas.width;
+            this.interactiveZoneC.height = this.interactiveZoneC.width * (16/ 9);
+            this.interactiveZoneC.posY = (canvas.ctx.canvas.height - this.interactiveZoneC.height) /2;
+            this.interactiveZoneC.rest = 'vertical';
 
-            this.interactiveZone.width = canvas.ctx.canvas.width;
-            this.interactiveZone.height = this.interactiveZone.width * (16/ 9);
-            this.interactiveZone.posY = (canvas.ctx.canvas.height - this.interactiveZone.height) /2;
-            this.interactiveZone.rest = 'vertical';
+            this.interactiveZoneW.width = window.innerWidth;
+            this.interactiveZoneW.height = this.interactiveZoneW.width * (16/9);
+            this.interactiveZoneW.posY = window.innerHeight /2 - this.interactiveZoneW.height /2;
+            this.interactiveZoneW.rest = 'horizontal';
         }
 
-        this.interactiveZone.botsideDivider = this.interactiveZone.height / (100 / 60)  + this.interactiveZone.posY;
-        this.interactiveZone.werticalDivider = this.interactiveZone.width / 2 + this.interactiveZone.posX ;
 
-        //NIEDOROBIONE
-        canvas.plantGraphData.maxHeight = this.interactiveZone.height - this.interactiveZone.botsideDivider;
-        canvas.plantGraphData.maxWidth = this.interactiveZone.width - 100;;
+        this.interactiveZoneC.botsideDivider = this.interactiveZoneC.height / (100 / 60)  + this.interactiveZoneC.posY;
+        this.interactiveZoneC.werticalDivider = this.interactiveZoneC.width / 2 + this.interactiveZoneC.posX ;
+
+        this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (100 / 60)  + this.interactiveZoneW.posY;
+        this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX ;
     }
 
     _adjustControls(){
         //disable context menu
         document.addEventListener("contextmenu", (e) => {e.preventDefault()});
 
+        console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
         document.addEventListener('pointerdown', e =>{
-            if(e.clientX < this.interactiveZone.posX || 
-                e.clientX > this.interactiveZone.posX + this.interactiveZone.width || 
-                e.clientY < this.interactiveZone.posY || 
-                e.clientY > this.interactiveZone.posY + this.interactiveZone.height){
+            console.log(e);
+            if(e.clientX < this.interactiveZoneW.posX || 
+                e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
+                e.clientY < this.interactiveZoneW.posY || 
+                e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
                 return
             }else{
                 let grow;
-                if(e.clientY >= this.interactiveZone.botsideDivider){
+                if(e.clientY >= this.interactiveZoneW.botsideDivider){
                     grow = setInterval(plant.growRoot.bind(plant), 10);
-                }else if(e.clientY < this.interactiveZone.botsideDivider && e.clientX >  this.interactiveZone.werticalDivider){
+                }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
                     grow = setInterval(plant.growLeafs.bind(plant), 10);
                 }
                 window.addEventListener('pointerup', ()=>{
@@ -218,7 +258,7 @@ function init(){
     devOutput.renderOutput();
     canvas.draw();
     canvas.drawDividers();
-   canvas.drawPlantStart();
+    canvas.drawPlantStart();
 }
 
 document.addEventListener('DOMContentLoaded', init);
