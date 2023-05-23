@@ -1,10 +1,16 @@
-body{
-    margin: 0;
+body {
     width: 100%;
     height: 100%;
+    margin: 0;
 }
 
-#dev-output{
+canvas {
+    display: block;
+    touch-action: none;
+    margin: 0;
+}
+
+#dev-output {
     position: fixed;
     bottom: 0;
     right: 0;
@@ -13,10 +19,10 @@ body{
     color: white;
 }
 
-@media (max-width: 800px){
+/* @media (max-width: 800px){
     body{
         margin: 0;
         width: 100%;
         height: 100%;
     }
-}
+} */
