@@ -251,6 +251,7 @@ class App{
 
         //console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
         document.addEventListener('pointerdown', e =>{
+            e.preventDefault;
             if(e.clientX < this.interactiveZoneW.posX || 
                 e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
                 e.clientY < this.interactiveZoneW.posY || 
