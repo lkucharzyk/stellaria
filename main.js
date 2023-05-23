@@ -55,22 +55,23 @@ class Canvas{
         this.graphData ={
             plant:{
                 height : 40,
-                maxWidth : 600,
-                maxHeight: 1000
+                maxWidth : 500,
+                maxHeight: 550
             }
+        }
+
+        this.asets ={
+            
         }
 
         if(window.innerHeight < window.innerWidth){
             this.ctx.canvas.height = 1280;
             this.ctx.canvas.width  = 3000;
             this.canvas.style.height = '100vh';
-            //this.graphData.interactiveZoneC.outside === 'horizontal';
-            
         }else{
             this.ctx.canvas.width  = 720;
             this.ctx.canvas.height = 2200;
-            this.canvas.style.width = '100%';
-           // this.graphData.interactiveZoneC.outside === 'vertical';
+            this.canvas.style.width = '100%'
         }
 
         //set screen in center
@@ -85,8 +86,8 @@ class Canvas{
         this.ctx.fillStyle = "#2e778f";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        //this.ctx.fillStyle = "#332300";
-        //this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.fillStyle = "#332300";
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
     
         //draw interactive zone 
         this.ctx.beginPath();
@@ -120,10 +121,10 @@ class Canvas{
 
     drawPlantStart(){
         //root
-        const imgRoot = new Image(10, 10);
-        imgRoot.src = './asets/img/root.jpg';
-        imgRoot.onload = () =>{
-            this.ctx.drawImage(imgRoot, app.interactiveZoneC.werticalDivider - 20, app.interactiveZoneC.botsideDivider, 40, 30);
+        this.asets.imgRoot = new Image(10, 10);
+        this.asets.imgRoot.src = './asets/img/root.jpg';
+        this.asets.imgRoot.onload = () =>{
+            this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 20, app.interactiveZoneC.botsideDivider, 40, 30);
         }
 
         //leafs
@@ -136,15 +137,15 @@ class Canvas{
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
 
-        const imgLeafRight = new Image(100, 100);
-        imgLeafRight.src = './asets/img/leaf-right.png';
-        imgLeafRight.onload = () =>{
-            this.ctx.drawImage(imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height - 30, 80, 50);
+        this.asets.imgLeafRight = new Image(100, 100);
+        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
+        this.asets.imgLeafRight.onload = () =>{
+            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - 50 - this.graphData.plant.height / 2, 80, 50);
         }
-        const imgLeafLeft = new Image(100, 100);
-        imgLeafLeft.src = './asets/img/leaf-left.png';
-        imgLeafLeft.onload = () =>{
-            this.ctx.drawImage(imgLeafLeft, app.interactiveZoneC.werticalDivider - 80, app.interactiveZoneC.botsideDivider - this.graphData.plant.height - 30, 80, 50);
+        this.asets.imgLeafLeft = new Image(100, 100);
+        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
+        this.asets.imgLeafLeft.onload = () =>{
+            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - 80, app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2, 80, 50);
 
         }
     }
@@ -158,8 +159,30 @@ class Canvas{
         }
     }
 
+    clearLeafs(){
+        this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
+        this.ctx.fillStyle = "#2e778f";
+        this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
+    }
+
     drawLeafs(){
-        this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.plantGraphData.maxWidth /2, app.interactiveZoneC.botsideDivider - this.plantGraphData.maxHeight, this.plantGraphData.maxWidth, this.plantGraphData.maxHeight)
+        this.clearLeafs();
+        canvas.graphData.plant.height =  40 + plant.leafs.size * 15;
+
+        this.ctx.beginPath();
+        this.ctx.globalAlpha = 1;
+        this.ctx.strokeStyle = "#447629";
+        this.ctx.lineWidth = 15;
+
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
+        this.ctx.stroke();
+
+        const leafSizeRatio = plant.leafs.size * 7;
+        this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider , app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2, 80 + leafSizeRatio, 50 + leafSizeRatio,);
+        this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - 80 - leafSizeRatio, app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2, 80 + leafSizeRatio, 50 + leafSizeRatio);
+        
+
     }
 }
 
@@ -226,9 +249,8 @@ class App{
         //disable context menu
         document.addEventListener("contextmenu", (e) => {e.preventDefault()});
 
-        console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
+        //console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
         document.addEventListener('pointerdown', e =>{
-            console.log(e);
             if(e.clientX < this.interactiveZoneW.posX || 
                 e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
                 e.clientY < this.interactiveZoneW.posY || 
@@ -250,8 +272,8 @@ class App{
     }
 }
 
-const canvas = new Canvas;
 const plant = new Plant;
+const canvas = new Canvas;
 const app = new App;
 
 function init(){
