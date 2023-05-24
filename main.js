@@ -38,7 +38,7 @@ class Plant{
 class devOutput{
     static renderOutput(){
         //const devOutputEl = document.querySelector('#dev-output');
-       // devOutputEl.innerHTML = `Root: ${plant.root.size}, Leafs: ${plant.leafs.size}, Flowers: ${plant.flowers.size}`;
+       //devOutputEl.innerHTML = `Root: ${plant.root.size}, Leafs: ${plant.leafs.size}, Flowers: ${plant.flowers.size}`;
     }
 }
 
@@ -63,11 +63,11 @@ class Canvas{
         this.asets ={
             
         }
-
+       screen.orientation.lock(); 
         if(window.innerHeight < window.innerWidth){
             this.ctx.canvas.height = 1280;
             this.ctx.canvas.width  = 3000;
-            this.canvas.style.height = `${window.innerHeight}px`;
+            this.canvas.style.height = `100vh`;
             //this.canvas.style.height = '-webkit-fill-available';
             
         }else{
@@ -81,7 +81,7 @@ class Canvas{
             console.log();
             window.scroll(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
             document.querySelector('body').style.overflow = 'hidden';
-        }, 100);
+        }, 1000);
     }
 
     draw(){
@@ -271,7 +271,7 @@ class App{
 
     _handleControls(e){
         e.preventDefault();
-        console.log(e);
+        e.stopPropagation();
         if(e.clientX < this.interactiveZoneW.posX || 
             e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
             e.clientY < this.interactiveZoneW.posY || 
