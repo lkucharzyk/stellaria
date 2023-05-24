@@ -37,8 +37,8 @@ class Plant{
 
 class devOutput{
     static renderOutput(){
-        const devOutputEl = document.querySelector('#dev-output');
-        devOutputEl.innerHTML = `Root: ${plant.root.size}, Leafs: ${plant.leafs.size}, Flowers: ${plant.flowers.size}`;
+        //const devOutputEl = document.querySelector('#dev-output');
+       // devOutputEl.innerHTML = `Root: ${plant.root.size}, Leafs: ${plant.leafs.size}, Flowers: ${plant.flowers.size}`;
     }
 }
 
