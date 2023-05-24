@@ -63,7 +63,11 @@ class Canvas{
         this.asets ={
             
         }
-       screen.orientation.lock("portrait"); 
+        this.adjustCanvasToScreen()
+        ScreenOrientation.onchange = this.adjustCanvasToScreen.bind(this);
+
+    }
+    adjustCanvasToScreen(){
         if(window.innerHeight < window.innerWidth){
             this.ctx.canvas.height = 1280;
             this.ctx.canvas.width  = 3000;
