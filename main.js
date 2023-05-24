@@ -63,7 +63,7 @@ class Canvas{
         this.asets ={
             
         }
-       screen.orientation.lock(); 
+       screen.orientation.lock("portrait"); 
         if(window.innerHeight < window.innerWidth){
             this.ctx.canvas.height = 1280;
             this.ctx.canvas.width  = 3000;
@@ -81,7 +81,7 @@ class Canvas{
             console.log();
             window.scroll(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
             document.querySelector('body').style.overflow = 'hidden';
-        }, 1000);
+        }, 300);
     }
 
     draw(){
