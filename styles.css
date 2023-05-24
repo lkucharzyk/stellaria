@@ -12,7 +12,6 @@ canvas {
 }
 
 #dev-output {
-    display: none;
     position: fixed;
     margin: 0;
     bottom: 0;
