@@ -67,7 +67,9 @@ class Canvas{
         if(window.innerHeight < window.innerWidth){
             this.ctx.canvas.height = 1280;
             this.ctx.canvas.width  = 3000;
-            this.canvas.style.height = '100vh';
+            this.canvas.style.height = `${window.innerHeight}px`;
+            //this.canvas.style.height = '-webkit-fill-available';
+            
         }else{
             this.ctx.canvas.width  = 720;
             this.ctx.canvas.height = 2200;
@@ -76,9 +78,10 @@ class Canvas{
 
         //set screen in center
         setTimeout(() => {
-            window.scrollTo( document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
+            console.log();
+            window.scroll(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
             document.querySelector('body').style.overflow = 'hidden';
-        }, 10);
+        }, 100);
     }
 
     draw(){
@@ -246,30 +249,46 @@ class App{
     }
 
     _adjustControls(){
+        let passiveSupported = false;
+        try {
+            const options = {
+                get passive() {
+                passiveSupported = true;
+                return false;
+                },
+            };
+            window.addEventListener('pointerdown', null, options);
+            window.removeEventListener('pointerdown', null, options);
+            } catch (err) {
+            passiveSupported = false;
+        }
         //disable context menu
-        document.addEventListener("contextmenu", (e) => {e.preventDefault()});
+        document.addEventListener("contextmenu", e => e.preventDefault());
 
         //console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
-        document.addEventListener('pointerdown', e =>{
-            e.preventDefault;
-            if(e.clientX < this.interactiveZoneW.posX || 
-                e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
-                e.clientY < this.interactiveZoneW.posY || 
-                e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
-                return
-            }else{
-                let grow;
-                if(e.clientY >= this.interactiveZoneW.botsideDivider){
-                    grow = setInterval(plant.growRoot.bind(plant), 10);
-                }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
-                    grow = setInterval(plant.growLeafs.bind(plant), 10);
-                }
-                window.addEventListener('pointerup', ()=>{
-                    clearInterval(grow);
-                })
+        document.addEventListener('pointerdown', this._handleControls.bind(this), passiveSupported ? { passive: false } : false)
+    }
+
+    _handleControls(e){
+        e.preventDefault();
+        console.log(e);
+        if(e.clientX < this.interactiveZoneW.posX || 
+            e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
+            e.clientY < this.interactiveZoneW.posY || 
+            e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
+            return
+        }else{
+            let grow;
+            if(e.clientY >= this.interactiveZoneW.botsideDivider){
+                grow = setInterval(plant.growRoot.bind(plant), 10);
+            }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
+                grow = setInterval(plant.growLeafs.bind(plant), 10);
             }
-            
-        })
+            window.addEventListener('pointerup', ()=>{
+                clearInterval(grow);
+            })
+        }
+        
     }
 }
 
