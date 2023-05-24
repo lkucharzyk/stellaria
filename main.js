@@ -36,8 +36,12 @@ class Plant{
 
     growLeafs(){
         this.leafs.size = (+this.leafs.size + +this.leafs.growRate).toFixed(2);
-        devOutput.renderOutput();
+
+        canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => entry += 0.1);
+        canvas.graphData.plant.height =  (40 + plant.leafs.size * 15).toFixed(2);
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
+        
+        devOutput.renderOutput();
     }
 }
 
@@ -63,7 +67,7 @@ class Canvas{
                 height : 40,
                 maxWidth : 500,
                 maxHeight: 550,
-                leafRows : 1,
+                leafRowsSize : [100],
                 leafSizeRatio: 0
             }
         }
@@ -158,12 +162,12 @@ class Canvas{
         this.asets.imgLeafRight = new Image(100, 100);
         this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
         this.asets.imgLeafRight.onload = () =>{
-            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - 50 - this.graphData.plant.height / 2, 80, 50);
+            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
         }
         this.asets.imgLeafLeft = new Image(100, 100);
         this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
         this.asets.imgLeafLeft.onload = () =>{
-            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - 80, app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2, 80, 50);
+            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[0], app.interactiveZoneC.botsideDivider -this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
 
         }
 
@@ -179,10 +183,8 @@ class Canvas{
     }
 
 
-
     drawLeafs(){
         this._clearLeafs();
-        canvas.graphData.plant.height =  (40 + plant.leafs.size * 15).toFixed(2);
 
         //draw stalk
         this.ctx.beginPath();
@@ -194,28 +196,40 @@ class Canvas{
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
 
-        //draw leafs    
-         this.graphData.plant.leafSizeRatio = plant.leafs.size * 7;
+        //draw leafs        
+        console.log(this.graphData.plant.height);     
+        if(this.graphData.plant.height / 150  > this.graphData.plant.leafRowsSize.length ){
+            this.graphData.plant.leafRowsSize.push(30);
+        }
 
-         console.log(this.graphData.plant.height);
+        const leafGrowRatio = 2;
 
-         this.graphData.plant.leafRows = Math.floor(this.graphData.plant.height / 100) +1;
-        console.log(this.graphData.plant.leafRows)
+        console.log(this.graphData.plant.leafRowsSize)
     
 
-        for (let i = 1; i <= this.graphData.plant.leafRows; i++){
-            if(i ===1){
-                this._drawSingleLeafRow(0);
+        for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
+            if(i === 0){
+                this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[i] *0.625 - this.graphData.plant.height / 2);
             }else{
-                this._drawSingleLeafRow(i * 50);
+                this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 150 - this.graphData.plant.leafRowsSize[i]);
             }
         }
 
     }
 
-    _drawSingleLeafRow(leafsAddtionalHeight){
-        this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider , app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2 - leafsAddtionalHeight, 80 + this.graphData.plant.leafSizeRatio, 50 + this.graphData.plant.leafSizeRatio);
-        this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - 80 - this.graphData.plant.leafSizeRatio, app.interactiveZoneC.botsideDivider -50 - this.graphData.plant.height / 2 - leafsAddtionalHeight, 80 + this.graphData.plant.leafSizeRatio, 50 + this.graphData.plant.leafSizeRatio);
+
+
+    _drawSingleLeafRow(id, leafsHeight){
+        //this "if" prevent from growing mature leafs
+        console.log(this.graphData.plant.leafRowsSize);
+        if(this.graphData.plant.leafRowsSize[id] < 200){
+
+           this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[id], leafsHeight, this.graphData.plant.leafRowsSize[id], this.graphData.plant.leafRowsSize[id] *0.625);
+
+           this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, leafsHeight, this.graphData.plant.leafRowsSize[id], this.graphData.plant.leafRowsSize[id] *0.625);
+        }else{
+
+        }
     }
 
     _clearLeafs(){
