@@ -12,9 +12,9 @@ window.mobileCheck = function() {
 class Plant{
     constructor(){
         this.root = {
-            size: 3,
+            size: 5,
             growRate: 0.01,
-            cost: 0.01
+            cost: 0.001,
         };
         this.leafs = {
             size: 1,
@@ -27,8 +27,9 @@ class Plant{
         };
         this.assimilationPower = 0.1;
         this.carbohydrates = 0;
+
         this.waterSupply = 5;
-        
+        this.watered = true;
     }
 
     growRoot(){
@@ -74,11 +75,11 @@ class Habitat{
         this.day = 1;
         this.weather = 'rainy'
 
-        this.waterLevel = -5;
+        this.waterLevel = -2;
         this.minWeterLevel = -70;
 
         this._randomWeather();
-        setInterval( () =>this._dayPass(), 1000); // one day - 1s
+       setInterval( () =>this._dayPass(), 1000); // one day - 1s
     }
 
     _randomWeather(){
@@ -126,25 +127,43 @@ class Habitat{
             break;
             case 'sunny':
                 if (this.waterLevel !== this.minWeterLevel){
-                    this.waterLevel -=2;
+                    if(this.day < 30){
+                        this.waterLevel -=1;
+                    }else{
+                        this.waterLevel -=2;
+                    }  
                 } 
             break;
+        }
+        if(plant.root.size + habitat.waterLevel >= 0){
+            plant.watered = true;
+        }else{
+            plant.watered = false;
         }
     }
 
     _dayPass(){
         this._addCarbohydrates();
         this._setWaterLevel();
+        if(plant.watered){
+            if(plant.waterSupply < 5){
+                plant.waterSupply += 1
+            } 
+        }else{
+            plant.waterSupply -=1;
+        }
+        if(plant.waterSupply < 1){
+            alert('You died becasue out of water supply');
+            app.gameOver();
+        }
         
         requestAnimationFrame(canvas.drawWaterLevel.bind(canvas));
-
+        
         this.day+=1;
         
         if(this.day % 5 === 0){
             this._randomWeather();
         }    
-
-        canvas.drawHabitat()
 
         DevOutput.renderOutput()
     }
@@ -207,99 +226,51 @@ class Canvas{
             console.log();
             window.scroll(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
             document.querySelector('body').style.overflow = 'hidden';
-        }, 200);
+        }, 10);
     }
 
     drawInit(){
-        //draw backgorund 
-        this.ctx.fillStyle = "#2e778f";
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-        this.ctx.fillStyle = "#332300";
-        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
-    
-        //draw interactive zone 
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "white";
-        this.ctx.lineWidth = 3;
-        if(app.interactiveZoneC.rest === 'horizontal'){
-            this.ctx.rect(app.interactiveZoneC.posX +3, 3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
-        }else{
-            this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
-        }
-        this.ctx.stroke();
-    }
-
-    drawDividers(){
-        //for dev needs and maybe tutotrial
-        
-        this.ctx.strokeStyle = "white";
-        this.ctx.lineWidth = 3;
-        this.ctx.globalAlpha = 0.2;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
-        this.ctx.stroke();
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
-        this.ctx.stroke();
-    }
-
-    drawHabitat(){
-
+        this._drawHabitatTopside();
+        this._drawHabitatBotside();
+        this._drawDividers();
+        this._drawInteractiveZone();
+        this.drawWaterLevel();
+        this._drawPlantStart();
     }
 
     drawWaterLevel(){
+        this._drawHabitatBotside();
+        this._drawInteractiveZone();
         this.ctx.strokeStyle = "blue";
         this.ctx.lineWidth = 5;
         this.ctx.globalAlpha = 0.6;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider +20  -habitat.waterLevel *10 );
-        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider +20  -habitat.waterLevel *10);
+        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12 );
+        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +20);
         this.ctx.stroke();
-    };
 
-    drawPlantStart(){
-        //root
-        this.asets.imgRoot = new Image(100, 100);
-        this.asets.imgRoot.src = './asets/img/root.jpg';
-        this.asets.imgRoot.onload = () =>{
-            this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 5);
-        }
-
-        //leafs
         this.ctx.beginPath();
-        this.ctx.globalAlpha = 1;
-        this.ctx.strokeStyle = "#447629";
-       this.ctx.lineWidth = 15;
+        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +20, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.fillStyle = "rgba(31, 41, 153, 0.3)";
+        this.ctx.fill();
 
-        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
-        this.ctx.stroke();
-
-        this.asets.imgLeafRight = new Image(100, 100);
-        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
-        this.asets.imgLeafRight.onload = () =>{
-            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-        }
-        this.asets.imgLeafLeft = new Image(100, 100);
-        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
-        this.asets.imgLeafLeft.onload = () =>{
-            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[0], app.interactiveZoneC.botsideDivider -this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-
+        if(habitat.day > 1){
+            this.drawRoot();
         }
 
-    }
+        if(plant.watered){
+            this._drawHydrated();
+        }
+    };
 
     //simple
     drawRoot(){
-        this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 5);
+        this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
+        if(plant.watered){
+            this._drawHydrated();
+        }
     }
-
 
     drawLeafs(){
         this._clearLeafs();
@@ -329,6 +300,85 @@ class Canvas{
 
     }
 
+    _drawHydrated(){
+        this.ctx.beginPath();
+        this.ctx.fillStyle = 'blue';
+        this.ctx.lineWidth = 8;
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size *12);
+        this.ctx.stroke();
+    }
+
+    _drawHabitatTopside(){
+        this.ctx.fillStyle = "#2e778f";
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    }
+
+    _drawHabitatBotside(){
+        this.ctx.fillStyle = "#332300";
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+    }
+    
+    _drawInteractiveZone(){
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 3;
+        if(app.interactiveZoneC.rest === 'horizontal'){
+            this.ctx.rect(app.interactiveZoneC.posX +3, 3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
+        }else{
+            this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
+        }
+        this.ctx.stroke();
+    }
+
+    _drawDividers(){
+        //for dev needs and tutotrial
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 3;
+        this.ctx.globalAlpha = 0.2;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
+        this.ctx.stroke();
+    }
+
+    _drawPlantStart(){
+        //root
+        this.asets.imgRoot = new Image(100, 100);
+        this.asets.imgRoot.src = './asets/img/root.jpg';
+        this.asets.imgRoot.onload = () =>{
+            this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
+        }
+
+        //leafs
+        this.ctx.beginPath();
+        this.ctx.globalAlpha = 1;
+        this.ctx.strokeStyle = "#447629";
+       this.ctx.lineWidth = 15;
+
+        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
+        this.ctx.stroke();
+
+        this.asets.imgLeafRight = new Image(100, 100);
+        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
+        this.asets.imgLeafRight.onload = () =>{
+            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
+        }
+        this.asets.imgLeafLeft = new Image(100, 100);
+        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
+        this.asets.imgLeafLeft.onload = () =>{
+            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[0], app.interactiveZoneC.botsideDivider -this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
+
+        }
+
+    }
 
     _drawSingleLeafRow(id, leafsHeight){
         this.ctx.globalAlpha = 1;
@@ -381,6 +431,10 @@ class App{
         }
         this._adjustinteractiveZoneC();
         this._adjustControls();
+    }
+
+    gameOver(){
+        
     }
 
     _adjustinteractiveZoneC(){
@@ -473,8 +527,6 @@ const app = new App;
 function init(){
     DevOutput.renderOutput();
     canvas.drawInit();
-    canvas.drawDividers();
-    canvas.drawPlantStart();
 }
 
 document.addEventListener('DOMContentLoaded', init);
