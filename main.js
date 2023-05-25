@@ -13,48 +13,149 @@ class Plant{
     constructor(){
         this.root = {
             size: 3,
-            growRate: 0.01
+            growRate: 0.01,
+            cost: 0.01
         };
         this.leafs = {
             size: 1,
-            growRate: 0.01
+            growRate: 0.002,
+            cost: 0.01
         };
         this.flowers = {
             size: 0,
             growRate: 0.2
         };
-
+        this.assimilationPower = 0.1;
         this.carbohydrates = 0;
+        this.waterSupply = 5;
         
     }
 
     growRoot(){
-        this.root.size = (+this.root.size + +this.root.growRate).toFixed(2);
-        devOutput.renderOutput();
+        if(this.carbohydrates > 0.1){
+        sounds.leafs.play();
+        this.carbohydrates -= this.root.cost;
+        this.root.size = this.root.size + this.root.growRate;
+        
         requestAnimationFrame(canvas.drawRoot.bind(canvas));
+        }else{
+            sounds.creak.play();
+            sounds.leafs.pause();
+        }
+        DevOutput.renderOutput();
     }
 
     growLeafs(){
-        this.leafs.size = (+this.leafs.size + +this.leafs.growRate).toFixed(2);
+        if(this.carbohydrates > 0.1){
+            sounds.leafs.play();
+            this.carbohydrates -= this.leafs.cost;
+            this.leafs.size = this.leafs.size + +this.leafs.growRate;
 
-        canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
-            if (entry < 200){
-                return entry += 0.07
-            }else{
-                return entry;
-            }
-        });
-        canvas.graphData.plant.height =  (40 + plant.leafs.size * 15).toFixed(2);
-        requestAnimationFrame(canvas.drawLeafs.bind(canvas));
-        
-        devOutput.renderOutput();
+            canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
+                if (entry < 200){
+                    return entry += 0.07
+                }else{
+                    return entry;
+                }
+            });
+            canvas.graphData.plant.height =  (40 + plant.leafs.size * 15).toFixed(2);
+
+            requestAnimationFrame(canvas.drawLeafs.bind(canvas));
+        }else{
+            sounds.creak.play();
+            sounds.leafs.pause();
+        }
+        DevOutput.renderOutput();   
     }
 }
 
-class devOutput{
+class Habitat{
+    constructor(){
+        this.day = 1;
+        this.weather = 'rainy'
+
+        this.waterLevel = -5;
+        this.minWeterLevel = -70;
+
+        this._randomWeather();
+        setInterval( () =>this._dayPass(), 1000); // one day - 1s
+    }
+
+    _randomWeather(){
+        const randomNumber =random(1, 3);
+        switch(randomNumber){
+            case 1 :
+                this.weather = 'rainy';
+            break;
+            case 2 :
+                this.weather = 'cloudy';
+            break;
+            case 1 :
+                this.weather = 'sunny';
+            break;
+        }
+    }
+
+    _addCarbohydrates(){
+        let weatherFactor;
+        switch(this.weather){
+            case 'rainy':
+                weatherFactor = 1;
+            break;
+            case 'cloudy':
+                weatherFactor = 1.5;
+            break;
+            case 'sunny':
+                weatherFactor = 3;
+            break;
+        }
+        plant.carbohydrates = plant.carbohydrates + (plant.leafs.size * weatherFactor * plant.assimilationPower);
+    }
+
+    _setWaterLevel(){
+        switch(this.weather){
+            case 'rainy':
+               if (this.waterLevel !== 0){
+                this.waterLevel +=1;
+               }
+            break;
+            case 'cloudy':
+                if (this.waterLevel !== this.minWeterLevel){
+                    this.waterLevel -=1;
+                } 
+            break;
+            case 'sunny':
+                if (this.waterLevel !== this.minWeterLevel){
+                    this.waterLevel -=2;
+                } 
+            break;
+        }
+    }
+
+    _dayPass(){
+        this._addCarbohydrates();
+        this._setWaterLevel();
+        
+        requestAnimationFrame(canvas.drawWaterLevel.bind(canvas));
+
+        this.day+=1;
+        
+        if(this.day % 5 === 0){
+            this._randomWeather();
+        }    
+
+        canvas.drawHabitat()
+
+        DevOutput.renderOutput()
+    }
+
+}
+
+class DevOutput{
     static renderOutput(){
         const devOutputEl = document.querySelector('#dev-output');
-       devOutputEl.innerHTML = `Root: ${plant.root.size}, Leafs: ${plant.leafs.size}, Flowers: ${plant.flowers.size}`;
+       devOutputEl.innerHTML = `Root: ${plant.root.size.toFixed(2)}, Leafs: ${plant.leafs.size.toFixed(2)}, Flowers: ${plant.flowers.size.toFixed(2)} <br>
+       Day: ${habitat.day} Weather: ${habitat.weather} Carbo: ${plant.carbohydrates.toFixed(2)} <br> WaterSupp: ${plant.waterSupply} Water lvl: ${habitat.waterLevel}`;
     }
 }
 
@@ -109,7 +210,7 @@ class Canvas{
         }, 200);
     }
 
-    draw(){
+    drawInit(){
         //draw backgorund 
         this.ctx.fillStyle = "#2e778f";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -146,6 +247,21 @@ class Canvas{
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
         this.ctx.stroke();
     }
+
+    drawHabitat(){
+
+    }
+
+    drawWaterLevel(){
+        this.ctx.strokeStyle = "blue";
+        this.ctx.lineWidth = 5;
+        this.ctx.globalAlpha = 0.6;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider +20  -habitat.waterLevel *10 );
+        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider +20  -habitat.waterLevel *10);
+        this.ctx.stroke();
+    };
 
     drawPlantStart(){
         //root
@@ -199,13 +315,9 @@ class Canvas{
         this.ctx.stroke();
 
         //draw leafs        
-        console.log(this.graphData.plant.height);     
         if(this.graphData.plant.height / 130  > this.graphData.plant.leafRowsSize.length ){
             this.graphData.plant.leafRowsSize.push(30);
-        }
-
-        console.log(this.graphData.plant.leafRowsSize)
-    
+        }    
 
         for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
             if(i === 0){
@@ -219,7 +331,7 @@ class Canvas{
 
 
     _drawSingleLeafRow(id, leafsHeight){
-        console.log(this.graphData.plant.leafRowsSize);
+        this.ctx.globalAlpha = 1;
 
            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[id], leafsHeight, this.graphData.plant.leafRowsSize[id], this.graphData.plant.leafRowsSize[id] *0.625);
 
@@ -227,11 +339,22 @@ class Canvas{
     }
 
     _clearLeafs(){
+        this.ctx.globalAlpha = 1;
         this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
         this.ctx.fillStyle = "#2e778f";
         this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
     }
 
+}
+
+class Sounds{
+    constructor(){
+        this.err = new Audio('/asets/sounds/erro.mp3');
+        this.leafs = new Audio('/asets/sounds/leaves.mp3');
+        this.leafs.playbackRate = 2;
+        this.creak = new Audio('/asets/sounds/creak.mp3');
+        this.creak.playbackRate = 10;
+    }
 }
 
 class App{
@@ -331,6 +454,10 @@ class App{
             }
             window.addEventListener('pointerup', ()=>{
                 clearInterval(grow);
+
+                //pause feedback sounds
+                sounds.leafs.pause();
+                sounds.creak.pause();
             })
         }
         
@@ -338,12 +465,14 @@ class App{
 }
 
 const plant = new Plant;
+const habitat = new Habitat;
 const canvas = new Canvas;
+const sounds = new Sounds;
 const app = new App;
 
 function init(){
-    devOutput.renderOutput();
-    canvas.draw();
+    DevOutput.renderOutput();
+    canvas.drawInit();
     canvas.drawDividers();
     canvas.drawPlantStart();
 }
