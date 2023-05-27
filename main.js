@@ -13,13 +13,14 @@ class Plant{
     constructor(){
         this.root = {
             size: 5,
+            maxSize: 40,
             growRate: 0.01,
             cost: 0.005,
         };
         this.leafs = {
             size: 1,
             growRate: 0.002,
-            cost: 0.0001
+            cost: 0.01
         };
         this.flowers = {
             size: 0,
@@ -34,16 +35,22 @@ class Plant{
     }
 
     growRoot(){
-        if(this.carbohydrates > 0.1){
-            sounds.leafs.play();
-            this.carbohydrates -= this.root.cost;
-            this.root.size = this.root.size + this.root.growRate;
-            
-            requestAnimationFrame(canvas.drawRoot.bind(canvas));
+        if(this.root.size < this.root.maxSize){
+            if(this.carbohydrates > 0.1){
+                sounds.leafs.play();
+                this.carbohydrates -= this.root.cost;
+                this.root.size = this.root.size + this.root.growRate;
+                
+                requestAnimationFrame(canvas.drawRoot.bind(canvas));
+            }else{
+                sounds.creak.play();
+                sounds.leafs.pause();
+            }
         }else{
-            sounds.creak.play();
-            sounds.leafs.pause();
+            console.log('root max size');
         }
+
+
         DevOutput.renderOutput();
     }
 
@@ -76,14 +83,14 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -70;
+        this.minWeterLevel = -40;
 
         this._randomWeather();
        setInterval( () =>this._dayPass(), 1000); // one day - 1s
     }
 
     _randomWeather(){
-        const randomNumber =random(1, 3);
+        const randomNumber =random(1, 4);
         switch(randomNumber){
             case 1 :
                 this.weather = 'rainy';
@@ -91,7 +98,7 @@ class Habitat{
             case 2 :
                 this.weather = 'cloudy';
             break;
-            case 1 :
+            case 3 :
                 this.weather = 'sunny';
             break;
         }
@@ -123,12 +130,12 @@ class Habitat{
                }
             break;
             case 'cloudy':
-                if (this.waterLevel !== this.minWeterLevel){
+                if (this.waterLevel > this.minWeterLevel){
                     this.waterLevel -=1;
                 } 
             break;
             case 'sunny':
-                if (this.waterLevel !== this.minWeterLevel){
+                if (this.waterLevel > this.minWeterLevel){
                     if(this.day < 30){
                         this.waterLevel -=1;
                     }else{
@@ -333,7 +340,7 @@ class Canvas{
         this.ctx.stroke();
 
         this.ctx.beginPath();
-        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +20, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "rgba(31, 41, 153, 0.3)";
         this.ctx.fill();
 
@@ -405,8 +412,13 @@ class Canvas{
     }
 
     _drawHabitatBotside(){
+        this.ctx.globalAlpha = 1;
         this.ctx.fillStyle = "#332300";
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        //draw minimal water level
+        this.ctx.fillStyle = '#1c1c1c';
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider + 40 *12, this.ctx.canvas.width, this.ctx.canvas.height);
     }
     
     _drawInteractiveZone(){
