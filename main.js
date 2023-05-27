@@ -27,6 +27,7 @@ class Plant{
         };
         this.assimilationPower = 0.1;
         this.carbohydrates = 0;
+        this.maxCarbohydrates = 5;
 
         this.waterSupply = 5;
         this.watered = true;
@@ -110,7 +111,9 @@ class Habitat{
                 weatherFactor = 3;
             break;
         }
-        plant.carbohydrates = plant.carbohydrates + (plant.leafs.size * weatherFactor * plant.assimilationPower);
+        if(plant.carbohydrates < plant.maxCarbohydrates){
+            plant.carbohydrates = plant.carbohydrates + (plant.leafs.size * weatherFactor * plant.assimilationPower);
+        }
     }
 
     _setWaterLevel(){
@@ -150,7 +153,9 @@ class Habitat{
                 plant.waterSupply += 1
             } 
         }else{
-            plant.waterSupply -=1;
+            if(plant.waterSupply > 0){
+                plant.waterSupply -=1;
+            }
         }
         if(plant.waterSupply < 1){
             console.log('gameOver');
@@ -164,7 +169,7 @@ class Habitat{
         if(this.day % 5 === 0){
             this._randomWeather();
         }    
-        canvas.drawUI();
+        //canvas.drawUI();
         DevOutput.renderOutput()
     }
 
@@ -203,7 +208,8 @@ class Canvas{
                 height: 0
             },
             colors:{
-                skyblue :'#2e778f'
+                skyblue :'#2e778f',
+                gold: '#D1B000'
             }
         }
 
@@ -269,7 +275,7 @@ class Canvas{
         this.graphData.ui.topLine = app.interactiveZoneC.posY + 20;
         this.graphData.ui.rightLine = app.interactiveZoneC.posX +  app.interactiveZoneC.width - 20;
         this.graphData.ui.width = 170;
-        this.graphData.ui.height = 50;
+        this.graphData.ui.height = 100;
 
         //water supplies
         function drawBottle(full, order){
@@ -280,20 +286,29 @@ class Canvas{
             }
         }
 
-        for(let i = 5; i > 0; i--){
-            if(i <= plant.waterSupply){
-               drawBottle.bind(this, true, i)()
+        for(let i = 1; i <= 5; i++){
+            if(i + plant.waterSupply <= 5){
+                drawBottle.bind(this, false, i)()
             }else{
-               drawBottle.bind(this, false, i)()
+               drawBottle.bind(this, true, i)()
             } 
         }
-    }
 
-    _clearUI(){
-        this.ctx.globalAlpha =1;
-        this.ctx.clearRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+        //carbohydrates bar
+        this.ctx.strokeStyle = "black";
+        this.ctx.lineWidth = 1
+        this.ctx.beginPath();
+        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine + 60,  this.graphData.ui.width, 30, 20)
+        this.ctx.stroke();
+
+        const barRange = (plant.carbohydrates * this.graphData.ui.width) /plant.maxCarbohydrates; 
+        console.log(barRange);
+        this.ctx.fillStyle = this.graphData.colors.gold;
+        this.ctx.beginPath();
+        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine + 60, barRange , 30, 20)
+        this.ctx.fill();
+
+        requestAnimationFrame(this.drawUI.bind(this))
     }
 
     drawInit(){
@@ -314,8 +329,8 @@ class Canvas{
         this.ctx.globalAlpha = 0.6;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12);
-        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12);
+        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12 +5);
+        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5);
         this.ctx.stroke();
 
         this.ctx.beginPath();
@@ -366,6 +381,13 @@ class Canvas{
             }
         }
 
+    }
+
+    _clearUI(){
+        this.ctx.globalAlpha =1;
+        this.ctx.clearRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
     }
 
     _drawHydrated(){
@@ -584,12 +606,11 @@ const app = new App;
 // Promise.all()
 
 function init(){
-    console.log(canvas.imgPromises);
     Promise.all(canvas.imgPromises)
     .then( ()=>{
          canvas.drawInit();
-         console.log(canvas.imgPromises);
          DevOutput.renderOutput();
+         requestAnimationFrame(canvas.drawUI.bind(canvas));
     })
 }
 
