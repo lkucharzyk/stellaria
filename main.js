@@ -164,7 +164,7 @@ class Habitat{
             }
         }
         if(plant.waterSupply < 1){
-            console.log('gameOver');
+           // console.log('gameOver');
             app.gameOver();
         }
         
@@ -269,11 +269,12 @@ class Canvas{
         }
 
         //set screen in center
-        setTimeout(() => {
-            console.log();
-            window.scroll(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
-            document.querySelector('body').style.overflow = 'hidden';
-        }, 10);
+        window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
+        document.querySelector('body').style.overflow = 'hidden';
+        //this is to prevent werid scroll event, wchich sometimes fires after above scrollTo - no idea why
+        document.addEventListener("scroll", () => { 
+            window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
+       });
     }
 
     drawUI(){
@@ -541,6 +542,7 @@ class App{
 
         this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (100 / 60)  + this.interactiveZoneW.posY;
         this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX ;
+
     }
 
     _adjustControls(){
@@ -597,8 +599,9 @@ const canvas = new Canvas;
 const sounds = new Sounds;
 const app = new App;
 
-
-// Promise.all()
+document.addEventListener("scroll", (event) => { 
+    window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
+});
 
 function init(){
     Promise.all(canvas.imgPromises)
