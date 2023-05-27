@@ -34,11 +34,11 @@ class Plant{
 
     growRoot(){
         if(this.carbohydrates > 0.1){
-        sounds.leafs.play();
-        this.carbohydrates -= this.root.cost;
-        this.root.size = this.root.size + this.root.growRate;
-        
-        requestAnimationFrame(canvas.drawRoot.bind(canvas));
+            sounds.leafs.play();
+            this.carbohydrates -= this.root.cost;
+            this.root.size = this.root.size + this.root.growRate;
+            
+            requestAnimationFrame(canvas.drawRoot.bind(canvas));
         }else{
             sounds.creak.play();
             sounds.leafs.pause();
@@ -153,7 +153,7 @@ class Habitat{
             plant.waterSupply -=1;
         }
         if(plant.waterSupply < 1){
-            alert('You died becasue out of water supply');
+            console.log('gameOver');
             app.gameOver();
         }
         
@@ -164,7 +164,7 @@ class Habitat{
         if(this.day % 5 === 0){
             this._randomWeather();
         }    
-
+        canvas.drawUI();
         DevOutput.renderOutput()
     }
 
@@ -195,12 +195,47 @@ class Canvas{
                 maxHeight: 550,
                 leafRowsSize : [100],
                 leafSizeRatio: 0
+            },
+            ui:{
+                topLine: 0,
+                rightLine : 0,
+                width: 0,
+                height: 0
+            },
+            colors:{
+                skyblue :'#2e778f'
             }
         }
 
         this.asets ={
             
         }
+
+        this.imgPromises = [];
+
+        this.asets.emptyBottle = new Image(100, 100);
+        this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
+
+        this.asets.fullBottle = new Image(100, 100);
+        this.asets.fullBottle.src = './asets/img/water-bottle-full.png';
+
+        this.asets.imgRoot = new Image(100, 100);
+        this.asets.imgRoot.src = './asets/img/root.jpg';
+
+        this.asets.imgLeafRight = new Image(100, 100);
+        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
+        
+         this.asets.imgLeafLeft = new Image(100, 100);
+        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
+
+        Object.values(this.asets).forEach(img => {
+            const promise = new Promise((resolve, reject) => {
+                img.onload = resolve
+                img.onerror = reject
+            })
+            this.imgPromises.push(promise);
+        });
+
         this.adjustCanvasToScreen()
        // ScreenOrientation.onchange = this.adjustCanvasToScreen.bind(this);
 
@@ -229,6 +264,38 @@ class Canvas{
         }, 10);
     }
 
+    drawUI(){
+        this._clearUI()
+        this.graphData.ui.topLine = app.interactiveZoneC.posY + 20;
+        this.graphData.ui.rightLine = app.interactiveZoneC.posX +  app.interactiveZoneC.width - 20;
+        this.graphData.ui.width = 170;
+        this.graphData.ui.height = 50;
+
+        //water supplies
+        function drawBottle(full, order){
+            if(full){
+                   this.ctx.drawImage(this.asets.fullBottle, this.graphData.ui.rightLine - order * 35, this.graphData.ui.topLine,  50, 50)
+            }else{
+                this.ctx.drawImage(this.asets.emptyBottle, this.graphData.ui.rightLine - order * 35, this.graphData.ui.topLine,  50, 50)
+            }
+        }
+
+        for(let i = 5; i > 0; i--){
+            if(i <= plant.waterSupply){
+               drawBottle.bind(this, true, i)()
+            }else{
+               drawBottle.bind(this, false, i)()
+            } 
+        }
+    }
+
+    _clearUI(){
+        this.ctx.globalAlpha =1;
+        this.ctx.clearRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+    }
+
     drawInit(){
         this._drawHabitatTopside();
         this._drawHabitatBotside();
@@ -236,6 +303,7 @@ class Canvas{
         this._drawInteractiveZone();
         this.drawWaterLevel();
         this._drawPlantStart();
+        this.drawUI()
     }
 
     drawWaterLevel(){
@@ -246,8 +314,8 @@ class Canvas{
         this.ctx.globalAlpha = 0.6;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12 );
-        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +20);
+        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12);
+        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12);
         this.ctx.stroke();
 
         this.ctx.beginPath();
@@ -301,16 +369,16 @@ class Canvas{
     }
 
     _drawHydrated(){
-        this.ctx.beginPath();
-        this.ctx.fillStyle = 'blue';
+        this.ctx.strokeStyle = 'blue';
         this.ctx.lineWidth = 8;
+        this.ctx.beginPath();
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size *12);
         this.ctx.stroke();
     }
 
     _drawHabitatTopside(){
-        this.ctx.fillStyle = "#2e778f";
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
@@ -350,11 +418,7 @@ class Canvas{
 
     _drawPlantStart(){
         //root
-        this.asets.imgRoot = new Image(100, 100);
-        this.asets.imgRoot.src = './asets/img/root.jpg';
-        this.asets.imgRoot.onload = () =>{
-            this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
-        }
+        this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
 
         //leafs
         this.ctx.beginPath();
@@ -366,17 +430,9 @@ class Canvas{
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
 
-        this.asets.imgLeafRight = new Image(100, 100);
-        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
-        this.asets.imgLeafRight.onload = () =>{
             this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-        }
-        this.asets.imgLeafLeft = new Image(100, 100);
-        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
-        this.asets.imgLeafLeft.onload = () =>{
+       
             this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[0], app.interactiveZoneC.botsideDivider -this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-
-        }
 
     }
 
@@ -391,7 +447,7 @@ class Canvas{
     _clearLeafs(){
         this.ctx.globalAlpha = 1;
         this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
-        this.ctx.fillStyle = "#2e778f";
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
     }
 
@@ -434,7 +490,7 @@ class App{
     }
 
     gameOver(){
-        
+
     }
 
     _adjustinteractiveZoneC(){
@@ -524,9 +580,17 @@ const canvas = new Canvas;
 const sounds = new Sounds;
 const app = new App;
 
+
+// Promise.all()
+
 function init(){
-    DevOutput.renderOutput();
-    canvas.drawInit();
+    console.log(canvas.imgPromises);
+    Promise.all(canvas.imgPromises)
+    .then( ()=>{
+         canvas.drawInit();
+         console.log(canvas.imgPromises);
+         DevOutput.renderOutput();
+    })
 }
 
 document.addEventListener('DOMContentLoaded', init);
