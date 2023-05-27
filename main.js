@@ -14,12 +14,12 @@ class Plant{
         this.root = {
             size: 5,
             growRate: 0.01,
-            cost: 0.001,
+            cost: 0.005,
         };
         this.leafs = {
             size: 1,
             growRate: 0.002,
-            cost: 0.01
+            cost: 0.0001
         };
         this.flowers = {
             size: 0,
@@ -52,7 +52,7 @@ class Plant{
             sounds.leafs.play();
             this.carbohydrates -= this.leafs.cost;
             this.leafs.size = this.leafs.size + +this.leafs.growRate;
-
+            canvas.graphData.plant.height = plant.leafs.size * 60
             canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
                 if (entry < 200){
                     return entry += 0.07
@@ -60,7 +60,6 @@ class Plant{
                     return entry;
                 }
             });
-            canvas.graphData.plant.height =  (40 + plant.leafs.size * 15).toFixed(2);
 
             requestAnimationFrame(canvas.drawLeafs.bind(canvas));
         }else{
@@ -195,10 +194,10 @@ class Canvas{
 
         this.graphData ={
             plant:{
-                height : 40,
+                height : plant.leafs.size * 60,
                 maxWidth : 500,
                 maxHeight: 550,
-                leafRowsSize : [100],
+                leafRowsSize : [50],
                 leafSizeRatio: 0
             },
             ui:{
@@ -302,10 +301,9 @@ class Canvas{
         this.ctx.stroke();
 
         const barRange = (plant.carbohydrates * this.graphData.ui.width) /plant.maxCarbohydrates; 
-        console.log(barRange);
         this.ctx.fillStyle = this.graphData.colors.gold;
         this.ctx.beginPath();
-        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine + 60, barRange , 30, 20)
+        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine + 60, barRange , 30, 20)
         this.ctx.fill();
 
         requestAnimationFrame(this.drawUI.bind(this))
@@ -317,7 +315,8 @@ class Canvas{
         this._drawDividers();
         this._drawInteractiveZone();
         this.drawWaterLevel();
-        this._drawPlantStart();
+        this.drawLeafs()
+        this.drawRoot();
         this.drawUI()
     }
 
@@ -367,9 +366,10 @@ class Canvas{
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
+        console.log(this.graphData.plant.height);
 
         //draw leafs        
-        if(this.graphData.plant.height / 130  > this.graphData.plant.leafRowsSize.length ){
+        if(this.graphData.plant.height / 140  > this.graphData.plant.leafRowsSize.length ){
             this.graphData.plant.leafRowsSize.push(30);
         }    
 
@@ -438,32 +438,15 @@ class Canvas{
         this.ctx.stroke();
     }
 
-    _drawPlantStart(){
-        //root
-        this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
-
-        //leafs
-        this.ctx.beginPath();
-        this.ctx.globalAlpha = 1;
-        this.ctx.strokeStyle = "#447629";
-       this.ctx.lineWidth = 15;
-
-        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
-        this.ctx.stroke();
-
-            this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-       
-            this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[0], app.interactiveZoneC.botsideDivider -this.graphData.plant.leafRowsSize[0] *0.625 - this.graphData.plant.height / 2, this.graphData.plant.leafRowsSize[0], this.graphData.plant.leafRowsSize[0] *0.625);
-
-    }
 
     _drawSingleLeafRow(id, leafsHeight){
+        const leafSizeFactor = 1;
+
         this.ctx.globalAlpha = 1;
 
-           this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[id], leafsHeight, this.graphData.plant.leafRowsSize[id], this.graphData.plant.leafRowsSize[id] *0.625);
+        this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[id] * leafSizeFactor, leafsHeight, this.graphData.plant.leafRowsSize[id] * leafSizeFactor, this.graphData.plant.leafRowsSize[id] * leafSizeFactor *0.625);
 
-           this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, leafsHeight, this.graphData.plant.leafRowsSize[id], this.graphData.plant.leafRowsSize[id] *0.625);
+         this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, leafsHeight, this.graphData.plant.leafRowsSize[id] * leafSizeFactor, this.graphData.plant.leafRowsSize[id] * leafSizeFactor *0.625);
     }
 
     _clearLeafs(){
@@ -479,7 +462,7 @@ class Sounds{
     constructor(){
         this.err = new Audio('/asets/sounds/erro.mp3');
         this.leafs = new Audio('/asets/sounds/leaves.mp3');
-        this.leafs.playbackRate = 2;
+        this.leafs.playbackRate = 3;
         this.creak = new Audio('/asets/sounds/creak.mp3');
         this.creak.playbackRate = 10;
     }
