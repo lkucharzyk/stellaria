@@ -193,11 +193,6 @@ class Canvas{
     constructor() {
         this.canvas = document.querySelector('canvas');
         this.ctx = this.canvas.getContext('2d');
-        this.ctx.canvas.width  = window.innerWidth;
-        this.ctx.canvas.height = window.innerHeight;
-        //this.ctx.canvas.width  = 720;
-       //this.ctx.canvas.height = 1280;
-
 
         this.graphData ={
             plant:{
@@ -253,28 +248,27 @@ class Canvas{
 
     }
     adjustCanvasToScreen(){
-        if(window.innerHeight < window.innerWidth){
+        //check if is need to add horizontal or vertical space to fill screen
+        let fillScreen;
 
-            if(window.mobileCheck()){
-                alert('To play Stellaria, please change device orientation to portrait, then refresh page');
-            }
-            this.ctx.canvas.height = 1280;
-            this.ctx.canvas.width  =  4000;
-            this.canvas.style.height = `100vh`;
-            //this.canvas.style.height = '-webkit-fill-available';      
+        if(window.screen.height * (9/16) < window.screen.width){
+            fillScreen = "horizontal";
         }else{
+            fillScreen = "vertical";
+        }
+        
+        if(fillScreen === "horizontal"){
+            const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
+            this.ctx.canvas.height = 1280;
+            this.ctx.canvas.width  =  this.ctx.canvas.height *ratio
+            this.canvas.style.height = `${document.querySelector('html').clientHeight}px`;
+            console.log(document.querySelector('html').clientHeight);
+        }else{
+            const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
             this.ctx.canvas.width  = 720;
-            this.ctx.canvas.height = 2200;
+            this.ctx.canvas.height = this.ctx.canvas.width *ratio
             this.canvas.style.width = '100%'
         }
-
-        //set screen in center
-        window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
-        document.querySelector('body').style.overflow = 'hidden';
-        //this is to prevent werid scroll event, wchich sometimes fires after above scrollTo - no idea why
-        document.addEventListener("scroll", () => { 
-            window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
-       });
     }
 
     drawUI(){
@@ -512,13 +506,25 @@ class App{
     }
 
     _adjustinteractiveZoneC(){
-        if(window.innerHeight < window.innerWidth){
-            this.interactiveZoneC.height = canvas.ctx.canvas.height;
+                //check if is need to add horizontal or vertical space to fill screen
+                let fillScreen;
+
+                if(window.screen.height * (9/16) < window.screen.width){
+                    fillScreen = "horizontal";
+                    console.log('szerokość');
+                }else{
+                    fillScreen = "vertical";
+                    console.log('długość');
+                }
+
+        if(fillScreen === 'horizontal'){
+            console.log('hori');
+            this.interactiveZoneC.height = canvas.ctx.canvas.height; 
             this.interactiveZoneC.width = this.interactiveZoneC.height * (9/16);
             this.interactiveZoneC.posX = (canvas.ctx.canvas.width/2 - this.interactiveZoneC.width /2);
             this.interactiveZoneC.rest = 'horizontal';
 
-            this.interactiveZoneW.height = window.innerHeight;
+            this.interactiveZoneW.height = window.innerHeight; //window.screen.height 
             this.interactiveZoneW.width = this.interactiveZoneW.height * (9/16);
             this.interactiveZoneW.posX = window.innerWidth /2 - this.interactiveZoneW.width /2;
             this.interactiveZoneW.rest = 'horizontal';
@@ -533,7 +539,7 @@ class App{
             this.interactiveZoneW.width = window.innerWidth;
             this.interactiveZoneW.height = this.interactiveZoneW.width * (16/9);
             this.interactiveZoneW.posY = window.innerHeight /2 - this.interactiveZoneW.height /2;
-            this.interactiveZoneW.rest = 'horizontal';
+            this.interactiveZoneW.rest = 'vertical';
         }
 
 
@@ -593,6 +599,8 @@ class App{
     }
 }
 
+
+
 const plant = new Plant;
 const habitat = new Habitat;
 const canvas = new Canvas;
@@ -609,6 +617,7 @@ function init(){
          canvas.drawInit();
          DevOutput.renderOutput();
          requestAnimationFrame(canvas.drawUI.bind(canvas));
+         
     })
 }
 
