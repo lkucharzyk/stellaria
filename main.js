@@ -82,7 +82,7 @@ class Habitat{
         this.minWeterLevel = -40;
 
         this._randomWeather();
-       setInterval( () =>this._dayPass(), 100); // one day - 1s
+       setInterval( () =>this._dayPass(), 1000); // one day - 1s
     }
 
     _randomWeather(){
@@ -304,8 +304,20 @@ class Canvas{
         }
     }
 
+    drawInit(){
+        requestAnimationFrame(this._drawHabitatTopside.bind(this));
+        requestAnimationFrame(this.drawDayAndWeather.bind(this));
+        requestAnimationFrame(this._drawHabitatBotside.bind(this));
+        requestAnimationFrame(this.drawWaterLevel.bind(this));
+        requestAnimationFrame(this.drawLeafs.bind(this));
+        requestAnimationFrame(this.drawRoot.bind(this));
+        requestAnimationFrame(this.drawUI.bind(this));
+        requestAnimationFrame(this._drawDividers.bind(this));
+        requestAnimationFrame(this._drawInteractiveZone.bind(this));
+        requestAnimationFrame(this._clearCanvas.bind(this));
+    }
+
     drawUI(){
-        this._clearUI()
         this.graphData.ui.topLine = app.interactiveZoneC.posY + 20;
         this.graphData.ui.rightLine = app.interactiveZoneC.posX +  app.interactiveZoneC.width - 20;
         this.graphData.ui.width = 170;
@@ -329,6 +341,7 @@ class Canvas{
         }
 
         //carbohydrates bar
+        this.ctx.save()
         this.ctx.strokeStyle = "black";
         this.ctx.lineWidth = 1
         this.ctx.beginPath();
@@ -340,23 +353,13 @@ class Canvas{
         this.ctx.beginPath();
         this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine + 60, barRange , 30, 20)
         this.ctx.fill();
+        this.ctx.restore()
 
         requestAnimationFrame(this.drawUI.bind(this))
     }
 
-    drawInit(){
-        requestAnimationFrame(this._drawHabitatTopside.bind(this));
-        requestAnimationFrame(this.drawDayAndWeather.bind(this));
-        requestAnimationFrame(this._drawHabitatBotside.bind(this));
-        requestAnimationFrame(this.drawWaterLevel.bind(this));
-        requestAnimationFrame(this.drawLeafs.bind(this));
-        requestAnimationFrame(this.drawRoot.bind(this));
-        requestAnimationFrame(this.drawUI.bind(this));
-        requestAnimationFrame(this._drawDividers.bind(this));
-        requestAnimationFrame(this._drawInteractiveZone.bind(this));
-    }
-
     drawWaterLevel(){
+        this.ctx.save()
         this.ctx.strokeStyle = "blue";
         this.ctx.lineWidth = 5;
         this.ctx.globalAlpha = 0.6;
@@ -370,6 +373,7 @@ class Canvas{
         this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "rgba(31, 41, 153, 0.3)";
         this.ctx.fill();
+        this.ctx.restore()
 
         if(plant.watered){
             this._drawHydrated();
@@ -379,7 +383,6 @@ class Canvas{
 
     //simple
     drawRoot(){
-        this.ctx.globalAlpha = 1;
         this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
         if(plant.watered){
             this._drawHydrated();
@@ -388,17 +391,16 @@ class Canvas{
     }
 
     drawLeafs(){
-        this._clearLeafs();
-
         //draw stalk
+        this.ctx.save()
         this.ctx.beginPath();
-        this.ctx.globalAlpha = 1;
         this.ctx.strokeStyle = "#447629";
         this.ctx.lineWidth = 15;
 
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
+        this.ctx.restore()
 
         //draw leafs        
         if(this.graphData.plant.height / 140  > this.graphData.plant.leafRowsSize.length ){
@@ -419,9 +421,6 @@ class Canvas{
     drawDayAndWeather(){
         const imgSize = 100;
         
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
-
         let aset;
         switch (habitat.weather){
             case 'sunny':
@@ -438,29 +437,31 @@ class Canvas{
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
     }
 
-    _clearUI(){
-        this.ctx.globalAlpha =1;
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+    _clearCanvas(){
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
     _drawHydrated(){
+        this.ctx.save()
         this.ctx.strokeStyle = 'blue';
         this.ctx.lineWidth = 8;
         this.ctx.beginPath();
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size *12);
         this.ctx.stroke();
+        this.ctx.restore()
     }
 
     _drawHabitatTopside(){
+        this.ctx.save()
        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.restore()
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
     }
 
     _drawHabitatBotside(){
-        this.ctx.globalAlpha = 1;
+        this.ctx.save()
         this.ctx.fillStyle = "#332300";
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
 
@@ -468,9 +469,11 @@ class Canvas{
         this.ctx.fillStyle = '#1c1c1c';
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider + 40 *12, this.ctx.canvas.width, this.ctx.canvas.height);
         requestAnimationFrame(this._drawHabitatBotside.bind(this))
+        this.ctx.restore()
     }
     
     _drawInteractiveZone(){
+        this.ctx.save()
         this.ctx.beginPath();
         this.ctx.strokeStyle = "white";
         this.ctx.lineWidth = 3;
@@ -480,14 +483,16 @@ class Canvas{
             this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
         }
         this.ctx.stroke();
+        this.ctx.restore()
         requestAnimationFrame(this._drawInteractiveZone.bind(this));
     }
 
     _drawDividers(){
         //for dev needs and tutotrial
+        this.ctx.save()
         this.ctx.strokeStyle = "white";
         this.ctx.lineWidth = 3;
-        this.ctx.globalAlpha = 0.2;
+        this.ctx.globalAlpha = 0.3;
 
         this.ctx.beginPath();
         this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider);
@@ -498,27 +503,19 @@ class Canvas{
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
         this.ctx.stroke();
+        this.ctx.restore()
         requestAnimationFrame(this._drawDividers.bind(this));
     }
-
 
     _drawSingleLeafRow(id, leafsHeight){
         const leafSizeFactor = 1;
 
-        this.ctx.globalAlpha = 1;
-
+        this.ctx.save()
         this.ctx.drawImage(this.asets.imgLeafLeft, app.interactiveZoneC.werticalDivider - this.graphData.plant.leafRowsSize[id] * leafSizeFactor, leafsHeight, this.graphData.plant.leafRowsSize[id] * leafSizeFactor, this.graphData.plant.leafRowsSize[id] * leafSizeFactor *0.625);
 
          this.ctx.drawImage(this.asets.imgLeafRight, app.interactiveZoneC.werticalDivider, leafsHeight, this.graphData.plant.leafRowsSize[id] * leafSizeFactor, this.graphData.plant.leafRowsSize[id] * leafSizeFactor *0.625);
+         this.ctx.restore()
     }
-
-    _clearLeafs(){
-        this.ctx.globalAlpha = 1;
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2 -1, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth +2, this.graphData.plant.maxHeight);
-    }
-
-   
 
 }
 
