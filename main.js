@@ -40,8 +40,6 @@ class Plant{
                 sounds.leafs.play();
                 this.carbohydrates -= this.root.cost;
                 this.root.size = this.root.size + this.root.growRate;
-                
-                requestAnimationFrame(canvas.drawRoot.bind(canvas));
             }else{
                 sounds.creak.play();
                 sounds.leafs.pause();
@@ -49,8 +47,6 @@ class Plant{
         }else{
             console.log('root max size');
         }
-
-
         DevOutput.renderOutput();
     }
 
@@ -67,8 +63,6 @@ class Plant{
                     return entry;
                 }
             });
-
-            requestAnimationFrame(canvas.drawLeafs.bind(canvas));
         }else{
             sounds.creak.play();
             sounds.leafs.pause();
@@ -88,7 +82,7 @@ class Habitat{
         this.minWeterLevel = -40;
 
         this._randomWeather();
-       setInterval( () =>this._dayPass(), 50); // one day - 1s
+       setInterval( () =>this._dayPass(), 100); // one day - 1s
     }
 
     _randomWeather(){
@@ -170,7 +164,6 @@ class Habitat{
             app.gameOver();
         }
         
-        requestAnimationFrame(canvas.drawWaterLevel.bind(canvas));
 
         //data for drawing weather marker
             if(habitat.day < habitat.maxDay /7){
@@ -202,8 +195,6 @@ class Habitat{
         if(this.day % 5 === 0){
             this._randomWeather();
         }
-            
-        //canvas.drawUI();
         DevOutput.renderOutput()
     }
 
@@ -354,19 +345,18 @@ class Canvas{
     }
 
     drawInit(){
-        this._drawHabitatTopside();
-        this._drawHabitatBotside();
-        this._drawDividers();
-        this._drawInteractiveZone();
-        this.drawWaterLevel();
-        this.drawLeafs()
-        this.drawRoot();
-        this.drawUI()
+        requestAnimationFrame(this._drawHabitatTopside.bind(this));
+        requestAnimationFrame(this.drawDayAndWeather.bind(this));
+        requestAnimationFrame(this._drawHabitatBotside.bind(this));
+        requestAnimationFrame(this.drawWaterLevel.bind(this));
+        requestAnimationFrame(this.drawLeafs.bind(this));
+        requestAnimationFrame(this.drawRoot.bind(this));
+        requestAnimationFrame(this.drawUI.bind(this));
+        requestAnimationFrame(this._drawDividers.bind(this));
+        requestAnimationFrame(this._drawInteractiveZone.bind(this));
     }
 
     drawWaterLevel(){
-        this._drawHabitatBotside();
-        this._drawInteractiveZone();
         this.ctx.strokeStyle = "blue";
         this.ctx.lineWidth = 5;
         this.ctx.globalAlpha = 0.6;
@@ -381,21 +371,20 @@ class Canvas{
         this.ctx.fillStyle = "rgba(31, 41, 153, 0.3)";
         this.ctx.fill();
 
-        if(habitat.day > 1){
-            this.drawRoot();
-        }
-
         if(plant.watered){
             this._drawHydrated();
         }
+        requestAnimationFrame(this.drawWaterLevel.bind(canvas));
     };
 
     //simple
     drawRoot(){
+        this.ctx.globalAlpha = 1;
         this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
         if(plant.watered){
             this._drawHydrated();
         }
+        requestAnimationFrame(canvas.drawRoot.bind(canvas));
     }
 
     drawLeafs(){
@@ -423,6 +412,7 @@ class Canvas{
                 this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 130 - this.graphData.plant.leafRowsSize[i] *0.625);
             }
         }
+        requestAnimationFrame(canvas.drawLeafs.bind(canvas));
 
     }
 
@@ -466,6 +456,7 @@ class Canvas{
     _drawHabitatTopside(){
        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        requestAnimationFrame(this._drawHabitatTopside.bind(this));
     }
 
     _drawHabitatBotside(){
@@ -476,6 +467,7 @@ class Canvas{
         //draw minimal water level
         this.ctx.fillStyle = '#1c1c1c';
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider + 40 *12, this.ctx.canvas.width, this.ctx.canvas.height);
+        requestAnimationFrame(this._drawHabitatBotside.bind(this))
     }
     
     _drawInteractiveZone(){
@@ -488,6 +480,7 @@ class Canvas{
             this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
         }
         this.ctx.stroke();
+        requestAnimationFrame(this._drawInteractiveZone.bind(this));
     }
 
     _drawDividers(){
@@ -505,6 +498,7 @@ class Canvas{
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
         this.ctx.stroke();
+        requestAnimationFrame(this._drawDividers.bind(this));
     }
 
 
@@ -609,9 +603,9 @@ class App{
         this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (100 / 60)  + this.interactiveZoneW.posY;
         this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX;
 
-        //set values addtional for canvas
+        //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +150;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
     }
 
     _adjustControls(){
@@ -679,9 +673,7 @@ function init(){
     .then( ()=>{
          canvas.drawInit();
          DevOutput.renderOutput();
-         requestAnimationFrame(canvas.drawUI.bind(canvas));
-         requestAnimationFrame(canvas.drawDayAndWeather.bind(canvas));
-         
+         //requestAnimationFrame(canvas.drawDayAndWeather.bind(canvas))
     })
 }
 
