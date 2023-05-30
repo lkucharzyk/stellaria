@@ -80,13 +80,15 @@ class Plant{
 class Habitat{
     constructor(){
         this.day = 1;
+        this.maxDay = 200;
+
         this.weather = 'rainy'
 
         this.waterLevel = -2;
         this.minWeterLevel = -40;
 
         this._randomWeather();
-       setInterval( () =>this._dayPass(), 1000); // one day - 1s
+       setInterval( () =>this._dayPass(), 50); // one day - 1s
     }
 
     _randomWeather(){
@@ -169,12 +171,38 @@ class Habitat{
         }
         
         requestAnimationFrame(canvas.drawWaterLevel.bind(canvas));
+
+        //data for drawing weather marker
+            if(habitat.day < habitat.maxDay /7){
+                canvas.graphData.weather.posX += 3;
+                canvas.graphData.weather.posY -= 2;
+            }else if((habitat.day < (habitat.maxDay /7) *2 )){
+                canvas.graphData.weather.posX += 4;
+                canvas.graphData.weather.posY -= 2;
+            }else if((habitat.day < (habitat.maxDay /7) *3 )){
+                canvas.graphData.weather.posX += 3;
+                canvas.graphData.weather.posY -= 1;
+            }else if((habitat.day < (habitat.maxDay /7) *4 )){
+                canvas.graphData.weather.posX += 2;
+            }else if((habitat.day < (habitat.maxDay /7) *5 )){
+                canvas.graphData.weather.posX += 3;
+                canvas.graphData.weather.posY += 1;
+            }else if((habitat.day < (habitat.maxDay /7) *6 )){
+                canvas.graphData.weather.posX += 4;
+                canvas.graphData.weather.posY += 2;
+            }else if((habitat.day < (habitat.maxDay /7) *7 )){
+                canvas.graphData.weather.posX += 3;
+                canvas.graphData.weather.posY += 2;
+            }
         
-        this.day+=1;
+        if (this.day < this.maxDay){
+            this.day+=1;
+        }
         
         if(this.day % 5 === 0){
             this._randomWeather();
-        }    
+        }
+            
         //canvas.drawUI();
         DevOutput.renderOutput()
     }
@@ -208,6 +236,10 @@ class Canvas{
                 width: 0,
                 height: 0
             },
+            weather:{
+                posX : 0,
+                posY : 0,
+            },
             colors:{
                 skyblue :'#2e778f',
                 gold: '#D1B000'
@@ -232,8 +264,19 @@ class Canvas{
         this.asets.imgLeafRight = new Image(100, 100);
         this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
         
-         this.asets.imgLeafLeft = new Image(100, 100);
+        this.asets.imgLeafLeft = new Image(100, 100);
         this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
+        
+        this.asets.sunny = new Image(100, 100);
+        this.asets.sunny.src = './asets/img/sunny.png';
+
+        this.asets.cloudy = new Image(100, 100);
+        this.asets.cloudy.src = './asets/img/cloudy.png';
+
+        this.asets.rainy = new Image(100, 100);
+        this.asets.rainy.src = './asets/img/rainy.png';
+
+
 
         Object.values(this.asets).forEach(img => {
             const promise = new Promise((resolve, reject) => {
@@ -260,9 +303,8 @@ class Canvas{
         if(fillScreen === "horizontal"){
             const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
             this.ctx.canvas.height = 1280;
-            this.ctx.canvas.width  =  this.ctx.canvas.height *ratio
+            this.ctx.canvas.width  =  this.ctx.canvas.height *ratio;
             this.canvas.style.height = `${document.querySelector('html').clientHeight}px`;
-            console.log(document.querySelector('html').clientHeight);
         }else{
             const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
             this.ctx.canvas.width  = 720;
@@ -368,7 +410,6 @@ class Canvas{
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
         this.ctx.stroke();
-        console.log(this.graphData.plant.height);
 
         //draw leafs        
         if(this.graphData.plant.height / 140  > this.graphData.plant.leafRowsSize.length ){
@@ -385,11 +426,32 @@ class Canvas{
 
     }
 
+    drawDayAndWeather(){
+        const imgSize = 100;
+        
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+        this.ctx.fillRect(this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
+
+        let aset;
+        switch (habitat.weather){
+            case 'sunny':
+                aset = this.asets.sunny;
+            break;
+            case 'cloudy':
+                aset = this.asets.cloudy;
+            break;    
+            case 'rainy':
+                aset = this.asets.rainy;
+            break;
+        }
+        this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
+        requestAnimationFrame(this.drawDayAndWeather.bind(this))
+    }
+
     _clearUI(){
         this.ctx.globalAlpha =1;
-        this.ctx.clearRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
         this.ctx.fillStyle = this.graphData.colors.skyblue;
-       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
+       this.ctx.fillRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine, this.graphData.ui.width, this.graphData.ui.height);
     }
 
     _drawHydrated(){
@@ -402,7 +464,7 @@ class Canvas{
     }
 
     _drawHabitatTopside(){
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
+       this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
@@ -458,10 +520,11 @@ class Canvas{
 
     _clearLeafs(){
         this.ctx.globalAlpha = 1;
-        this.ctx.clearRect( app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
         this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth, this.graphData.plant.maxHeight);
+        this.ctx.fillRect(app.interactiveZoneC.werticalDivider - this.graphData.plant.maxWidth /2 -1, app.interactiveZoneC.botsideDivider - this.graphData.plant.maxHeight, this.graphData.plant.maxWidth +2, this.graphData.plant.maxHeight);
     }
+
+   
 
 }
 
@@ -511,14 +574,11 @@ class App{
 
                 if(window.screen.height * (9/16) < window.screen.width){
                     fillScreen = "horizontal";
-                    console.log('szerokość');
                 }else{
                     fillScreen = "vertical";
-                    console.log('długość');
                 }
 
         if(fillScreen === 'horizontal'){
-            console.log('hori');
             this.interactiveZoneC.height = canvas.ctx.canvas.height; 
             this.interactiveZoneC.width = this.interactiveZoneC.height * (9/16);
             this.interactiveZoneC.posX = (canvas.ctx.canvas.width/2 - this.interactiveZoneC.width /2);
@@ -547,8 +607,11 @@ class App{
         this.interactiveZoneC.werticalDivider = this.interactiveZoneC.width / 2 + this.interactiveZoneC.posX ;
 
         this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (100 / 60)  + this.interactiveZoneW.posY;
-        this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX ;
+        this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX;
 
+        //set values addtional for canvas
+        canvas.graphData.weather.posX = this.interactiveZoneC.posX;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +150;
     }
 
     _adjustControls(){
@@ -617,6 +680,7 @@ function init(){
          canvas.drawInit();
          DevOutput.renderOutput();
          requestAnimationFrame(canvas.drawUI.bind(canvas));
+         requestAnimationFrame(canvas.drawDayAndWeather.bind(canvas));
          
     })
 }
