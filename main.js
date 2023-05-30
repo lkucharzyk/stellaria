@@ -15,19 +15,19 @@ class Plant{
             size: 5,
             maxSize: 40,
             growRate: 0.01,
-            cost: 0.005,
+            cost: 0.01,
         };
         this.leafs = {
             size: 1,
             growRate: 0.002,
-            cost: 0.01
+            cost: 0.015
         };
         this.flowers = {
             size: 0,
             growRate: 0.2
         };
         this.assimilationPower = 0.1;
-        this.carbohydrates = 0;
+        this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
         this.waterSupply = 5;
@@ -43,6 +43,7 @@ class Plant{
             }else{
                 sounds.creak.play();
                 sounds.leafs.pause();
+                canvas.graphData.ui.danger = true;
             }
         }else{
             console.log('root max size');
@@ -64,6 +65,7 @@ class Plant{
                 }
             });
         }else{
+            canvas.graphData.ui.danger = true;
             sounds.creak.play();
             sounds.leafs.pause();
         }
@@ -81,22 +83,38 @@ class Habitat{
         this.waterLevel = -2;
         this.minWeterLevel = -40;
 
-        this._randomWeather();
        setInterval( () =>this._dayPass(), 1000); // one day - 1s
     }
 
     _randomWeather(){
-        const randomNumber =random(1, 4);
-        switch(randomNumber){
-            case 1 :
+        const randomNumber =random(1, 11);
+        if(this.day <= 30){
+           if(randomNumber <= 5){
                 this.weather = 'rainy';
-            break;
-            case 2 :
+           }else if(randomNumber >= 8){
                 this.weather = 'cloudy';
-            break;
-            case 3 :
+           }else{
+            this.weather = 'sunny';
+           }
+        }else if(this.day > 30 && this.day < 100){
+            if(randomNumber <= 3){
+                this.weather = 'rainy';
+           }else if(randomNumber >= 8){
+                this.weather = 'cloudy';
+           }else{
                 this.weather = 'sunny';
-            break;
+           }    
+        }else{
+            if(randomNumber <= 2){
+                this.weather = 'rainy';
+           }else if(randomNumber >= 8){
+                this.weather = 'cloudy';
+           }else{
+                this.weather = 'sunny';
+            }
+        }
+        if(this.day <= 6 && this.weather === 'sunny'){
+            this.weather = 'cloudy';
         }
     }
 
@@ -122,21 +140,17 @@ class Habitat{
         switch(this.weather){
             case 'rainy':
                if (this.waterLevel !== 0){
-                this.waterLevel +=1;
+                this.waterLevel +=0.5;
                }
             break;
             case 'cloudy':
                 if (this.waterLevel > this.minWeterLevel){
-                    this.waterLevel -=1;
+                    this.waterLevel -=0.5;
                 } 
             break;
             case 'sunny':
                 if (this.waterLevel > this.minWeterLevel){
-                    if(this.day < 30){
-                        this.waterLevel -=1;
-                    }else{
-                        this.waterLevel -=2;
-                    }  
+                    this.waterLevel -=1;
                 } 
             break;
         }
@@ -225,7 +239,8 @@ class Canvas{
                 topLine: 0,
                 rightLine : 0,
                 width: 0,
-                height: 0
+                height: 0,
+                danger: false
             },
             weather:{
                 posX : 0,
@@ -353,8 +368,15 @@ class Canvas{
         this.ctx.beginPath();
         this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine + 60, barRange , 30, 20)
         this.ctx.fill();
-        this.ctx.restore()
 
+        if(this.graphData.ui.danger){
+            this.ctx.strokeStyle = "red";
+            this.ctx.lineWidth = 3
+            this.ctx.beginPath();
+            this.ctx.roundRect(this.graphData.ui.rightLine- this.graphData.ui.width -3, this.graphData.ui.topLine + 60 -3,  this.graphData.ui.width +3, 33, 20)
+            this.ctx.stroke();
+        }
+        this.ctx.restore()
         requestAnimationFrame(this.drawUI.bind(this))
     }
 
@@ -643,7 +665,7 @@ class App{
             }
             window.addEventListener('pointerup', ()=>{
                 clearInterval(grow);
-
+                canvas.graphData.ui.danger = false;
                 //pause feedback sounds
                 sounds.leafs.pause();
                 sounds.creak.pause();
