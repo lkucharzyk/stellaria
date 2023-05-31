@@ -58,7 +58,7 @@ class Plant{
             sounds.leafs.play();
             this.carbohydrates -= this.leafs.cost;
             this.leafs.size = this.leafs.size + +this.leafs.growRate;
-            canvas.graphData.plant.height = plant.leafs.size * 60
+            canvas.graphData.plant.leafsHeight = plant.leafs.size * 60
             canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
                 if (entry < 200){
                     return entry += 0.07
@@ -248,7 +248,7 @@ class Canvas{
 
         this.graphData ={
             plant:{
-                height : plant.leafs.size * 60,
+                leafsHeight : plant.leafs.size * 60,
                 maxWidth : 500,
                 maxHeight: 550,
                 leafRowsSize : [50],
@@ -267,7 +267,8 @@ class Canvas{
             },
             colors:{
                 skyblue :'#2e778f',
-                gold: '#D1B000'
+                gold: '#D1B000',
+                plantGreen: '#447629'
             }
         }
 
@@ -291,6 +292,9 @@ class Canvas{
         
         this.asets.imgLeafLeft = new Image(100, 100);
         this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
+
+        this.asets.flower = new Image(100, 100);
+        this.asets.flower.src = './asets/img/flower.png';
         
         this.asets.sunny = new Image(100, 100);
         this.asets.sunny.src = './asets/img/sunny.png';
@@ -345,6 +349,7 @@ class Canvas{
         requestAnimationFrame(this.drawWaterLevel.bind(this));
         requestAnimationFrame(this.drawLeafs.bind(this));
         requestAnimationFrame(this.drawRoot.bind(this));
+        requestAnimationFrame(this.drawFlowers.bind(this))
         requestAnimationFrame(this.drawUI.bind(this));
         requestAnimationFrame(this._drawDividers.bind(this));
         requestAnimationFrame(this._drawInteractiveZone.bind(this));
@@ -435,16 +440,16 @@ class Canvas{
         //draw stalk
         this.ctx.save()
         this.ctx.beginPath();
-        this.ctx.strokeStyle = "#447629";
+        this.ctx.strokeStyle = this.graphData.colors.plantGreen;
         this.ctx.lineWidth = 15;
 
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.height);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
         this.ctx.stroke();
         this.ctx.restore()
 
         //draw leafs        
-        if(this.graphData.plant.height / 140  > this.graphData.plant.leafRowsSize.length ){
+        if(this.graphData.plant.leafsHeight / 140  > this.graphData.plant.leafRowsSize.length ){
             this.graphData.plant.leafRowsSize.push(30);
         }    
 
@@ -457,6 +462,30 @@ class Canvas{
         }
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
 
+    }
+
+    drawFlowers(){
+        //draw divider betwen leafs an flowers
+        this.ctx.save()
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = "white";
+        this.ctx.lineWidth = 2;
+        this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
+        this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
+        this.ctx.stroke();
+        this.ctx.restore()
+
+        //placeholder
+        const flowerSize = plant.flowers.size *5 + 10;
+        this.ctx.drawImage(this.asets.flower, app.interactiveZoneC.werticalDivider - flowerSize /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight - flowerSize, flowerSize, flowerSize);
+        
+        this.ctx.save()
+        this.ctx.font = "50px sans-serif";
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText(`${plant.flowers.quantity}`, app.interactiveZoneC.werticalDivider + 10, app.interactiveZoneC.botsideDivider- this.graphData.plant.leafsHeight - flowerSize - 10)
+        this.ctx.restore()
+
+        requestAnimationFrame(this.drawFlowers.bind(this))
     }
 
     drawDayAndWeather(){
