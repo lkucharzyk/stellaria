@@ -24,7 +24,9 @@ class Plant{
         };
         this.flowers = {
             size: 0,
-            growRate: 0.2
+            quantity: 0,
+            growRate: 0.01,
+            cost: 0.03,
         };
         this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
@@ -64,6 +66,20 @@ class Plant{
                     return entry;
                 }
             });
+        }else{
+            canvas.graphData.ui.danger = true;
+            sounds.creak.play();
+            sounds.leafs.pause();
+        }
+        DevOutput.renderOutput();   
+    }
+
+    growFlowers(){
+        if(this.carbohydrates > 0.1){
+            sounds.leafs.play();
+            this.carbohydrates -= this.flowers.cost;
+            this.flowers.size = this.flowers.size + +this.flowers.growRate;
+            this.flowers.quantity = Math.floor(this.flowers.size / 10); 
         }else{
             canvas.graphData.ui.danger = true;
             sounds.creak.play();
@@ -133,6 +149,9 @@ class Habitat{
         }
         if(plant.carbohydrates < plant.maxCarbohydrates){
             plant.carbohydrates = plant.carbohydrates + (plant.leafs.size * weatherFactor * plant.assimilationPower);
+        }
+        if(plant.carbohydrates > plant.maxCarbohydrates){
+            plant.carbohydrates = plant.maxCarbohydrates;
         }
     }
 
@@ -217,7 +236,7 @@ class Habitat{
 class DevOutput{
     static renderOutput(){
         const devOutputEl = document.querySelector('#dev-output');
-       devOutputEl.innerHTML = `Root: ${plant.root.size.toFixed(2)}, Leafs: ${plant.leafs.size.toFixed(2)}, Flowers: ${plant.flowers.size.toFixed(2)} <br>
+       devOutputEl.innerHTML = `Root: ${plant.root.size.toFixed(2)}, Leafs: ${plant.leafs.size.toFixed(2)}, Flowers: ${plant.flowers.size.toFixed(2)}, Flowers Quanity: ${plant.flowers.quantity.toFixed(2)}  <br>
        Day: ${habitat.day} Weather: ${habitat.weather} Carbo: ${plant.carbohydrates.toFixed(2)} <br> WaterSupp: ${plant.waterSupply} Water lvl: ${habitat.waterLevel}`;
     }
 }
@@ -644,7 +663,6 @@ class App{
         //disable context menu
         document.addEventListener("contextmenu", e => e.preventDefault());
 
-        //console.log(`IzX ${this.interactiveZoneW.posX } IzY: ${this.interactiveZoneW.posY} IzW: ${this.interactiveZoneW.width} IzH: ${this.interactiveZoneW.height}`);
         document.addEventListener('pointerdown', this._handleControls.bind(this), passiveSupported ? { passive: false } : false)
     }
 
@@ -662,6 +680,8 @@ class App{
                 grow = setInterval(plant.growRoot.bind(plant), 10);
             }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
                 grow = setInterval(plant.growLeafs.bind(plant), 10);
+            }else{
+                grow = setInterval(plant.growFlowers.bind(plant), 10);
             }
             window.addEventListener('pointerup', ()=>{
                 clearInterval(grow);
