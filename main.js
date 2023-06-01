@@ -28,7 +28,7 @@ class Plant{
             growRate: 0.01,
             cost: 0.03,
         };
-        this.assimilationPower = 0.01;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
@@ -733,8 +733,8 @@ class App{
             e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
             return
         }else{
-            let grow;
-            if(grow){
+            let grow = false;
+            if(grow != false){
                 clearInterval(grow);
             }
             if(e.clientY >= this.interactiveZoneW.botsideDivider){
