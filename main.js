@@ -28,7 +28,7 @@ class Plant{
             growRate: 0.01,
             cost: 0.03,
         };
-        this.assimilationPower = 1;
+        this.assimilationPower = 0.01;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
