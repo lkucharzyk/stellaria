@@ -28,7 +28,7 @@ class Plant{
             growRate: 0.01,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
@@ -173,6 +173,9 @@ class Habitat{
                 } 
             break;
         }
+        if(this.waterLevel < this.minWeterLevel){
+            this.waterLevel = this.minWeterLevel;
+        } 
         if(plant.root.size + habitat.waterLevel >= 0){
             plant.watered = true;
         }else{
@@ -637,6 +640,7 @@ class App{
         document.querySelector('.overlay').style.display = 'none';
         plant = new Plant;
         habitat = new Habitat;
+        canvas.graphData.plant.leafsHeight = plant.leafs.size * 60;
         canvas.graphData.plant.leafRowsSize = [50];
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
