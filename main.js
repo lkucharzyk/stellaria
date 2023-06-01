@@ -734,18 +734,18 @@ class App{
             e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
             return
         }else{
-            if(grow != false){
-                clearInterval(grow);
+            if(this.grow != false){
+                clearInterval(this.grow);
             }
             if(e.clientY >= this.interactiveZoneW.botsideDivider){
-                grow = setInterval(plant.growRoot.bind(plant), 10);
+                this.grow = setInterval(plant.growRoot.bind(plant), 10);
             }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
-                grow = setInterval(plant.growLeafs.bind(plant), 10);
+                this.grow = setInterval(plant.growLeafs.bind(plant), 10);
             }else{
-                grow = setInterval(plant.growFlowers.bind(plant), 10);
+                this.grow = setInterval(plant.growFlowers.bind(plant), 10);
             }
             canvas.canvas.addEventListener('pointerup', ()=>{
-                clearInterval(grow);
+                clearInterval(this.grow);
                 canvas.graphData.ui.danger = false;
                 //pause feedback sounds
                 sounds.leafs.pause();
