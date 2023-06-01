@@ -626,6 +626,7 @@ class App{
             botsideDivider : 0,
             werticalDivider: 0,
         }
+        this.grow = false;
         this._adjustinteractiveZoneC();
         this._adjustControls();
     }
@@ -733,7 +734,6 @@ class App{
             e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
             return
         }else{
-            let grow = false;
             if(grow != false){
                 clearInterval(grow);
             }
