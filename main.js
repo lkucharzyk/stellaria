@@ -226,6 +226,8 @@ class Habitat{
         
         if (this.day < this.maxDay){
             this.day+=1;
+        }else{
+            app.gameOver('time');
         }
         
         if(this.day % 5 === 0){
@@ -629,10 +631,19 @@ class App{
     }
 
     gameOver(cause){
-        clearInterval(habitat.dayInterval);
-        document.querySelector('.overlay').style.display = 'flex';
-        if(cause === 'water'){
+        const overlay = document.querySelector('.overlay');
+        const notification = document.querySelector('.notification div');
 
+        clearInterval(habitat.dayInterval);
+        overlay.style.display = 'flex';
+
+        if(cause === 'time'){
+            if(plant.flowers.quantity === 0){
+                notification.innerText= `Winter has come and you died. Sadly, didn't make any flowers, moron!`;
+            }else{
+                notification.innerText= `Winter has come and you died. Hopefully, you managed to grow ${plant.flowers.quantity} flowers.`;
+            }
+            
         }
     }
 
@@ -723,6 +734,9 @@ class App{
             return
         }else{
             let grow;
+            if(grow){
+                clearInterval(grow);
+            }
             if(e.clientY >= this.interactiveZoneW.botsideDivider){
                 grow = setInterval(plant.growRoot.bind(plant), 10);
             }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
@@ -751,6 +765,7 @@ class MenusAndNotifications{
         }
         const notification = document.querySelector('.notification');
         notification.querySelector('button').addEventListener('pointerdown', app.resetGame.bind(app));
+        notification.style.maxWidth = `${app.interactiveZoneW.width}px`;
     }
 }
 
