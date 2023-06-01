@@ -99,7 +99,7 @@ class Habitat{
         this.waterLevel = -2;
         this.minWeterLevel = -40;
 
-       setInterval( () =>this._dayPass(), 1000); // one day - 1s
+       this.dayInterval =setInterval( () =>this._dayPass(), 1000); // one day - 1s
     }
 
     _randomWeather(){
@@ -194,7 +194,7 @@ class Habitat{
         }
         if(plant.waterSupply < 1){
            // console.log('gameOver');
-            app.gameOver();
+            app.gameOver('water');
         }
         
 
@@ -625,8 +625,22 @@ class App{
         this._adjustControls();
     }
 
-    gameOver(){
+    gameOver(cause){
+        clearInterval(habitat.dayInterval);
+        document.querySelector('.overlay').style.display = 'flex';
+        if(cause === 'water'){
 
+        }
+    }
+
+    resetGame(){
+        document.querySelector('.overlay').style.display = 'none';
+        plant = new Plant;
+        habitat = new Habitat;
+        canvas.graphData.plant.leafRowsSize = [50];
+        canvas.graphData.weather.posX = this.interactiveZoneC.posX;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
+        DevOutput.renderOutput();
     }
 
     _adjustinteractiveZoneC(){
@@ -692,7 +706,7 @@ class App{
         //disable context menu
         document.addEventListener("contextmenu", e => e.preventDefault());
 
-        document.addEventListener('pointerdown', this._handleControls.bind(this), passiveSupported ? { passive: false } : false)
+        canvas.canvas.addEventListener('pointerdown', this._handleControls.bind(this), passiveSupported ? { passive: false } : false)
     }
 
     _handleControls(e){
@@ -712,7 +726,7 @@ class App{
             }else{
                 grow = setInterval(plant.growFlowers.bind(plant), 10);
             }
-            window.addEventListener('pointerup', ()=>{
+            canvas.canvas.addEventListener('pointerup', ()=>{
                 clearInterval(grow);
                 canvas.graphData.ui.danger = false;
                 //pause feedback sounds
@@ -724,13 +738,25 @@ class App{
     }
 }
 
+class MenusAndNotifications{
+    constructor(){
+        this.graphData = {
+            colors: {
+
+            }
+        }
+        const notification = document.querySelector('.notification');
+        notification.querySelector('button').addEventListener('pointerdown', app.resetGame.bind(app));
+    }
+}
 
 
-const plant = new Plant;
-const habitat = new Habitat;
+let plant = new Plant;
+let habitat = new Habitat;
 const canvas = new Canvas;
-const sounds = new Sounds;
 const app = new App;
+const sounds = new Sounds;
+const menusAndNotifications = new MenusAndNotifications;
 
 document.addEventListener("scroll", (event) => { 
     window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
@@ -741,7 +767,6 @@ function init(){
     .then( ()=>{
          canvas.drawInit();
          DevOutput.renderOutput();
-         //requestAnimationFrame(canvas.drawDayAndWeather.bind(canvas))
     })
 }
 
