@@ -48,7 +48,7 @@ class Plant{
                 canvas.graphData.ui.danger = true;
             }
         }else{
-            console.log('root max size');
+            canvas.graphData.plant.rootMaxAlert = true;
         }
         DevOutput.renderOutput();
     }
@@ -104,13 +104,14 @@ class Habitat{
 
     _randomWeather(){
         const randomNumber =random(1, 11);
-        if(this.day <= 30){
+        console.log(randomNumber);
+        if(this.day <= 40){
            if(randomNumber <= 5){
                 this.weather = 'rainy';
-           }else if(randomNumber >= 8){
+           }else if(randomNumber >= 7){
                 this.weather = 'cloudy';
            }else{
-            this.weather = 'sunny';
+                this.weather = 'sunny';
            }
         }else if(this.day > 30 && this.day < 100){
             if(randomNumber <= 3){
@@ -257,7 +258,8 @@ class Canvas{
                 maxWidth : 500,
                 maxHeight: 550,
                 leafRowsSize : [50],
-                leafSizeRatio: 0
+                leafSizeRatio: 0,
+                rootMaxAlert : false
             },
             ui:{
                 topLine: 0,
@@ -437,6 +439,14 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
         if(plant.watered){
             this._drawHydrated();
+        }
+        if(this.graphData.plant.rootMaxAlert){
+            this.ctx.save()
+            this.ctx.font = "33px sans-serif";
+            this.ctx.fillStyle = "#d15252";
+            this.ctx.fillText(`Root reached`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -83)
+            this.ctx.fillText(`maximum size!`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -50)
+            this.ctx.restore()
         }
         requestAnimationFrame(canvas.drawRoot.bind(canvas));
     }
@@ -750,6 +760,9 @@ class App{
                 //pause feedback sounds
                 sounds.leafs.pause();
                 sounds.creak.pause();
+                setTimeout(() => {
+                    canvas.graphData.plant.rootMaxAlert = false;
+                }, 500);
             })
         }
         
