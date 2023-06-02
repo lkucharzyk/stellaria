@@ -114,7 +114,7 @@ class Habitat{
                 this.weather = 'sunny';
            }
         }else if(this.day > 40 && this.day < 100){
-            if(randomNumber <= 3){
+            if(randomNumber <= 4){
                 this.weather = 'rainy';
            }else if(randomNumber >= 8){
                 this.weather = 'cloudy';
@@ -279,11 +279,31 @@ class Canvas{
             }
         }
 
+        this.preGameAsets ={
+
+        }
+
+        this.preGameAsetsPromises = [];
+
+        this.preGameAsets.lilChiefPanel = new Image(2000, 2000);
+        this.preGameAsets.lilChiefPanel.src = './asets/img/lil-chief-panel.jpg';
+
+        this.preGameAsets.menu = new Image(2000, 2000);
+        this.preGameAsets.menu.src = './asets/img/menu.jpg';
+
+        Object.values(this.preGameAsets).forEach(img => {
+            const promise = new Promise((resolve, reject) => {
+                img.onload = resolve
+                img.onerror = reject
+            })
+            this.preGameAsetsPromises.push(promise);
+        });
+
         this.asets ={
             
         }
 
-        this.imgPromises = [];
+        this.asetsPromises = [];
 
         this.asets.emptyBottle = new Image(100, 100);
         this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
@@ -319,7 +339,7 @@ class Canvas{
                 img.onload = resolve
                 img.onerror = reject
             })
-            this.imgPromises.push(promise);
+            this.asetsPromises.push(promise);
         });
 
         this.adjustCanvasToScreen()
@@ -347,6 +367,18 @@ class Canvas{
             this.ctx.canvas.height = this.ctx.canvas.width *ratio
             this.canvas.style.width = '100%'
         }
+    }
+
+    drawStartingPanels(){
+        this.ctx.drawImage(this.preGameAsets.lilChiefPanel, -1500 + canvas.canvas.width /2,  -1216 + canvas.canvas.height /2, 3000, 2432);
+        setTimeout(() => {
+            this.drawMenu();
+        }, 1500);
+    }
+
+    drawMenu(){
+        this.ctx.drawImage(this.preGameAsets.menu,  -1920 + canvas.canvas.width /2,  -717 + canvas.canvas.height /2, 3840, 1434);
+        document.querySelector('#start-menu').style.display = 'flex';
     }
 
     drawInit(){
@@ -784,21 +816,31 @@ class MenusAndNotifications{
 
 
 let plant = new Plant;
-let habitat = new Habitat;
+let habitat;
 const canvas = new Canvas;
 const app = new App;
 const sounds = new Sounds;
 const menusAndNotifications = new MenusAndNotifications;
 
-document.addEventListener("scroll", (event) => { 
-    window.scrollTo(document.querySelector('canvas').offsetWidth /2 - window.innerWidth /2, document.querySelector('canvas').offsetHeight /2 - window.innerHeight /2);
-});
-
 function init(){
-    Promise.all(canvas.imgPromises)
+    console.log(canvas.preGameAsetsPromises)
+    Promise.all(canvas.preGameAsetsPromises)
+    .then(()=>{
+        canvas.drawStartingPanels();
+    })
+
+    Promise.all(canvas.asetsPromises)
     .then( ()=>{
-         canvas.drawInit();
-         DevOutput.renderOutput();
+        const startMenu = document.querySelector('#start-menu');
+        const button = document.querySelector('#start-menu button');
+
+        button.innerHTML = 'Start!'
+        button.addEventListener('pointerdown', ()=>{
+            app.resetGame()
+            canvas.drawInit();
+            DevOutput.renderOutput();
+            startMenu.style.display = 'none';
+        })
     })
 }
 

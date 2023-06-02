@@ -17,6 +17,13 @@ canvas {
     margin: 0;
 }
 
+button {
+    border-radius: 4px;
+    padding: 5px 20px;
+    background-color: #755432;
+    color: white;
+}
+
 #dev-output {
     position: fixed;
     margin: 0;
@@ -25,6 +32,18 @@ canvas {
     padding: 5px;
     font-size: 25px;
     color: white;
+}
+
+#start-menu {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+
 }
 
 .overlay {
@@ -58,11 +77,8 @@ canvas {
     margin: auto;
     margin-top: 10px;
     font-family: inherit;
-    border-radius: 4px;
-    padding: 5px 20px;
-    background-color: #755432;
-    color: white;
 }
+
 
 @media (max-width: 800px) {
     #dev-output {
