@@ -113,7 +113,7 @@ class Habitat{
            }else{
                 this.weather = 'sunny';
            }
-        }else if(this.day > 30 && this.day < 100){
+        }else if(this.day > 40 && this.day < 100){
             if(randomNumber <= 3){
                 this.weather = 'rainy';
            }else if(randomNumber >= 8){
