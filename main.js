@@ -343,7 +343,6 @@ class Canvas{
         });
 
         this.adjustCanvasToScreen()
-       // ScreenOrientation.onchange = this.adjustCanvasToScreen.bind(this);
 
     }
     adjustCanvasToScreen(){
