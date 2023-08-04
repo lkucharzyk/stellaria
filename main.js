@@ -254,12 +254,14 @@ class Canvas{
 
         this.graphData ={
             plant:{
-                leafsHeight : plant.leafs.size * 60,
+                //leafsHeight : plant.leafs.size * 60,
                 maxWidth : 500,
                 maxHeight: 550,
                 leafRowsSize : [50],
                 leafSizeRatio: 0,
-                rootMaxAlert : false
+                rootMaxAlert : false,
+                stalkWidth: 96,
+                stalkHeight: 106
             },
             ui:{
                 topLine: 0,
@@ -276,7 +278,8 @@ class Canvas{
                 skyblue :'#2e778f',
                 gold: '#D1B000',
                 plantGreen: '#447629'
-            }
+            },
+            scale: 10
         }
 
         this.preGameAsets ={
@@ -313,6 +316,9 @@ class Canvas{
 
         this.asets.imgRoot = new Image(100, 100);
         this.asets.imgRoot.src = './asets/img/root.jpg';
+
+        this.asets.imgStalk1 = new Image(100, 100);
+        this.asets.imgStalk1.src = './asets/pngs/stalk_96x106_1.png'
 
         this.asets.imgLeafRight = new Image(100, 100);
         this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
@@ -484,28 +490,25 @@ class Canvas{
 
     drawLeafs(){
         //draw stalk
+        //108
         this.ctx.save()
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = this.graphData.colors.plantGreen;
-        this.ctx.lineWidth = 15;
+       // const spriteSheetScaledWidth = (app.interactiveZoneC.width) * 108 
 
-        this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
-        this.ctx.stroke();
-        this.ctx.restore()
 
+        this.ctx.drawImage(this.asets.imgStalk1, 0, 0, 96, 106, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
+        //app.interactiveZoneC.werticalDivider - 48, app.interactiveZoneC.botsideDivider -106, 96, plant.root.size * 12
         //draw leafs        
         if(this.graphData.plant.leafsHeight / 140  > this.graphData.plant.leafRowsSize.length ){
             this.graphData.plant.leafRowsSize.push(30);
         }    
 
-        for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
-            if(i === 0){
-                this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[i] *0.625 - 20);
-            }else{
-                this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 130 - this.graphData.plant.leafRowsSize[i] *0.625);
-            }
-        }
+        // for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
+        //     if(i === 0){
+        //         this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[i] *0.625 - 20);
+        //     }else{
+        //         this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 130 - this.graphData.plant.leafRowsSize[i] *0.625);
+        //     }
+        // }
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
 
     }
