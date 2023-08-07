@@ -19,7 +19,7 @@ class Plant{
         };
         this.leafs = {
             size: 1,
-            growRate: 0.002,
+            growRate: 0.01,// 0.002,
             cost: 0.015
         };
         this.flowers = {
@@ -28,7 +28,7 @@ class Plant{
             growRate: 0.01,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 100//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
@@ -58,14 +58,14 @@ class Plant{
             sounds.leafs.play();
             this.carbohydrates -= this.leafs.cost;
             this.leafs.size = this.leafs.size + +this.leafs.growRate;
-            canvas.graphData.plant.leafsHeight = plant.leafs.size * 60
-            canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
-                if (entry < 200){
-                    return entry += 0.07
-                }else{
-                    return entry;
-                }
-            });
+            //canvas.graphData.plant.leafsHeight = plant.leafs.size * 60
+            // canvas.graphData.plant.leafRowsSize = canvas.graphData.plant.leafRowsSize.map(entry => {
+            //     if (entry < 200){
+            //         return entry += 0.07
+            //     }else{
+            //         return entry;
+            //     }
+            // });
         }else{
             canvas.graphData.ui.danger = true;
             sounds.creak.play();
@@ -104,7 +104,6 @@ class Habitat{
 
     _randomWeather(){
         const randomNumber =random(1, 11);
-        console.log(randomNumber);
         if(this.day <= 40){
            if(randomNumber <= 5){
                 this.weather = 'rainy';
@@ -261,7 +260,30 @@ class Canvas{
                 leafSizeRatio: 0,
                 rootMaxAlert : false,
                 stalkWidth: 96,
-                stalkHeight: 106
+                stalkHeight: 106,
+                leafsWidth: 26,
+                leafsHeight: 12,
+                growPoints: [
+                    {
+                        id: 1,
+                        frame: 47,
+                        x:44,
+                        y: 34,
+                        ready: false,
+                        leaf: {
+                            started: false,
+                            done: false,
+                            size: 0,
+                            encounteredFrame : null
+                        },
+                        flower: {
+                            started: false,
+                            done: false,
+                            size: 0
+                        }
+
+                    }
+                ]
             },
             ui:{
                 topLine: 0,
@@ -319,6 +341,9 @@ class Canvas{
 
         this.asets.imgStalk1 = new Image(100, 100);
         this.asets.imgStalk1.src = './asets/pngs/stalk_96x106_1.png'
+
+        this.asets.imgLeafs = new Image(100, 100);
+        this.asets.imgLeafs.src = './asets/pngs/leafes_26x12_1.png'
 
         this.asets.imgLeafRight = new Image(100, 100);
         this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
@@ -387,6 +412,7 @@ class Canvas{
     }
 
     drawInit(){
+        this.ctx.imageSmoothingEnabled = false; 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
         requestAnimationFrame(this._drawHabitatBotside.bind(this));
@@ -489,18 +515,48 @@ class Canvas{
     }
 
     drawLeafs(){
-        //draw stalk
-        //108
         this.ctx.save()
-       // const spriteSheetScaledWidth = (app.interactiveZoneC.width) * 108 
+        //stalk
+        const frame = Math.floor(plant.leafs.size * 20) - 20;
+        //console.log(frame);
+        this.ctx.drawImage(this.asets.imgStalk1, frame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
+       
+        const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
+
+        //leafs
+        const yebnięcieMateusza = -3;
+        this.graphData.plant.growPoints.forEach(growPoint => {
+            if(!growPoint.ready){
+                if(frame >= growPoint.frame){
+                    growPoint.ready = true;
+                    growPoint.leaf.encounteredFrame = frame;
+                    console.log(growPoint);
+                }
+            }
+            if(growPoint.ready && !growPoint.leaf.done){
+                growPoint.leaf.size = frame - growPoint.leaf.encounteredFrame;
+                if(growPoint.leaf.size >= 98){{
+                    growPoint.leaf.done = true;
+                }}
+            }
+            if(growPoint.ready){
+                const leafFrame = growPoint.leaf.size; 
+                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.leafsWidth /2)*scale;
+                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.leafsHeight + growPoint.y + yebnięcieMateusza)*scale;
+    
+                this.ctx.drawImage(this.asets.imgLeafs, leafFrame *this.graphData.plant.leafsWidth, 0, this.graphData.plant.leafsWidth, this.graphData.plant.leafsHeight,  xPosition, yPosition, this.graphData.plant.leafsWidth *scale, this.graphData.plant.leafsHeight * scale);
+            }
+        })
+       
+        
+       
 
 
-        this.ctx.drawImage(this.asets.imgStalk1, 0, 0, 96, 106, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
         //app.interactiveZoneC.werticalDivider - 48, app.interactiveZoneC.botsideDivider -106, 96, plant.root.size * 12
         //draw leafs        
-        if(this.graphData.plant.leafsHeight / 140  > this.graphData.plant.leafRowsSize.length ){
-            this.graphData.plant.leafRowsSize.push(30);
-        }    
+        // if(this.graphData.plant.leafsHeight / 140  > this.graphData.plant.leafRowsSize.length ){
+        //     this.graphData.plant.leafRowsSize.push(30);
+        // }    
 
         // for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
         //     if(i === 0){
@@ -509,20 +565,21 @@ class Canvas{
         //         this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 130 - this.graphData.plant.leafRowsSize[i] *0.625);
         //     }
         // }
+
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
 
     }
 
     drawFlowers(){
         //draw divider betwen leafs an flowers
-        this.ctx.save()
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "white";
-        this.ctx.lineWidth = 2;
-        this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
-        this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
-        this.ctx.stroke();
-        this.ctx.restore()
+        // this.ctx.save()
+        // this.ctx.beginPath();
+        // this.ctx.strokeStyle = "white";
+        // this.ctx.lineWidth = 2;
+        // this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
+        // this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
+        // this.ctx.stroke();
+        // this.ctx.restore()
 
         //placeholder
         const flowerSize = plant.flowers.size *5 + 10;
@@ -696,7 +753,6 @@ class App{
         document.querySelector('.overlay').style.display = 'none';
         plant = new Plant;
         habitat = new Habitat;
-        canvas.graphData.plant.leafsHeight = plant.leafs.size * 60;
         canvas.graphData.plant.leafRowsSize = [50];
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
@@ -825,7 +881,6 @@ const sounds = new Sounds;
 const menusAndNotifications = new MenusAndNotifications;
 
 function init(){
-    console.log(canvas.preGameAsetsPromises)
     Promise.all(canvas.preGameAsetsPromises)
     .then(()=>{
         canvas.drawStartingPanels();
