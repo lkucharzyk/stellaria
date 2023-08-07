@@ -246,6 +246,33 @@ class DevOutput{
     }
 }
 
+class GrowPoint{
+    constructor(frame, x, y){
+        this.id = GrowPoint.incrementId(),
+        this.frame = frame,
+        this.x = x,
+        this.y = y,
+        this.ready = false,
+        this.leaf =  {
+            started: false,
+            done: false,
+            size: 0,
+            encounteredFrame : null
+        },
+        this.flower = {
+            started: false,
+            done: false,
+            size: 0
+        }
+    }
+
+    static incrementId() {
+        if (!this.latestId) this.latestId = 1
+        else this.latestId++
+        return this.latestId
+    }
+}
+
 class Canvas{
     constructor() {
         this.canvas = document.querySelector('canvas');
@@ -253,37 +280,14 @@ class Canvas{
 
         this.graphData ={
             plant:{
-                //leafsHeight : plant.leafs.size * 60,
                 maxWidth : 500,
                 maxHeight: 550,
-                leafRowsSize : [50],
-                leafSizeRatio: 0,
                 rootMaxAlert : false,
                 stalkWidth: 96,
                 stalkHeight: 106,
                 leafsWidth: 26,
                 leafsHeight: 12,
-                growPoints: [
-                    {
-                        id: 1,
-                        frame: 47,
-                        x:44,
-                        y: 34,
-                        ready: false,
-                        leaf: {
-                            started: false,
-                            done: false,
-                            size: 0,
-                            encounteredFrame : null
-                        },
-                        flower: {
-                            started: false,
-                            done: false,
-                            size: 0
-                        }
-
-                    }
-                ]
+                growPoints: []
             },
             ui:{
                 topLine: 0,
@@ -304,9 +308,8 @@ class Canvas{
             scale: 10
         }
 
-        this.preGameAsets ={
 
-        }
+        this.preGameAsets ={}
 
         this.preGameAsetsPromises = [];
 
@@ -344,12 +347,6 @@ class Canvas{
 
         this.asets.imgLeafs = new Image(100, 100);
         this.asets.imgLeafs.src = './asets/pngs/leafes_26x12_1.png'
-
-        this.asets.imgLeafRight = new Image(100, 100);
-        this.asets.imgLeafRight.src = './asets/img/leaf-right.png';
-        
-        this.asets.imgLeafLeft = new Image(100, 100);
-        this.asets.imgLeafLeft.src = './asets/img/leaf-left.png';
 
         this.asets.flower = new Image(100, 100);
         this.asets.flower.src = './asets/img/flower.png';
@@ -412,7 +409,8 @@ class Canvas{
     }
 
     drawInit(){
-        this.ctx.imageSmoothingEnabled = false; 
+        this.ctx.imageSmoothingEnabled = false;
+        this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
         requestAnimationFrame(this._drawHabitatBotside.bind(this));
@@ -424,6 +422,23 @@ class Canvas{
         requestAnimationFrame(this._drawDividers.bind(this));
         requestAnimationFrame(this._drawInteractiveZone.bind(this));
         requestAnimationFrame(this._clearCanvas.bind(this));
+    }
+
+    setGrowPoints(){
+        this.graphData.plant.growPoints = [];
+        this.graphData.plant.growPoints.push(new GrowPoint(47, 44, 34));
+        this.graphData.plant.growPoints.push(new GrowPoint(58, 28, 25));
+        this.graphData.plant.growPoints.push(new GrowPoint(89, 47, 53));
+        this.graphData.plant.growPoints.push(new GrowPoint(104, 23, 44));
+        this.graphData.plant.growPoints.push(new GrowPoint(115, 51, 85));
+        this.graphData.plant.growPoints.push(new GrowPoint(139, 48, 63));
+        this.graphData.plant.growPoints.push(new GrowPoint(197, 62, 73));
+        this.graphData.plant.growPoints.push(new GrowPoint(201, 17, 78));
+        this.graphData.plant.growPoints.push(new GrowPoint(202, 63, 45));
+        this.graphData.plant.growPoints.push(new GrowPoint(204, 63, 75));
+        this.graphData.plant.growPoints.push(new GrowPoint(210, 48, 87));
+        this.graphData.plant.growPoints.push(new GrowPoint(210, 8, 70));
+        this.graphData.plant.growPoints.push(new GrowPoint(210, 32, 73));
     }
 
     drawUI(){
@@ -518,19 +533,18 @@ class Canvas{
         this.ctx.save()
         //stalk
         const frame = Math.floor(plant.leafs.size * 20) - 20;
-        //console.log(frame);
         this.ctx.drawImage(this.asets.imgStalk1, frame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider);
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
         //leafs
         const yebnięcieMateusza = -3;
+
         this.graphData.plant.growPoints.forEach(growPoint => {
             if(!growPoint.ready){
                 if(frame >= growPoint.frame){
                     growPoint.ready = true;
                     growPoint.leaf.encounteredFrame = frame;
-                    console.log(growPoint);
                 }
             }
             if(growPoint.ready && !growPoint.leaf.done){
@@ -548,24 +562,6 @@ class Canvas{
             }
         })
        
-        
-       
-
-
-        //app.interactiveZoneC.werticalDivider - 48, app.interactiveZoneC.botsideDivider -106, 96, plant.root.size * 12
-        //draw leafs        
-        // if(this.graphData.plant.leafsHeight / 140  > this.graphData.plant.leafRowsSize.length ){
-        //     this.graphData.plant.leafRowsSize.push(30);
-        // }    
-
-        // for (let i = 0; i < this.graphData.plant.leafRowsSize.length; i++){
-        //     if(i === 0){
-        //         this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafRowsSize[i] *0.625 - 20);
-        //     }else{
-        //         this._drawSingleLeafRow(i, app.interactiveZoneC.botsideDivider - i * 130 - this.graphData.plant.leafRowsSize[i] *0.625);
-        //     }
-        // }
-
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
 
     }
@@ -738,7 +734,6 @@ class App{
 
         clearInterval(habitat.dayInterval);
         overlay.style.display = 'flex';
-
         if(cause === 'time'){
             if(plant.flowers.quantity === 0){
                 notification.innerText= `Winter has come and you died. Sadly, didn't make any flowers, moron!`;
@@ -753,7 +748,7 @@ class App{
         document.querySelector('.overlay').style.display = 'none';
         plant = new Plant;
         habitat = new Habitat;
-        canvas.graphData.plant.leafRowsSize = [50];
+        canvas.setGrowPoints();
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
         DevOutput.renderOutput();
