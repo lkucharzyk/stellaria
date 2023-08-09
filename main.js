@@ -592,6 +592,20 @@ class Canvas{
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
     }
 
+    randomNextGrowPoint(){
+        const avabliveGrowPoints = this.graphData.plant.growPoints.filter(growPoint =>
+            growPoint.ready === true && growPoint.flower.done === false
+        )
+        if(avabliveGrowPoints.length > 0){
+            const index = random(0, avabliveGrowPoints.length -1);
+            const id = avabliveGrowPoints[index].id;
+            console.log(id);
+            return id;
+        }else{
+            console.log('no grow points for flowers');
+        }
+    }
+
     drawFlowers(){
         this.ctx.save();
         const yebnięcieMateusza = -3;
@@ -605,14 +619,16 @@ class Canvas{
                         this.graphData.plant.lastFlowerQuanity = plant.flowers.quantity;
                         growPoint.flower.done = true;
                        growPoint.flower.size = 1; 
-                        this.graphData.plant.activeFlowerGrowPoint ++;
+
+                        this.graphData.plant.activeFlowerGrowPoint = this.randomNextGrowPoint();
+                        //console.log(this.graphData.plant.activeFlowerGrowPoint);
                     }
                 
             }
 
             if(growPoint.flower.done || this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
                 const totalFrames = 94;
-                const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0); 
+                const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0) -1; 
                 const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*scale;
                 const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.flowerHeight + growPoint.y + yebnięcieMateusza)*scale;
     
@@ -775,6 +791,7 @@ class App{
         plant = new Plant;
         habitat = new Habitat;
         canvas.setGrowPoints();
+        canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
         DevOutput.renderOutput();
