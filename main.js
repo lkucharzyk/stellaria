@@ -77,7 +77,7 @@ class Plant{
                 sounds.leafs.play();
                 this.carbohydrates -= this.flowers.cost;
                 this.flowers.size = this.flowers.size + +this.flowers.growRate;
-                this.flowers.quantity = Math.floor(this.flowers.size / 10); 
+                this.flowers.quantity = Math.floor(this.flowers.size); 
             }else{
                 canvas.graphData.ui.danger = true;
                 sounds.creak.play();
@@ -284,6 +284,10 @@ class Canvas{
                 stalkHeight: 106,
                 leafsWidth: 26,
                 leafsHeight: 12,
+                flowerWidth: 14,
+                flowerHeight: 18,
+                lastFlowerQuanity: 0,
+                activeFlowerGrowPoint: 0,
                 growPoints: []
             },
             ui:{
@@ -345,8 +349,8 @@ class Canvas{
         this.asets.imgLeafs = new Image(100, 100);
         this.asets.imgLeafs.src = './asets/pngs/leafes_26x12_1.png'
 
-        this.asets.flower = new Image(100, 100);
-        this.asets.flower.src = './asets/pngs/flower_14x18_1.png';
+        this.asets.imgFlower = new Image(100, 100);
+        this.asets.imgFlower.src = './asets/pngs/flower_14x18_1.png';
         
         this.asets.sunny = new Image(100, 100);
         this.asets.sunny.src = './asets/img/sunny.png';
@@ -574,45 +578,50 @@ class Canvas{
         })
 
         if(nowGrowingPoints < 3){
-            //  if(habitat.day % 1 === 0){
-              //console.log(nowGrowingPoints);
-                  const growPointsToStart= this.graphData.plant.growPoints.filter(growPoint =>
-                      growPoint.leaf.started === false && growPoint.ready === true
-                  )
-                  if(growPointsToStart.length > 0){
-                      const index = random(0, growPointsToStart.length -1);
-                      growPointsToStart[index].leaf.started = true;
-                      growPointsToStart[index].leaf.encounteredFrame = frame;
-                  }
-             // }
+            const growPointsToStart= this.graphData.plant.growPoints.filter(growPoint =>
+                growPoint.leaf.started === false && growPoint.ready === true
+            )
+            if(growPointsToStart.length > 0){
+                const index = random(0, growPointsToStart.length -1);
+                growPointsToStart[index].leaf.started = true;
+                growPointsToStart[index].leaf.encounteredFrame = frame;
+            }
           }
-          //console.log(this.graphData.plant.growPoints);
 
-
+        this.ctx.restore();  
         requestAnimationFrame(canvas.drawLeafs.bind(canvas));
-
     }
 
     drawFlowers(){
-        //draw divider betwen leafs an flowers
-        // this.ctx.save()
-        // this.ctx.beginPath();
-        // this.ctx.strokeStyle = "white";
-        // this.ctx.lineWidth = 2;
-        // this.ctx.moveTo(app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
-        // this.ctx.lineTo(app.interactiveZoneC.posX + app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight);
-        // this.ctx.stroke();
-        // this.ctx.restore()
+        this.ctx.save();
+        const yebnięcieMateusza = -3;
+        const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
-        //placeholder
-        const flowerSize = plant.flowers.size *5 + 10;
-        this.ctx.drawImage(this.asets.flower, app.interactiveZoneC.werticalDivider - flowerSize /2, app.interactiveZoneC.botsideDivider - this.graphData.plant.leafsHeight - flowerSize, flowerSize, flowerSize);
-        
-        this.ctx.save()
-        this.ctx.font = "50px sans-serif";
-        this.ctx.fillStyle = "white";
-        this.ctx.fillText(`${plant.flowers.quantity}`, app.interactiveZoneC.werticalDivider + 10, app.interactiveZoneC.botsideDivider- this.graphData.plant.leafsHeight - flowerSize - 10)
-        this.ctx.restore()
+        this.graphData.plant.growPoints.forEach(growPoint => {
+            if(this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
+                    growPoint.flower.size = plant.flowers.size - plant.flowers.quantity;
+  
+                    if(plant.flowers.quantity !== this.graphData.plant.lastFlowerQuanity){
+                        this.graphData.plant.lastFlowerQuanity = plant.flowers.quantity;
+                        growPoint.flower.done = true;
+                       growPoint.flower.size = 1; 
+                        this.graphData.plant.activeFlowerGrowPoint ++;
+                    }
+                
+            }
+
+            if(growPoint.flower.done || this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
+                const totalFrames = 94;
+                const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0); 
+                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*scale;
+                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.flowerHeight + growPoint.y + yebnięcieMateusza)*scale;
+    
+                this.ctx.drawImage(this.asets.imgFlower, flowerFrame *this.graphData.plant.flowerWidth, 0, this.graphData.plant.flowerWidth, this.graphData.plant.flowerHeight,  xPosition, yPosition, this.graphData.plant.flowerWidth *scale, this.graphData.plant.flowerHeight * scale);
+            }
+            
+        })
+
+        this.ctx.restore();  
 
         requestAnimationFrame(this.drawFlowers.bind(this))
     }
