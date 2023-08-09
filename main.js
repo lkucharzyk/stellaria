@@ -536,7 +536,7 @@ class Canvas{
         this.ctx.save()
         //stalk
         //probably max leaf size = 25
-        const frame = Math.floor(plant.leafs.size * 25) - 25;
+        const frame = Math.floor(plant.leafs.size * 30) - 30;
         this.ctx.drawImage(this.asets.imgStalk1, frame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
