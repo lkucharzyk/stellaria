@@ -9,6 +9,8 @@ window.mobileCheck = function() {
     return check;
   };
 
+ const przyspiesz = 3 
+
 class Plant{
     constructor(){
         this.root = {
@@ -19,16 +21,16 @@ class Plant{
         };
         this.leafs = {
             size: 1,
-            growRate: 0.01,//0.002,
+            growRate: 0.002,
             cost: 0.015
         };
         this.flowers = {
             size: 0,
             quantity: 0,
-            growRate: 0.01,
+            growRate: 0.001,
             cost: 0.03,
         };
-        this.assimilationPower = 10//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 5;
 
@@ -96,9 +98,9 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -1//-40;
+        this.minWeterLevel = -40;
 
-       this.dayInterval =setInterval( () =>this._dayPass(), 1000); // one day - 1s
+       this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
 
     _randomWeather(){
@@ -534,7 +536,7 @@ class Canvas{
         this.ctx.save()
         //stalk
         //probably max leaf size = 25
-        const frame = Math.floor(plant.leafs.size * 20) - 20;
+        const frame = Math.floor(plant.leafs.size * 25) - 25;
         this.ctx.drawImage(this.asets.imgStalk1, frame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
@@ -621,7 +623,6 @@ class Canvas{
                        growPoint.flower.size = 1; 
 
                         this.graphData.plant.activeFlowerGrowPoint = this.randomNextGrowPoint();
-                        //console.log(this.graphData.plant.activeFlowerGrowPoint);
                     }
                 
             }
@@ -791,6 +792,8 @@ class App{
         plant = new Plant;
         habitat = new Habitat;
         canvas.setGrowPoints();
+        console.log(canvas.graphData.plant.growPoints);
+        canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
@@ -876,11 +879,11 @@ class App{
                 clearInterval(this.grow);
             }
             if(e.clientY >= this.interactiveZoneW.botsideDivider){
-                this.grow = setInterval(plant.growRoot.bind(plant), 10);
+                this.grow = setInterval(plant.growRoot.bind(plant), 10 / przyspiesz);
             }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
-                this.grow = setInterval(plant.growLeafs.bind(plant), 10);
+                this.grow = setInterval(plant.growLeafs.bind(plant), 10 / przyspiesz);
             }else{
-                this.grow = setInterval(plant.growFlowers.bind(plant), 10);
+                this.grow = setInterval(plant.growFlowers.bind(plant), 10 / przyspiesz);
             }
             canvas.canvas.addEventListener('pointerup', ()=>{
                 clearInterval(this.grow);
