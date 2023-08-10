@@ -807,7 +807,8 @@ class App{
             }else{
                 notification.innerText= `Winter has come and you died. Hopefully, you managed to grow ${plant.flowers.quantity} flowers.`;
             }
-            
+        }else{
+            notification.innerText= `You died for lack of water`;
         }
     }
 
