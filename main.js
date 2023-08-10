@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 3
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0015,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1 //0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -40;
+        this.minWeterLevel = -2//-40;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -304,7 +304,8 @@ class Canvas{
                 posY : 0,
             },
             colors:{
-                skyblue :'#2e778f',
+                skyblue :'#2f3847',
+                soilBrown: '#24272b',
                 gold: '#D1B000',
                 plantGreen: '#447629'
             },
@@ -337,10 +338,10 @@ class Canvas{
         this.asetsPromises = [];
 
         this.asets.imgBgBot = new Image(100, 100);
-        this.asets.imgBgBot.src = './asets/pngs/bg-bot.jpeg';
+        this.asets.imgBgBot.src = './asets/pngs/bckgrnddown96x66_1.png';
 
         this.asets.imgBgTop = new Image(100, 100);
-        this.asets.imgBgTop.src = './asets/pngs/bg-top.jpeg';
+        this.asets.imgBgTop.src = './asets/pngs/bckgrndup96x106_1.png';
 
         this.asets.emptyBottle = new Image(100, 100);
         this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
@@ -543,7 +544,7 @@ class Canvas{
         //stalk
         //probably max leaf size = 25
         const frame = Math.floor(plant.leafs.size * 30) - 30;
-        this.ctx.drawImage(this.asets.imgStalk1, frame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
+        this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
@@ -696,7 +697,7 @@ class Canvas{
 
     _drawHabitatBotside(){
         this.ctx.save()
-        this.ctx.fillStyle = "#332300";
+        this.ctx.fillStyle = this.graphData.colors.soilBrown;
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
 
         this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
