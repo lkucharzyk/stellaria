@@ -547,9 +547,10 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
+        console.log(frame);
 
         //leaf
-        const yebnięcieMateusza = -3;
+        const yebnięcieMateusza = -2;
         let nowGrowingPoints = 0;
 
         this.graphData.plant.growPoints.forEach(growPoint => {
@@ -617,7 +618,7 @@ class Canvas{
 
     drawFlowers(){
         this.ctx.save();
-        const yebnięcieMateusza = -3;
+        const yebnięcieMateusza = -2;
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
         this.graphData.plant.growPoints.forEach(growPoint => {
