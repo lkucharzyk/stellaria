@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 3
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
@@ -27,10 +27,10 @@ class Plant{
         this.flowers = {
             size: 0,
             quantity: 0,
-            growRate: 0.0015,
+            growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 1 //0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -70,7 +70,7 @@ class Plant{
 
     growFlowers(){
         if(!canvas.graphData.plant.growPoints[0].ready){
-            console.log('u cant make flowers yet');
+            canvas.graphData.plant.flowerNotAllowedYetAlert = true;
             canvas.graphData.ui.danger = true;
             sounds.creak.play();
             sounds.leafs.pause();
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -2//-40;
+        this.minWeterLevel = -40;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -282,6 +282,7 @@ class Canvas{
                 maxWidth : 500,
                 maxHeight: 550,
                 rootMaxAlert : false,
+                flowerNotAllowedYetAlert: false,
                 stalkWidth: 96,
                 stalkHeight: 106,
                 leafsWidth: 26,
@@ -362,13 +363,13 @@ class Canvas{
         this.asets.imgFlower.src = './asets/pngs/flower_14x18_1.png';
         
         this.asets.sunny = new Image(100, 100);
-        this.asets.sunny.src = './asets/img/sunny.png';
+        this.asets.sunny.src = './asets/pngs/moon_light_12x16.png';
 
         this.asets.cloudy = new Image(100, 100);
-        this.asets.cloudy.src = './asets/img/cloudy.png';
+        this.asets.cloudy.src = './asets/pngs/moon_cloud_12x16.png';
 
         this.asets.rainy = new Image(100, 100);
-        this.asets.rainy.src = './asets/img/rainy.png';
+        this.asets.rainy.src = './asets/pngs/moon_rain_12x16.png';
 
 
 
@@ -543,7 +544,7 @@ class Canvas{
         this.ctx.save()
         //stalk
         //probably max leaf size = 25
-        const frame = Math.floor(plant.leafs.size * 30) - 30;
+        const frame = Math.floor(plant.leafs.size * 60) - 60;
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
@@ -620,6 +621,15 @@ class Canvas{
         this.ctx.save();
         const yebnięcieMateusza = -2;
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
+
+        if(this.graphData.plant.flowerNotAllowedYetAlert){
+            this.ctx.save()
+            this.ctx.font = "33px sans-serif";
+            this.ctx.fillStyle = "#d15252";
+            this.ctx.fillText(`Grow more leafs before`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +330)
+            this.ctx.fillText(`start growing flowers!`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +365)
+            this.ctx.restore()
+        }
 
         this.graphData.plant.growPoints.forEach(growPoint => {
             if(this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
@@ -907,6 +917,7 @@ class App{
                 sounds.creak.pause();
                 setTimeout(() => {
                     canvas.graphData.plant.rootMaxAlert = false;
+                    canvas.graphData.plant.flowerNotAllowedYetAlert = false;
                 }, 500);
             })
         }
