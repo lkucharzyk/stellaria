@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 3 
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
@@ -27,12 +27,12 @@ class Plant{
         this.flowers = {
             size: 0,
             quantity: 0,
-            growRate: 0.001,
+            growRate: 0.0015,
             cost: 0.03,
         };
         this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
-        this.maxCarbohydrates = 5;
+        this.maxCarbohydrates = 10;
 
         this.waterSupply = 5;
         this.watered = true;
@@ -336,6 +336,12 @@ class Canvas{
 
         this.asetsPromises = [];
 
+        this.asets.imgBgBot = new Image(100, 100);
+        this.asets.imgBgBot.src = './asets/pngs/bg-bot.jpeg';
+
+        this.asets.imgBgTop = new Image(100, 100);
+        this.asets.imgBgTop.src = './asets/pngs/bg-top.jpeg';
+
         this.asets.emptyBottle = new Image(100, 100);
         this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
 
@@ -505,7 +511,7 @@ class Canvas{
 
         this.ctx.beginPath();
         this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.fillStyle = "rgba(31, 41, 153, 0.3)";
+        this.ctx.fillStyle = "rgba(56, 112, 217, 0.5)";
         this.ctx.fill();
         this.ctx.restore()
 
@@ -678,9 +684,12 @@ class Canvas{
     }
 
     _drawHabitatTopside(){
-        this.ctx.save()
+        this.ctx.save();
        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        this.ctx.drawImage(this.asets.imgBgTop, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
+
         this.ctx.restore()
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
     }
@@ -689,6 +698,8 @@ class Canvas{
         this.ctx.save()
         this.ctx.fillStyle = "#332300";
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
 
         //draw minimal water level
         this.ctx.fillStyle = '#1c1c1c';
@@ -776,6 +787,7 @@ class App{
         const notification = document.querySelector('.notification div');
 
         clearInterval(habitat.dayInterval);
+        clearInterval(app.grow);
         overlay.style.display = 'flex';
         if(cause === 'time'){
             if(plant.flowers.quantity === 0){
