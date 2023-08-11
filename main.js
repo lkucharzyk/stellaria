@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 4
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -40;
+        this.minWeterLevel = -2//-40;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -285,6 +285,7 @@ class Canvas{
                 flowerNotAllowedYetAlert: false,
                 stalkWidth: 96,
                 stalkHeight: 106,
+                rootHeight: 66,
                 leafsWidth: 26,
                 leafsHeight: 12,
                 flowerWidth: 14,
@@ -344,6 +345,9 @@ class Canvas{
         this.asets.imgBgTop = new Image(100, 100);
         this.asets.imgBgTop.src = './asets/pngs/bckgrndup96x106_1.png';
 
+        this.asets.imgBgPlants = new Image(100, 100);
+        this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants96x106.png';
+
         this.asets.emptyBottle = new Image(100, 100);
         this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
 
@@ -351,7 +355,7 @@ class Canvas{
         this.asets.fullBottle.src = './asets/img/water-bottle-full.png';
 
         this.asets.imgRoot = new Image(100, 100);
-        this.asets.imgRoot.src = './asets/img/root.jpg';
+        this.asets.imgRoot.src = './asets/pngs/root_96x66.png';
 
         this.asets.imgStalk1 = new Image(100, 100);
         this.asets.imgStalk1.src = './asets/pngs/stalk_96x106_1.png'
@@ -424,6 +428,7 @@ class Canvas{
         this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
+        requestAnimationFrame(this._drawBgPlants.bind(this));
         requestAnimationFrame(this._drawHabitatBotside.bind(this));
         requestAnimationFrame(this.drawWaterLevel.bind(this));
         requestAnimationFrame(this.drawLeafs.bind(this));
@@ -441,15 +446,15 @@ class Canvas{
         this.graphData.plant.growPoints.push(new GrowPoint(58, 28, 25));
         this.graphData.plant.growPoints.push(new GrowPoint(89, 47, 53));
         this.graphData.plant.growPoints.push(new GrowPoint(104, 23, 44));
-        this.graphData.plant.growPoints.push(new GrowPoint(115, 51, 85));
-        this.graphData.plant.growPoints.push(new GrowPoint(139, 48, 63));
-        this.graphData.plant.growPoints.push(new GrowPoint(197, 62, 73));
-        this.graphData.plant.growPoints.push(new GrowPoint(201, 17, 78));
-        this.graphData.plant.growPoints.push(new GrowPoint(202, 63, 45));
-        this.graphData.plant.growPoints.push(new GrowPoint(204, 63, 75));
-        this.graphData.plant.growPoints.push(new GrowPoint(210, 48, 87));
-        this.graphData.plant.growPoints.push(new GrowPoint(210, 8, 70));
-        this.graphData.plant.growPoints.push(new GrowPoint(210, 32, 73));
+        this.graphData.plant.growPoints.push(new GrowPoint(115, 52, 20));
+        this.graphData.plant.growPoints.push(new GrowPoint(139, 21, 58));
+ 	    this.graphData.plant.growPoints.push(new GrowPoint(142, 49, 62));
+        this.graphData.plant.growPoints.push(new GrowPoint(207, 9, 68));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 16, 79));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 32, 71));
+	    this.graphData.plant.growPoints.push(new GrowPoint(209, 48, 85));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 63, 75));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 64, 45));
     }
 
     drawUI(){
@@ -513,7 +518,7 @@ class Canvas{
 
         this.ctx.beginPath();
         this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.fillStyle = "rgba(56, 112, 217, 0.5)";
+        this.ctx.fillStyle = "rgba(56, 112, 217, 0.3)";
         this.ctx.fill();
         this.ctx.restore()
 
@@ -523,9 +528,14 @@ class Canvas{
         requestAnimationFrame(this.drawWaterLevel.bind(canvas));
     };
 
-    //simple
     drawRoot(){
-        this.ctx.drawImage(this.asets.imgRoot, app.interactiveZoneC.werticalDivider - 15, app.interactiveZoneC.botsideDivider, 30, plant.root.size * 12);
+
+        const totalFrames = 124;
+        const rootFrame = (plant.root.size / plant.root.maxSize  * totalFrames).toFixed(0) -1; 
+        console.log(rootFrame);
+        this.ctx.drawImage(this.asets.imgRoot, rootFrame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.rootHeight, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.height * (40/100));
+        
+        
         if(plant.watered){
             this._drawHydrated();
         }
@@ -548,7 +558,6 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
        
         const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
-        console.log(frame);
 
         //leaf
         const yebnięcieMateusza = -2;
@@ -706,12 +715,19 @@ class Canvas{
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
     }
 
+    _drawBgPlants(){
+        this.ctx.save();
+        this.ctx.drawImage(this.asets.imgBgPlants, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
+        this.ctx.restore()
+        requestAnimationFrame(this._drawBgPlants.bind(this));
+    }
+
     _drawHabitatBotside(){
         this.ctx.save()
         this.ctx.fillStyle = this.graphData.colors.soilBrown;
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
+      //  this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
 
         //draw minimal water level
         this.ctx.fillStyle = '#1c1c1c';
