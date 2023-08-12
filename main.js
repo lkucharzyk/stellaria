@@ -15,7 +15,7 @@ class Plant{
     constructor(){
         this.root = {
             size: 5,
-            maxSize: 66,
+            maxSize: 63,
             growRate: 0.01,
             cost: 0.008,
         };
