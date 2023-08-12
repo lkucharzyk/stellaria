@@ -9,15 +9,15 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 4
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
         this.root = {
             size: 5,
-            maxSize: 40,
+            maxSize: 66,
             growRate: 0.01,
-            cost: 0.01,
+            cost: 0.008,
         };
         this.leafs = {
             size: 1,
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 1//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -2//-40;
+        this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -311,7 +311,7 @@ class Canvas{
                 gold: '#D1B000',
                 plantGreen: '#447629'
             },
-            scale: 10
+            asetScale: null
         }
 
 
@@ -508,16 +508,16 @@ class Canvas{
     drawWaterLevel(){
         this.ctx.save()
         this.ctx.strokeStyle = "blue";
-        this.ctx.lineWidth = 5;
+        this.ctx.lineWidth = 1 * this.graphData.asetScale;
         this.ctx.globalAlpha = 0.6;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *12 +5);
-        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5);
+        this.ctx.moveTo(0, app.interactiveZoneC.botsideDivider -habitat.waterLevel *this.graphData.asetScale);
+        this.ctx.lineTo(this.ctx.canvas.width, app.interactiveZoneC.botsideDivider -habitat.waterLevel *this.graphData.asetScale);
         this.ctx.stroke();
 
         this.ctx.beginPath();
-        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *12 +5, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *this.graphData.asetScale +5, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "rgba(56, 112, 217, 0.3)";
         this.ctx.fill();
         this.ctx.restore()
@@ -530,11 +530,20 @@ class Canvas{
 
     drawRoot(){
 
-        const totalFrames = 124;
-        const rootFrame = (plant.root.size / plant.root.maxSize  * totalFrames).toFixed(0) -1; 
-        console.log(rootFrame);
-        this.ctx.drawImage(this.asets.imgRoot, rootFrame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.rootHeight, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.height * (40/100));
+      //  const totalFrames = 124;
+      //  const rootFrame = (plant.root.size / plant.root.maxSize  * totalFrames).toFixed(0) -1; 
+      //  console.log(rootFrame);
+     //   this.ctx.drawImage(this.asets.imgRoot, rootFrame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.rootHeight, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.height * (40/100));
         
+     this.ctx.save()
+     this.ctx.strokeStyle = 'brown';
+     this.ctx.lineWidth = 16;
+     this.ctx.beginPath();
+     this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+     this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale);
+     this.ctx.stroke();
+     this.ctx.restore()
+
         
         if(plant.watered){
             this._drawHydrated();
@@ -556,8 +565,6 @@ class Canvas{
         //probably max leaf size = 25
         const frame = Math.floor(plant.leafs.size * 60) - 60;
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
-       
-        const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
         //leaf
         const yebnięcieMateusza = -2;
@@ -589,10 +596,10 @@ class Canvas{
 
             if(growPoint.leaf.started){
                 const leafFrame = growPoint.leaf.size; 
-                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.leafsWidth /2)*scale;
-                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.leafsHeight + growPoint.y + yebnięcieMateusza)*scale;
+                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.leafsWidth /2)*this.graphData.asetScale;
+                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.leafsHeight + growPoint.y + yebnięcieMateusza)*this.graphData.asetScale;
     
-                this.ctx.drawImage(this.asets.imgLeafs, leafFrame *this.graphData.plant.leafsWidth, 0, this.graphData.plant.leafsWidth, this.graphData.plant.leafsHeight,  xPosition, yPosition, this.graphData.plant.leafsWidth *scale, this.graphData.plant.leafsHeight * scale);
+                this.ctx.drawImage(this.asets.imgLeafs, leafFrame *this.graphData.plant.leafsWidth, 0, this.graphData.plant.leafsWidth, this.graphData.plant.leafsHeight,  xPosition, yPosition, this.graphData.plant.leafsWidth *this.graphData.asetScale, this.graphData.plant.leafsHeight * this.graphData.asetScale);
             }
             
         })
@@ -629,7 +636,6 @@ class Canvas{
     drawFlowers(){
         this.ctx.save();
         const yebnięcieMateusza = -2;
-        const scale = app.interactiveZoneC.width / this.graphData.plant.stalkWidth;
 
         if(this.graphData.plant.flowerNotAllowedYetAlert){
             this.ctx.save()
@@ -657,10 +663,10 @@ class Canvas{
             if(growPoint.flower.done || this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
                 const totalFrames = 94;
                 const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0) -1; 
-                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*scale;
-                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.flowerHeight + growPoint.y + yebnięcieMateusza)*scale;
+                const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*this.graphData.asetScale;
+                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.flowerHeight + growPoint.y + yebnięcieMateusza)*this.graphData.asetScale;
     
-                this.ctx.drawImage(this.asets.imgFlower, flowerFrame *this.graphData.plant.flowerWidth, 0, this.graphData.plant.flowerWidth, this.graphData.plant.flowerHeight,  xPosition, yPosition, this.graphData.plant.flowerWidth *scale, this.graphData.plant.flowerHeight * scale);
+                this.ctx.drawImage(this.asets.imgFlower, flowerFrame *this.graphData.plant.flowerWidth, 0, this.graphData.plant.flowerWidth, this.graphData.plant.flowerHeight,  xPosition, yPosition, this.graphData.plant.flowerWidth *this.graphData.asetScale, this.graphData.plant.flowerHeight * this.graphData.asetScale);
             }
             
         })
@@ -699,7 +705,7 @@ class Canvas{
         this.ctx.lineWidth = 8;
         this.ctx.beginPath();
         this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size *12);
+        this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale);
         this.ctx.stroke();
         this.ctx.restore()
     }
@@ -728,10 +734,11 @@ class Canvas{
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
 
       //  this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
+      //app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale
 
         //draw minimal water level
-        this.ctx.fillStyle = '#1c1c1c';
-        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider + 40 *12, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.fillStyle = '#000';
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height); // todo
         requestAnimationFrame(this._drawHabitatBotside.bind(this))
         this.ctx.restore()
     }
@@ -885,6 +892,8 @@ class App{
         //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
+
+        canvas.graphData.asetScale = this.interactiveZoneC.width / canvas.graphData.plant.stalkWidth
     }
 
     _adjustControls(){
