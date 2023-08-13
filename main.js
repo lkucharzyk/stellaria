@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 4
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -306,7 +306,7 @@ class Canvas{
                 posY : 0,
             },
             colors:{
-                skyblue :'#2f3847',
+                skyblue :'#3d575c',
                 soilBrown: '#24272b',
                 gold: '#D1B000',
                 plantGreen: '#447629'
@@ -339,11 +339,17 @@ class Canvas{
 
         this.asetsPromises = [];
 
+        this.asets.grid = new Image(100, 100);
+        this.asets.grid.src = './asets/pngs/sheet96x172.png';
+
         this.asets.imgBgBot = new Image(100, 100);
         this.asets.imgBgBot.src = './asets/pngs/bckgrnddown96x66_1.png';
 
         this.asets.imgBgTop = new Image(100, 100);
         this.asets.imgBgTop.src = './asets/pngs/bckgrndup96x106_1.png';
+
+        this.asets.imgBgMountains = new Image(100, 100);
+        this.asets.imgBgMountains.src = './asets/pngs/mntns_96x106.png';
 
         this.asets.imgBgPlants = new Image(100, 100);
         this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants96x106.png';
@@ -428,8 +434,10 @@ class Canvas{
         this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
+        requestAnimationFrame(this._drawBgMountains.bind(this));
         requestAnimationFrame(this._drawBgPlants.bind(this));
         requestAnimationFrame(this._drawHabitatBotside.bind(this));
+       //requestAnimationFrame(this._drawGrid.bind(this))
         requestAnimationFrame(this.drawWaterLevel.bind(this));
         requestAnimationFrame(this.drawLeafs.bind(this));
         requestAnimationFrame(this.drawRoot.bind(this));
@@ -446,15 +454,15 @@ class Canvas{
         this.graphData.plant.growPoints.push(new GrowPoint(58, 28, 25));
         this.graphData.plant.growPoints.push(new GrowPoint(89, 47, 53));
         this.graphData.plant.growPoints.push(new GrowPoint(104, 23, 44));
-        this.graphData.plant.growPoints.push(new GrowPoint(115, 52, 20));
-        this.graphData.plant.growPoints.push(new GrowPoint(139, 21, 58));
- 	    this.graphData.plant.growPoints.push(new GrowPoint(142, 49, 62));
-        this.graphData.plant.growPoints.push(new GrowPoint(207, 9, 68));
-        this.graphData.plant.growPoints.push(new GrowPoint(209, 16, 79));
-        this.graphData.plant.growPoints.push(new GrowPoint(209, 32, 71));
-	    this.graphData.plant.growPoints.push(new GrowPoint(209, 48, 85));
-        this.graphData.plant.growPoints.push(new GrowPoint(209, 63, 75));
-        this.graphData.plant.growPoints.push(new GrowPoint(209, 64, 45));
+        this.graphData.plant.growPoints.push(new GrowPoint(115, 52, 22));
+        this.graphData.plant.growPoints.push(new GrowPoint(139, 21, 59));
+ 	    this.graphData.plant.growPoints.push(new GrowPoint(142, 49, 64));
+        this.graphData.plant.growPoints.push(new GrowPoint(207, 9, 70));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 16, 81));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 32, 73));
+	    this.graphData.plant.growPoints.push(new GrowPoint(209, 48, 87));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 63, 77));
+        this.graphData.plant.growPoints.push(new GrowPoint(209, 64, 47));
     }
 
     drawUI(){
@@ -522,32 +530,31 @@ class Canvas{
         this.ctx.fill();
         this.ctx.restore()
 
-        if(plant.watered){
-            this._drawHydrated();
-        }
+        // if(plant.watered){
+        //     this._drawHydrated();
+        // }
         requestAnimationFrame(this.drawWaterLevel.bind(canvas));
     };
 
     drawRoot(){
 
-      //  const totalFrames = 124;
-      //  const rootFrame = (plant.root.size / plant.root.maxSize  * totalFrames).toFixed(0) -1; 
-      //  console.log(rootFrame);
-     //   this.ctx.drawImage(this.asets.imgRoot, rootFrame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.rootHeight, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.height * (40/100));
+       const totalFrames = 124;
+       const rootFrame = (plant.root.size / plant.root.maxSize  * totalFrames).toFixed(0) -1; 
+       this.ctx.drawImage(this.asets.imgRoot, rootFrame *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.rootHeight, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, this.graphData.plant.rootHeight * this.graphData.asetScale);
         
-     this.ctx.save()
-     this.ctx.strokeStyle = 'brown';
-     this.ctx.lineWidth = 16;
-     this.ctx.beginPath();
-     this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
-     this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale);
-     this.ctx.stroke();
-     this.ctx.restore()
+    //  this.ctx.save()
+    //  this.ctx.strokeStyle = 'brown';
+    //  this.ctx.lineWidth = 16;
+    //  this.ctx.beginPath();
+    //  this.ctx.moveTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider);
+    //  this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale);
+    //  this.ctx.stroke();
+    //  this.ctx.restore()
 
         
-        if(plant.watered){
-            this._drawHydrated();
-        }
+        // if(plant.watered){
+        //     this._drawHydrated();
+        // }
         if(this.graphData.plant.rootMaxAlert){
             this.ctx.save()
             this.ctx.font = "33px sans-serif";
@@ -563,11 +570,11 @@ class Canvas{
         this.ctx.save()
         //stalk
         //probably max leaf size = 25
-        const frame = Math.floor(plant.leafs.size * 60) - 60;
-        this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height * (60/100));
+        const frame = Math.floor(plant.leafs.size *55) - 55;
+        this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, (this.graphData.plant.stalkHeight -4) * this.graphData.asetScale);
 
         //leaf
-        const yebnięcieMateusza = -2;
+        const yebnięcieMateusza = -4;
         let nowGrowingPoints = 0;
 
         this.graphData.plant.growPoints.forEach(growPoint => {
@@ -635,7 +642,7 @@ class Canvas{
 
     drawFlowers(){
         this.ctx.save();
-        const yebnięcieMateusza = -2;
+        const yebnięcieMateusza = -4;
 
         if(this.graphData.plant.flowerNotAllowedYetAlert){
             this.ctx.save()
@@ -728,6 +735,13 @@ class Canvas{
         requestAnimationFrame(this._drawBgPlants.bind(this));
     }
 
+    _drawBgMountains(){
+        this.ctx.save();
+        this.ctx.drawImage(this.asets.imgBgMountains, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
+        this.ctx.restore()
+        requestAnimationFrame(this._drawBgMountains.bind(this));
+    }
+
     _drawHabitatBotside(){
         this.ctx.save()
         this.ctx.fillStyle = this.graphData.colors.soilBrown;
@@ -738,7 +752,7 @@ class Canvas{
 
         //draw minimal water level
         this.ctx.fillStyle = '#000';
-        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height); // todo
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height);
         requestAnimationFrame(this._drawHabitatBotside.bind(this))
         this.ctx.restore()
     }
@@ -776,6 +790,13 @@ class Canvas{
         this.ctx.stroke();
         this.ctx.restore()
         requestAnimationFrame(this._drawDividers.bind(this));
+    }
+
+    _drawGrid(){
+        this.ctx.save()
+        this.ctx.drawImage(this.asets.grid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
+        this.ctx.restore()
+        requestAnimationFrame(this._drawGrid.bind(this));
     }
 
 }
