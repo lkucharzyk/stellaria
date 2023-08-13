@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 4
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 1//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -698,6 +698,7 @@ class Canvas{
                 aset = this.asets.rainy;
             break;
         }
+        console.log(this.graphData.weather.posX);
         this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
     }
@@ -865,7 +866,7 @@ class App{
         canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;
         DevOutput.renderOutput();
     }
 
@@ -911,8 +912,8 @@ class App{
         this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX;
 
         //set addtional values for canvas
-        canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +750;
+        canvas.graphData.weather.posX = this.interactiveZoneC.posX ;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;;
 
         canvas.graphData.asetScale = this.interactiveZoneC.width / canvas.graphData.plant.stalkWidth
     }
