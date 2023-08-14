@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -2//-63;
+        this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -582,7 +582,7 @@ class Canvas{
         //stalk
         //probably max leaf size = 25
         const frame = Math.floor(plant.leafs.size *55) - 55;
-        this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, (this.graphData.plant.stalkHeight -4) * this.graphData.asetScale);
+        this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale);
 
         //leaf
         const yebnięcieMateusza = -4;
@@ -745,14 +745,14 @@ class Canvas{
 
     _drawBgPlants(){
         this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgPlants, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
+        this.ctx.drawImage(this.asets.imgBgPlants, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         this.ctx.restore()
         requestAnimationFrame(this._drawBgPlants.bind(this));
     }
 
     _drawBgMountains(){
         this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgMountains, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
+        this.ctx.drawImage(this.asets.imgBgMountains, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         this.ctx.restore()
         requestAnimationFrame(this._drawBgMountains.bind(this));
     }
@@ -918,10 +918,10 @@ class App{
         }
 
 
-        this.interactiveZoneC.botsideDivider = this.interactiveZoneC.height / (100 / 60)  + this.interactiveZoneC.posY;
+        this.interactiveZoneC.botsideDivider = this.interactiveZoneC.height / (172 / 106)  + this.interactiveZoneC.posY;
         this.interactiveZoneC.werticalDivider = this.interactiveZoneC.width / 2 + this.interactiveZoneC.posX;
 
-        this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (100 / 60)  + this.interactiveZoneW.posY;
+        this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (172 / 106)  + this.interactiveZoneW.posY;
         this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX;
 
         //set addtional values for canvas
