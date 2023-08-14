@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 4
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 1//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -258,7 +258,8 @@ class GrowPoint{
             started: false,
             done: false,
             size: 0,
-            encounteredFrame : null
+            encounteredFrame : null,
+            endPoint: random(50, 98)
         },
         this.flower = {
             started: false,
@@ -581,7 +582,7 @@ class Canvas{
         this.ctx.save()
         //stalk
         //probably max leaf size = 25
-        const frame = Math.floor(plant.leafs.size *55) - 55;
+        const frame = Math.floor(plant.leafs.size *45) - 45;
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale);
 
         //leaf
@@ -607,7 +608,7 @@ class Canvas{
 
             if(growPoint.leaf.started && !growPoint.leaf.done){
                 growPoint.leaf.size = frame - growPoint.leaf.encounteredFrame;
-                if(growPoint.leaf.size >= 98){{
+                if(growPoint.leaf.size >= growPoint.leaf.endPoint){{
                     growPoint.leaf.done = true;
                 }}
             }
