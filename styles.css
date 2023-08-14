@@ -84,6 +84,14 @@ button {
     font-family: inherit;
 }
 
+#pause-btn{
+    position: fixed;
+    display: none;
+    top: 20px;
+    right: calc(50% - 25px);
+
+}
+
 
 @media (max-width: 800px) {
     #dev-output {

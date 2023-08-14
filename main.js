@@ -850,11 +850,16 @@ class App{
             werticalDivider: 0,
         }
         this.grow = false;
+        this.pause = {
+            paused: false,
+            btn: document.querySelector('#pause-btn')
+        }
         this._adjustinteractiveZoneC();
         this._adjustControls();
     }
 
     gameOver(cause){
+        app.pause.btn.style.display = 'none';
         const overlay = document.querySelector('.overlay');
         const notification = document.querySelector('.notification div');
 
@@ -872,6 +877,16 @@ class App{
         }
     }
 
+    pauseGame(){
+        if(!app.pause.paused){
+            clearInterval(habitat.dayInterval);
+            app.pause.paused = true;
+        }else{
+            habitat.dayInterval =setInterval( () =>habitat._dayPass(), 1000 /przyspiesz);
+            app.pause.paused = false;
+        }
+    }
+
     resetGame(){
         document.querySelector('.overlay').style.display = 'none';
         plant = new Plant;
@@ -881,6 +896,7 @@ class App{
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;
+        app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
     }
 
@@ -1017,15 +1033,18 @@ function init(){
     Promise.all(canvas.asetsPromises)
     .then( ()=>{
         const startMenu = document.querySelector('#start-menu');
-        const button = document.querySelector('#start-menu button');
+        const startBtn = document.querySelector('#start-menu button');
 
-        button.innerHTML = 'Start!'
-        button.addEventListener('pointerdown', ()=>{
+        startBtn.innerHTML = 'Start!'
+        startBtn.addEventListener('pointerdown', ()=>{
             app.resetGame()
             canvas.drawInit();
             DevOutput.renderOutput();
             startMenu.style.display = 'none';
         })
+        const pauseBtn = document.querySelector('#pause-btn');
+        pauseBtn.addEventListener('pointerdown', app.pauseGame);
+
     })
 }
 
