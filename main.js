@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 4
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -69,8 +69,8 @@ class Plant{
     }
 
     growFlowers(){
-        if(!canvas.graphData.plant.growPoints[0].ready){
-            canvas.graphData.plant.flowerNotAllowedYetAlert = true;
+        if(!canvas.graphData.plant.growPoints[0].ready || canvas.graphData.plant.activeFlowerGrowPoint === null){
+            canvas.graphData.plant.flowerNotAllowedAlert = true;
             canvas.graphData.ui.danger = true;
             sounds.creak.play();
             sounds.leafs.pause();
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -63;
+        this.minWeterLevel = -2//-63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -282,7 +282,7 @@ class Canvas{
                 maxWidth : 500,
                 maxHeight: 550,
                 rootMaxAlert : false,
-                flowerNotAllowedYetAlert: false,
+                flowerNotAllowedAlert: false,
                 stalkWidth: 96,
                 stalkHeight: 106,
                 rootHeight: 66,
@@ -648,6 +648,7 @@ class Canvas{
             return id;
         }else{
             console.log('no grow points for flowers');
+            return null;
         }
     }
 
@@ -655,7 +656,7 @@ class Canvas{
         this.ctx.save();
         const yebnięcieMateusza = -4;
 
-        if(this.graphData.plant.flowerNotAllowedYetAlert){
+        if(this.graphData.plant.flowerNotAllowedAlert){
             this.ctx.save()
             this.ctx.font = "33px sans-serif";
             this.ctx.fillStyle = "#d15252";
@@ -675,7 +676,10 @@ class Canvas{
 
                         this.graphData.plant.activeFlowerGrowPoint = this.randomNextGrowPoint();
                     }
-                
+            }else if(this.graphData.plant.activeFlowerGrowPoint === null){
+                if(growPoint.ready && !growPoint.flower.done){
+                    this.graphData.plant.activeFlowerGrowPoint = growPoint.id;
+                }
             }
 
             if(growPoint.flower.done || this.graphData.plant.activeFlowerGrowPoint === growPoint.id){
@@ -709,7 +713,6 @@ class Canvas{
                 aset = this.asets.rainy;
             break;
         }
-        console.log(this.graphData.weather.posX);
         this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
     }
@@ -873,7 +876,6 @@ class App{
         plant = new Plant;
         habitat = new Habitat;
         canvas.setGrowPoints();
-        console.log(canvas.graphData.plant.growPoints);
         canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
@@ -976,7 +978,7 @@ class App{
                 sounds.creak.pause();
                 setTimeout(() => {
                     canvas.graphData.plant.rootMaxAlert = false;
-                    canvas.graphData.plant.flowerNotAllowedYetAlert = false;
+                    canvas.graphData.plant.flowerNotAllowedAlert = false;
                 }, 500);
             })
         }
