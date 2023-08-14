@@ -323,7 +323,7 @@ class Canvas{
         this.preGameAsets.lilChiefPanel.src = './asets/img/lil-chief-panel.jpg';
 
         this.preGameAsets.menu = new Image(2000, 2000);
-        this.preGameAsets.menu.src = './asets/img/menu.jpg';
+        this.preGameAsets.menu.src = './asets/pngs/hints.png';
 
         Object.values(this.preGameAsets).forEach(img => {
             const promise = new Promise((resolve, reject) => {
@@ -418,6 +418,7 @@ class Canvas{
     }
 
     drawStartingPanels(){
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.drawImage(this.preGameAsets.lilChiefPanel, -1500 + canvas.canvas.width /2,  -1216 + canvas.canvas.height /2, 3000, 2432);
         setTimeout(() => {
             this.drawMenu();
@@ -425,7 +426,17 @@ class Canvas{
     }
 
     drawMenu(){
-        this.ctx.drawImage(this.preGameAsets.menu,  -1920 + canvas.canvas.width /2,  -717 + canvas.canvas.height /2, 3840, 1434);
+        this.ctx.save();
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.restore()
+
+        this.ctx.save()
+        this.ctx.fillStyle = this.graphData.colors.soilBrown;
+        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.restore()
+
+        this.ctx.drawImage(this.preGameAsets.menu, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
         document.querySelector('#start-menu').style.display = 'flex';
     }
 
