@@ -87,8 +87,9 @@ button {
 #pause-btn{
     position: fixed;
     display: none;
+    font-weight: bold;
     top: 20px;
-    right: calc(50% - 25px);
+    right: calc(50% - 35px);
 
 }
 

@@ -974,7 +974,7 @@ class App{
         if(e.clientX < this.interactiveZoneW.posX || 
             e.clientX > this.interactiveZoneW.posX + this.interactiveZoneW.width || 
             e.clientY < this.interactiveZoneW.posY || 
-            e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height){
+            e.clientY > this.interactiveZoneW.posY + this.interactiveZoneW.height ||app.pause.paused){
             return
         }else{
             if(this.grow != false){
