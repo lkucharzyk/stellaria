@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 4
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 1//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -63;
+        this.minWeterLevel = -2//-63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -1042,6 +1042,8 @@ function init(){
             startMenu.style.display = 'none';
         })
         const pauseBtn = document.querySelector('#pause-btn');
+        pauseBtn.style.top = app.interactiveZoneW.posY + 10 + 'px';
+        pauseBtn.style.left = app.interactiveZoneW.posX + 10 + 'px';
         pauseBtn.addEventListener('pointerdown', app.pauseGame);
 
     })

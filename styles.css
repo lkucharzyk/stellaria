@@ -28,15 +28,17 @@ canvas {
 button {
     border-radius: 0px;
     padding:7px;
-    background-color: #755432;
+    background-color: #507A74;
     border: none;
-    border-bottom: 7px solid black;
-    border-right: 7px solid black;
+    border-bottom: 7px solid #28313E;
+    border-right: 7px solid #28313E;
     color: white;
     transition: border 0.2s ease-in;
 }
 button:active{
     border: none;
+    margin-top: 7px;
+    margin-left: 7px;
 }
 
 #dev-output {
@@ -79,10 +81,8 @@ button:active{
 
 .notification {
     padding: 10px;
-    border: 1px solid #c48c54;
-    border-radius: 4px;
     text-align: center;
-    background-color: #a6784b;
+    background-color: #3A6B7C;
     font-family: Arial, Helvetica, sans-serif;
     color: white;
 }
@@ -102,8 +102,9 @@ button:active{
     position: fixed;
     display: none;
     font-weight: bold;
+    font-size: 20px;
     top: 10px;
-    right: calc(50% + 25px);
+    left: calc(50% + 25px);
 
 }
 
