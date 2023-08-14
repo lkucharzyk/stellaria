@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 4
+ const przyspiesz = 2
 
 class Plant{
     constructor(){
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 1//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -98,7 +98,7 @@ class Habitat{
         this.weather = 'rainy'
 
         this.waterLevel = -2;
-        this.minWeterLevel = -2//-63;
+        this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -289,7 +289,7 @@ class Canvas{
                 rootHeight: 66,
                 leafsWidth: 26,
                 leafsHeight: 12,
-                flowerWidth: 14,
+                flowerWidth: 20,
                 flowerHeight: 18,
                 lastFlowerQuanity: 0,
                 activeFlowerGrowPoint: 0,
@@ -379,7 +379,7 @@ class Canvas{
         this.asets.imgLeafs.src = './asets/pngs/leafes_26x12_1.png'
 
         this.asets.imgFlower = new Image(100, 100);
-        this.asets.imgFlower.src = './asets/pngs/flower_14x18_1.png';
+        this.asets.imgFlower.src = './asets/pngs/flower_20x18_1.png';
         
         this.asets.sunny = new Image(100, 100);
         this.asets.sunny.src = './asets/pngs/moon_light_12x16.png';
@@ -629,7 +629,7 @@ class Canvas{
             if(growPoint.leaf.started){
                 const leafFrame = growPoint.leaf.size; 
                 const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.leafsWidth /2)*this.graphData.asetScale;
-                const yPosition = (this.graphData.plant.stalkHeight - growPoint.y - this.graphData.plant.leafsHeight +1) *this.graphData.asetScale;
+                const yPosition = app.interactiveZoneC.posY +(this.graphData.plant.stalkHeight - growPoint.y - this.graphData.plant.leafsHeight +1) *this.graphData.asetScale;
     
                 this.ctx.drawImage(this.asets.imgLeafs, leafFrame *this.graphData.plant.leafsWidth, 0, this.graphData.plant.leafsWidth, this.graphData.plant.leafsHeight,  xPosition, yPosition, this.graphData.plant.leafsWidth *this.graphData.asetScale, this.graphData.plant.leafsHeight * this.graphData.asetScale);
             }
@@ -697,7 +697,7 @@ class Canvas{
                 const totalFrames = 94;
                 const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0) -1; 
                 const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*this.graphData.asetScale;
-                const yPosition = (this.graphData.plant.stalkHeight - growPoint.y  - this.graphData.plant.flowerHeight +1)*this.graphData.asetScale;
+                const yPosition = app.interactiveZoneC.posY + (this.graphData.plant.stalkHeight - growPoint.y  - this.graphData.plant.flowerHeight +1)*this.graphData.asetScale;
     
                 this.ctx.drawImage(this.asets.imgFlower, flowerFrame *this.graphData.plant.flowerWidth, 0, this.graphData.plant.flowerWidth, this.graphData.plant.flowerHeight,  xPosition, yPosition, this.graphData.plant.flowerWidth *this.graphData.asetScale, this.graphData.plant.flowerHeight * this.graphData.asetScale);
             }
