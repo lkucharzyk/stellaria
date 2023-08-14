@@ -447,7 +447,6 @@ class Canvas{
         this.ctx.imageSmoothingEnabled = false;
         this.graphData.font.load().then(font => {
             document.fonts.add(font);
-            console.log('loaded');
         });
         this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
@@ -651,10 +650,8 @@ class Canvas{
         if(avabliveGrowPoints.length > 0){
             const index = random(0, avabliveGrowPoints.length -1);
             const id = avabliveGrowPoints[index].id;
-            console.log(id);
             return id;
         }else{
-            console.log('no grow points for flowers');
             return null;
         }
     }
@@ -768,9 +765,6 @@ class Canvas{
         this.ctx.fillStyle = this.graphData.colors.soilBrown;
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
 
-      //  this.ctx.drawImage(this.asets.imgBgBot, 0, 0, 96, 66, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, app.interactiveZoneC.posY + app.interactiveZoneC.height)
-      //app.interactiveZoneC.botsideDivider + plant.root.size * this.graphData.asetScale
-
         //draw minimal water level
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -873,12 +867,12 @@ class App{
         overlay.style.display = 'flex';
         if(cause === 'time'){
             if(plant.flowers.quantity === 0){
-                notification.innerText= `Winter has come and you died. Sadly, didn't make any flowers, moron!`;
+                notification.innerText= `Winter has come and you died. Sadly, didn't make any flowers, and your genes will not survive!`;
             }else{
                 notification.innerText= `Winter has come and you died. Hopefully, you managed to grow ${plant.flowers.quantity} flowers.`;
             }
         }else{
-            notification.innerText= `You died for lack of water`;
+            notification.innerText= `You died for lack of water.`;
         }
     }
 
