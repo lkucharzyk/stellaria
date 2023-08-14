@@ -342,6 +342,9 @@ class Canvas{
 
         this.asetsPromises = [];
 
+        this.asets.pauseGrid = new Image(100, 100);
+        this.asets.pauseGrid.src = './asets/pngs/pausegrids_96X172x.png';
+
         this.asets.grid = new Image(100, 100);
         this.asets.grid.src = './asets/pngs/sheet96x172.png';
 
@@ -350,6 +353,9 @@ class Canvas{
 
         this.asets.imgBgTop = new Image(100, 100);
         this.asets.imgBgTop.src = './asets/pngs/bckgrndup96x106_1.png';
+
+        this.asets.imgBgStars = new Image(100, 100);
+        this.asets.imgBgStars.src = './asets/pngs/stars96x172.png';
 
         this.asets.imgBgMountains = new Image(100, 100);
         this.asets.imgBgMountains.src = './asets/pngs/mntns_96x106.png';
@@ -451,6 +457,7 @@ class Canvas{
         this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
+        requestAnimationFrame(this._drawBgStars.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
         requestAnimationFrame(this._drawBgMountains.bind(this));
         requestAnimationFrame(this._drawBgPlants.bind(this));
@@ -463,6 +470,7 @@ class Canvas{
         requestAnimationFrame(this.drawUI.bind(this));
         requestAnimationFrame(this._drawDividers.bind(this));
         requestAnimationFrame(this._drawInteractiveZone.bind(this));
+        requestAnimationFrame(this._drawPauseGrid.bind(this));
         requestAnimationFrame(this._clearCanvas.bind(this));
     }
 
@@ -621,7 +629,7 @@ class Canvas{
             if(growPoint.leaf.started){
                 const leafFrame = growPoint.leaf.size; 
                 const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.leafsWidth /2)*this.graphData.asetScale;
-                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.leafsHeight + growPoint.y + yebnięcieMateusza)*this.graphData.asetScale;
+                const yPosition = (this.graphData.plant.stalkHeight - growPoint.y - this.graphData.plant.leafsHeight +1) *this.graphData.asetScale;
     
                 this.ctx.drawImage(this.asets.imgLeafs, leafFrame *this.graphData.plant.leafsWidth, 0, this.graphData.plant.leafsWidth, this.graphData.plant.leafsHeight,  xPosition, yPosition, this.graphData.plant.leafsWidth *this.graphData.asetScale, this.graphData.plant.leafsHeight * this.graphData.asetScale);
             }
@@ -689,7 +697,7 @@ class Canvas{
                 const totalFrames = 94;
                 const flowerFrame = (growPoint.flower.size * totalFrames).toFixed(0) -1; 
                 const xPosition = app.interactiveZoneC.posX + (growPoint.x - this.graphData.plant.flowerWidth /2)*this.graphData.asetScale;
-                const yPosition = app.interactiveZoneC.botsideDivider - (this.graphData.plant.flowerHeight + growPoint.y + yebnięcieMateusza)*this.graphData.asetScale;
+                const yPosition = (this.graphData.plant.stalkHeight - growPoint.y  - this.graphData.plant.flowerHeight +1)*this.graphData.asetScale;
     
                 this.ctx.drawImage(this.asets.imgFlower, flowerFrame *this.graphData.plant.flowerWidth, 0, this.graphData.plant.flowerWidth, this.graphData.plant.flowerHeight,  xPosition, yPosition, this.graphData.plant.flowerWidth *this.graphData.asetScale, this.graphData.plant.flowerHeight * this.graphData.asetScale);
             }
@@ -760,6 +768,13 @@ class Canvas{
         requestAnimationFrame(this._drawBgMountains.bind(this));
     }
 
+    _drawBgStars(){
+        this.ctx.save();
+        this.ctx.drawImage(this.asets.imgBgStars, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale)
+        this.ctx.restore()
+        requestAnimationFrame(this._drawBgStars.bind(this));
+    }
+
     _drawHabitatBotside(){
         this.ctx.save()
         this.ctx.fillStyle = this.graphData.colors.soilBrown;
@@ -812,6 +827,15 @@ class Canvas{
         this.ctx.drawImage(this.asets.grid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
         this.ctx.restore()
         requestAnimationFrame(this._drawGrid.bind(this));
+    }
+
+    _drawPauseGrid(){
+        if(app.pause.paused){
+            this.ctx.save()
+            this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
+            this.ctx.restore()
+        }
+        requestAnimationFrame(this._drawPauseGrid.bind(this));
     }
 
 }
