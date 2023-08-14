@@ -382,13 +382,13 @@ class Canvas{
         this.asets.imgFlower.src = './asets/pngs/flower_20x18_1.png';
         
         this.asets.sunny = new Image(100, 100);
-        this.asets.sunny.src = './asets/pngs/moon_light_12x16.png';
+        this.asets.sunny.src = './asets/pngs/moon_light_20x16.png';
 
         this.asets.cloudy = new Image(100, 100);
-        this.asets.cloudy.src = './asets/pngs/moon_cloud_12x16.png';
+        this.asets.cloudy.src = './asets/pngs/moon_cloud_20x16.png';
 
         this.asets.rainy = new Image(100, 100);
-        this.asets.rainy.src = './asets/pngs/moon_rain_12x16.png';
+        this.asets.rainy.src = './asets/pngs/moon_rain_20x16.png';
 
 
 
@@ -710,8 +710,6 @@ class Canvas{
     }
 
     drawDayAndWeather(){
-        const imgSize = 100;
-        
         let aset;
         switch (habitat.weather){
             case 'sunny':
@@ -724,7 +722,7 @@ class Canvas{
                 aset = this.asets.rainy;
             break;
         }
-        this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, imgSize, imgSize)
+        this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale,)
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
     }
 

@@ -30,8 +30,8 @@ button {
     padding:7px;
     background-color: #507A74;
     border: none;
-    border-bottom: 7px solid #28313E;
-    border-right: 7px solid #28313E;
+    border-bottom: 7px solid #333E4F;
+    border-right: 7px solid #333E4F;
     color: white;
     transition: border 0.2s ease-in;
 }
