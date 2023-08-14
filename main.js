@@ -312,7 +312,9 @@ class Canvas{
                 gold: '#D1B000',
                 plantGreen: '#447629'
             },
-            asetScale: null
+            asetScale: null,
+            font: new FontFace("pixel", "url(./asets/fonts/Pixel-Madness.ttf)")
+            
         }
 
 
@@ -443,6 +445,11 @@ class Canvas{
 
     drawInit(){
         this.ctx.imageSmoothingEnabled = false;
+        this.graphData.font.load().then(font => {
+            document.fonts.add(font);
+            console.log('loaded');
+        });
+        this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this.drawDayAndWeather.bind(this));
@@ -569,7 +576,6 @@ class Canvas{
         // }
         if(this.graphData.plant.rootMaxAlert){
             this.ctx.save()
-            this.ctx.font = "33px sans-serif";
             this.ctx.fillStyle = "#d15252";
             this.ctx.fillText(`Root reached`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -83)
             this.ctx.fillText(`maximum size!`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -50)
@@ -659,7 +665,6 @@ class Canvas{
 
         if(this.graphData.plant.flowerNotAllowedAlert){
             this.ctx.save()
-            this.ctx.font = "33px sans-serif";
             this.ctx.fillStyle = "#d15252";
             this.ctx.fillText(`Grow more leafs before`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +330)
             this.ctx.fillText(`start growing flowers!`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +365)

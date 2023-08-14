@@ -1,5 +1,12 @@
+@font-face {
+    font-family: "Pixel Madness";
+    src: url('./asets/fonts/Pixel-Madness.ttf');
+  }
+
 * {
     box-sizing: border-box;
+    font-family: 'Pixel Madness';
+    font-size: 25px;
 }
 
 body {
@@ -19,10 +26,17 @@ canvas {
 }
 
 button {
-    border-radius: 4px;
-    padding: 5px 20px;
+    border-radius: 0px;
+    padding:7px;
     background-color: #755432;
+    border: none;
+    border-bottom: 7px solid black;
+    border-right: 7px solid black;
     color: white;
+    transition: border 0.2s ease-in;
+}
+button:active{
+    border: none;
 }
 
 #dev-output {
@@ -81,15 +95,15 @@ button {
 .notification button {
     margin: auto;
     margin-top: 10px;
-    font-family: inherit;
+    
 }
 
 #pause-btn{
     position: fixed;
     display: none;
     font-weight: bold;
-    top: 20px;
-    right: calc(50% - 35px);
+    top: 10px;
+    right: calc(50% + 25px);
 
 }
 
