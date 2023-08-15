@@ -35,6 +35,7 @@ class Plant{
         this.maxCarbohydrates = 10;
 
         this.waterSupply = 5;
+        this.maxWaterSupply = 10;
         this.watered = true;
     }
 
@@ -188,7 +189,7 @@ class Habitat{
         this._addCarbohydrates();
         this._setWaterLevel();
         if(plant.watered){
-            if(plant.waterSupply < 5){
+            if(plant.waterSupply < plant.maxWaterSupply){
                 plant.waterSupply += 1
             } 
         }else{
@@ -363,6 +364,9 @@ class Canvas{
         this.asets.imgBgPlants = new Image(100, 100);
         this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants96x106.png';
 
+        this.asets.imgBar = new Image(100, 100);
+        this.asets.imgBar.src = './asets/pngs/bar4x32.png';
+
         this.asets.emptyBottle = new Image(100, 100);
         this.asets.emptyBottle.src = './asets/img/water-bottle-empty.png';
 
@@ -492,50 +496,37 @@ class Canvas{
     }
 
     drawUI(){
-        this.graphData.ui.topLine = app.interactiveZoneC.posY + 20;
-        this.graphData.ui.rightLine = app.interactiveZoneC.posX +  app.interactiveZoneC.width - 20;
-        this.graphData.ui.width = 170;
-        this.graphData.ui.height = 100;
-
-        //water supplies
-        function drawBottle(full, order){
-            if(full){
-                   this.ctx.drawImage(this.asets.fullBottle, this.graphData.ui.rightLine - order * 35, this.graphData.ui.topLine,  50, 50)
-            }else{
-                this.ctx.drawImage(this.asets.emptyBottle, this.graphData.ui.rightLine - order * 35, this.graphData.ui.topLine,  50, 50)
-            }
-        }
-
-        for(let i = 1; i <= 5; i++){
-            if(i + plant.waterSupply <= 5){
-                drawBottle.bind(this, false, i)()
-            }else{
-               drawBottle.bind(this, true, i)()
-            } 
-        }
+        this.graphData.ui.width = 11 * canvas.graphData.asetScale;
+        this.graphData.ui.height = 20 * canvas.graphData.asetScale;
+        this.graphData.ui.barWidth = 4 * canvas.graphData.asetScale;
+        this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
+        this.graphData.ui.posY = app.interactiveZoneC.posY + 2 * canvas.graphData.asetScale;
 
         //carbohydrates bar
-        this.ctx.save()
-        this.ctx.strokeStyle = "black";
-        this.ctx.lineWidth = 1
-        this.ctx.beginPath();
-        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width , this.graphData.ui.topLine + 60,  this.graphData.ui.width, 30, 20)
-        this.ctx.stroke();
-
-        const barRange = (plant.carbohydrates * this.graphData.ui.width) /plant.maxCarbohydrates; 
-        this.ctx.fillStyle = this.graphData.colors.gold;
-        this.ctx.beginPath();
-        this.ctx.roundRect(this.graphData.ui.rightLine - this.graphData.ui.width, this.graphData.ui.topLine + 60, barRange , 30, 20)
-        this.ctx.fill();
+        this.ctx.save();
+        const carboBarRange = (plant.carbohydrates * this.graphData.ui.height) /plant.maxCarbohydrates; 
+        this.ctx.fillStyle = '#549c5d';
+        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height - carboBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, carboBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.restore();
 
         if(this.graphData.ui.danger){
-            this.ctx.strokeStyle = "red";
-            this.ctx.lineWidth = 3
-            this.ctx.beginPath();
-            this.ctx.roundRect(this.graphData.ui.rightLine- this.graphData.ui.width -3, this.graphData.ui.topLine + 60 -3,  this.graphData.ui.width +3, 33, 20)
-            this.ctx.stroke();
+            this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
+            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height -3* canvas.graphData.asetScale)
+            this.ctx.restore();
         }
-        this.ctx.restore()
+
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.height);
+        
+        //water supply bar
+        this.ctx.save();
+        const waterBarRange = (plant.waterSupply * this.graphData.ui.height) /plant.maxWaterSupply; 
+        this.ctx.fillStyle = '#3A6B7C';
+        this.ctx.fillRect(this.graphData.ui.posX +5.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height - waterBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.restore();
+
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX + 5 * canvas.graphData.asetScale, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.height);
+
+
         requestAnimationFrame(this.drawUI.bind(this))
     }
 
