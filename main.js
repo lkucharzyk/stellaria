@@ -327,7 +327,7 @@ class Canvas{
         this.preGameAsetsPromises = [];
 
         this.preGameAsets.lilChiefPanel = new Image(2000, 2000);
-        this.preGameAsets.lilChiefPanel.src = './asets/img/lil-chief-panel.jpg';
+        this.preGameAsets.lilChiefPanel.src = './asets/pngs/logobig.png';
 
         this.preGameAsets.menu = new Image(2000, 2000);
         this.preGameAsets.menu.src = './asets/pngs/hints.png';
@@ -443,7 +443,7 @@ class Canvas{
         
         setTimeout(() => {
             this.drawMenu();
-        }, 1500);
+        }, 2000);
     }
 
     drawMenu(){
@@ -735,12 +735,17 @@ class Canvas{
 
         if(pass){
             if(!this.graphData.weather.cloudPassingInterval){
-                setInterval(() => {
-                    this.graphData.weather.cloudFrame ++;
-                }, 5);
+                this.graphData.weather.cloudPassingInterval = setInterval(() => {
+                    if(this.graphData.weather.cloudFrame > 300){
+                        this.graphData.weather.cloudFrame =0;
+                    }else{
+                        this.graphData.weather.cloudFrame ++;
+                    }   
+                }, 10);
             }
             this.ctx.drawImage(pass, this.graphData.weather.cloudFrame, 0, 450, 172,  this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         }
+        console.log(this.graphData.weather.cloudFrame);
     }
 
     _clearCanvas(){
@@ -867,7 +872,7 @@ class Sounds{
         this.leafs = new Audio('/asets/sounds/leaves.mp3');
         this.leafs.playbackRate = 3;
         this.creak = new Audio('/asets/sounds/creak.mp3');
-        this.creak.playbackRate = 10;
+        this.creak.playbackRate = 6;
     }
 }
 
