@@ -306,6 +306,8 @@ class Canvas{
             weather:{
                 posX : 0,
                 posY : 0,
+                cloudPassingInterval: null,
+                cloudFrame: 0
             },
             colors:{
                 skyblue :'#3d575c',
@@ -394,6 +396,10 @@ class Canvas{
 
         this.asets.rainy = new Image(100, 100);
         this.asets.rainy.src = './asets/pngs/moon_rain_20x16.png';
+
+        this.asets.cloudPass = new Image(100, 100);
+        this.asets.cloudPass.src = './asets/pngs/clouds.png';
+
 
 
 
@@ -711,12 +717,14 @@ class Canvas{
 
     drawDayAndWeather(){
         let aset;
+        let pass;
         switch (habitat.weather){
             case 'sunny':
                 aset = this.asets.sunny;
             break;
             case 'cloudy':
                 aset = this.asets.cloudy;
+                pass = this.asets.cloudPass;
             break;    
             case 'rainy':
                 aset = this.asets.rainy;
@@ -724,6 +732,15 @@ class Canvas{
         }
         this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale,)
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
+
+        if(pass){
+            if(!this.graphData.weather.cloudPassingInterval){
+                setInterval(() => {
+                    this.graphData.weather.cloudFrame ++;
+                }, 5);
+            }
+            this.ctx.drawImage(pass, this.graphData.weather.cloudFrame, 0, 450, 172,  this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
+        }
     }
 
     _clearCanvas(){
