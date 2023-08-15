@@ -311,7 +311,8 @@ class Canvas{
                 skyblue :'#3d575c',
                 soilBrown: '#24272b',
                 gold: '#D1B000',
-                plantGreen: '#447629'
+                plantGreen: '#447629',
+                waterBlue: '#4986ad'
             },
             asetScale: null,
             font: new FontFace("pixel", "url(./asets/fonts/Pixel-Madness.ttf)")
@@ -359,7 +360,7 @@ class Canvas{
         this.asets.imgBgStars.src = './asets/pngs/stars96x172.png';
 
         this.asets.imgBgMountains = new Image(100, 100);
-        this.asets.imgBgMountains.src = './asets/pngs/mntns_96x106.png';
+        this.asets.imgBgMountains.src = './asets/pngs/mntns_450x106.png';
 
         this.asets.imgBgPlants = new Image(100, 100);
         this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants96x106.png';
@@ -528,7 +529,7 @@ class Canvas{
         //water supply bar
         this.ctx.save();
         const waterBarRange = (plant.waterSupply * this.graphData.ui.height) /plant.maxWaterSupply; 
-        this.ctx.fillStyle = '#3A6B7C';
+        this.ctx.fillStyle = this.graphData.colors.waterBlue;
         this.ctx.fillRect(this.graphData.ui.posX +5.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height - waterBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
         this.ctx.restore();
 
@@ -540,7 +541,7 @@ class Canvas{
 
     drawWaterLevel(){
         this.ctx.save()
-        this.ctx.strokeStyle = "blue";
+        this.ctx.strokeStyle = '#3b74ad';
         this.ctx.lineWidth = 1 * this.graphData.asetScale;
         this.ctx.globalAlpha = 0.6;
 
@@ -760,7 +761,7 @@ class Canvas{
 
     _drawBgMountains(){
         this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgMountains, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale)
+        this.ctx.drawImage(this.asets.imgBgMountains, this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         this.ctx.restore()
         requestAnimationFrame(this._drawBgMountains.bind(this));
     }
