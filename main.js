@@ -433,6 +433,7 @@ class Canvas{
     drawStartingPanels(){
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.drawImage(this.preGameAsets.lilChiefPanel, -1500 + canvas.canvas.width /2,  -1216 + canvas.canvas.height /2, 3000, 2432);
+        
         setTimeout(() => {
             this.drawMenu();
         }, 1500);
@@ -450,6 +451,13 @@ class Canvas{
         this.ctx.restore()
 
         this.ctx.drawImage(this.preGameAsets.menu, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
+
+        // this.ctx.save()
+        // this.ctx.font = "48px pixel";
+        // this.ctx.fillStyle = 'white';
+        // this.ctx.fillText("Stellaria", app.interactiveZoneC.posX, app.interactiveZoneC.posY +);
+        // this.ctx.restore()
+
         document.querySelector('#start-menu').style.display = 'flex';
     }
 
@@ -511,7 +519,7 @@ class Canvas{
 
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height -3* canvas.graphData.asetScale)
+            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.height -1* canvas.graphData.asetScale)
             this.ctx.restore();
         }
 
@@ -821,9 +829,15 @@ class Canvas{
     _drawPauseGrid(){
         if(app.pause.paused){
             this.ctx.save()
-            this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
+            this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
+
+            // this.ctx.font = "48px pixel";
+            // this.ctx.fillStyle = 'black';
+            // this.ctx.fillText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", app.interactiveZoneC.posX +20, app.interactiveZoneC.posY + 220), 200;
+
             this.ctx.restore()
         }
+
         requestAnimationFrame(this._drawPauseGrid.bind(this));
     }
 
@@ -893,9 +907,11 @@ class App{
         if(!app.pause.paused){
             clearInterval(habitat.dayInterval);
             app.pause.paused = true;
+            app.pause.btn.innerHTML = '>';
         }else{
             habitat.dayInterval =setInterval( () =>habitat._dayPass(), 1000 /przyspiesz);
             app.pause.paused = false;
+            app.pause.btn.innerHTML = '|| / ?';
         }
     }
 

@@ -102,6 +102,7 @@ button:active{
     position: fixed;
     display: none;
     font-weight: bold;
+    min-width: 80px;
     font-size: 20px;
     top: 10px;
     left: calc(50% + 25px);
