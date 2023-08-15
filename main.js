@@ -513,7 +513,7 @@ class Canvas{
         this.graphData.ui.barHeight = 20 * canvas.graphData.asetScale;
         this.graphData.ui.barWidth = 4 * canvas.graphData.asetScale;
         this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
-        this.graphData.ui.posY = app.interactiveZoneC.posY + 2 * canvas.graphData.asetScale;
+        this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
 
         //carbohydrates bar
         this.ctx.save();
@@ -528,7 +528,7 @@ class Canvas{
             this.ctx.restore();
         }
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
         
         //water supply bar
         this.ctx.save();
@@ -537,7 +537,7 @@ class Canvas{
         this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + 2* this.graphData.ui.barHeight - waterBarRange  +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
         this.ctx.restore();
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5 + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
 
 
         requestAnimationFrame(this.drawUI.bind(this))
