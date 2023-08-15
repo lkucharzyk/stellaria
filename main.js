@@ -300,7 +300,7 @@ class Canvas{
                 topLine: 0,
                 rightLine : 0,
                 width: 0,
-                height: 0,
+                barHeight: 0,
                 danger: false
             },
             weather:{
@@ -511,35 +511,35 @@ class Canvas{
     }
 
     drawUI(){
-        this.graphData.ui.width = 11 * canvas.graphData.asetScale;
-        this.graphData.ui.height = 20 * canvas.graphData.asetScale;
+        this.graphData.ui.width = 6 * canvas.graphData.asetScale;
+        this.graphData.ui.barHeight = 20 * canvas.graphData.asetScale;
         this.graphData.ui.barWidth = 4 * canvas.graphData.asetScale;
         this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
         this.graphData.ui.posY = app.interactiveZoneC.posY + 2 * canvas.graphData.asetScale;
 
         //carbohydrates bar
         this.ctx.save();
-        const carboBarRange = (plant.carbohydrates * this.graphData.ui.height) /plant.maxCarbohydrates; 
+        const carboBarRange = (plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates; 
         this.ctx.fillStyle = '#549c5d';
-        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height - carboBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, carboBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.barHeight - carboBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, carboBarRange -0.5 * canvas.graphData.asetScale)
         this.ctx.restore();
 
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.height -1* canvas.graphData.asetScale)
+            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
             this.ctx.restore();
         }
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.height);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
         
         //water supply bar
         this.ctx.save();
-        const waterBarRange = (plant.waterSupply * this.graphData.ui.height) /plant.maxWaterSupply; 
+        const waterBarRange = (plant.waterSupply * this.graphData.ui.barHeight) /plant.maxWaterSupply; 
         this.ctx.fillStyle = this.graphData.colors.waterBlue;
-        this.ctx.fillRect(this.graphData.ui.posX +5.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.height - waterBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + 2* this.graphData.ui.barHeight - waterBarRange  +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
         this.ctx.restore();
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX + 5 * canvas.graphData.asetScale, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.height);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
 
 
         requestAnimationFrame(this.drawUI.bind(this))
