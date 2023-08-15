@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 2
+ const przyspiesz = 1.5
 
 class Plant{
     constructor(){
@@ -96,7 +96,7 @@ class Habitat{
         this.day = 1;
         this.maxDay = 200;
 
-        this.weather = 'rainy'
+        this.weather = 'rainy';
 
         this.waterLevel = -2;
         this.minWeterLevel = -63;
@@ -401,8 +401,6 @@ class Canvas{
         this.asets.cloudPass.src = './asets/pngs/clouds.png';
 
 
-
-
         Object.values(this.asets).forEach(img => {
             const promise = new Promise((resolve, reject) => {
                 img.onload = resolve
@@ -487,8 +485,8 @@ class Canvas{
         requestAnimationFrame(this.drawRoot.bind(this));
         requestAnimationFrame(this.drawFlowers.bind(this))
         requestAnimationFrame(this.drawUI.bind(this));
-        requestAnimationFrame(this._drawDividers.bind(this));
-        requestAnimationFrame(this._drawInteractiveZone.bind(this));
+        //requestAnimationFrame(this._drawDividers.bind(this));
+        //requestAnimationFrame(this._drawInteractiveZone.bind(this));
         requestAnimationFrame(this._drawPauseGrid.bind(this));
         requestAnimationFrame(this._clearCanvas.bind(this));
     }
@@ -734,6 +732,7 @@ class Canvas{
         requestAnimationFrame(this.drawDayAndWeather.bind(this))
 
         if(pass){
+
             if(!this.graphData.weather.cloudPassingInterval){
                 this.graphData.weather.cloudPassingInterval = setInterval(() => {
                     if(this.graphData.weather.cloudFrame > 300){
@@ -743,9 +742,24 @@ class Canvas{
                     }   
                 }, 10);
             }
-            this.ctx.drawImage(pass, this.graphData.weather.cloudFrame, 0, 450, 172,  this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
+            this.ctx.save()
+            const patternCanvas = document.createElement("canvas");
+            const patternContext = patternCanvas.getContext("2d");
+            
+
+            patternCanvas.width = 450 * this.graphData.asetScale;
+            patternCanvas.height = 172 * this.graphData.asetScale;
+            patternCanvas.style.imageRendering = 'pixelated';
+            patternContext.imageSmoothingEnabled = false;
+            patternContext.drawImage(pass, 0, 0, patternCanvas.width, patternCanvas.height);
+
+            const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
+            this.ctx.fillStyle = pattern;
+            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
+            this.ctx.restore()
+
+            // this.ctx.drawImage(pass, this.graphData.weather.cloudFrame, 0, 450, 172,  this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         }
-        console.log(this.graphData.weather.cloudFrame);
     }
 
     _clearCanvas(){
@@ -783,7 +797,7 @@ class Canvas{
 
     _drawBgMountains(){
         this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgMountains, this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
+        this.ctx.drawImage(this.asets.imgBgMountains, this.canvas.width/2 - 225  * this.graphData.asetScale -120, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         this.ctx.restore()
         requestAnimationFrame(this._drawBgMountains.bind(this));
     }
