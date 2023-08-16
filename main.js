@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 10//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -850,7 +850,7 @@ class Canvas{
             const patternContext = patternCanvas.getContext("2d");
             
             patternCanvas.width = 450 * this.graphData.asetScale;
-            patternCanvas.height = 172 * this.graphData.asetScale;
+            patternCanvas.height = 106 * this.graphData.asetScale;
             patternCanvas.style.imageRendering = 'pixelated';
             patternContext.imageSmoothingEnabled = false;
             patternContext.drawImage(this.asets.imgBgStars, 0, 0, patternCanvas.width, patternCanvas.height);
