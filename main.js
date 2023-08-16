@@ -386,18 +386,12 @@ class Canvas{
 
         this.asets.imgFlower = new Image(100, 100);
         this.asets.imgFlower.src = './asets/pngs/flower_20x18_1.png';
-        
-        this.asets.sunny = new Image(100, 100);
-        this.asets.sunny.src = './asets/pngs/moon_light_20x16.png';
 
-        this.asets.cloudy = new Image(100, 100);
-        this.asets.cloudy.src = './asets/pngs/moon_cloud_20x16.png';
+        this.asets.moon = new Image(100, 100);
+        this.asets.moon.src = './asets/pngs/mooncycles20x16.png';
 
         this.asets.cloudPass = new Image(100, 100);
         this.asets.cloudPass.src = './asets/pngs/clouds.png';
-
-        this.asets.rainy = new Image(100, 100);
-        this.asets.rainy.src = './asets/pngs/moon_rain_20x16.png';
 
         this.asets.rainCloudPass = new Image(100, 100);
         this.asets.rainCloudPass.src = './asets/pngs/rain_clouds450x106.png';
@@ -479,7 +473,8 @@ class Canvas{
         this.setGrowPoints(); 
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this._drawBgStars.bind(this));
-        requestAnimationFrame(this.drawDayAndWeather.bind(this));
+        requestAnimationFrame(this.drawMoon.bind(this));
+        requestAnimationFrame(this.drawClouds.bind(this));
         requestAnimationFrame(this._drawBgMountains.bind(this));
         requestAnimationFrame(this._drawHabitatBotside.bind(this));
         requestAnimationFrame(this._drawBgPlants.bind(this));
@@ -718,24 +713,28 @@ class Canvas{
         requestAnimationFrame(this.drawFlowers.bind(this))
     }
 
-    drawDayAndWeather(){
-        let aset;
+    drawMoon(){
+        const totalFrames = 16;
+        const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
+        const width = 20;
+        const height = 16;
+        this.ctx.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale, 20* this.graphData.asetScale)
+        requestAnimationFrame(this.drawMoon.bind(this));
+    }
+
+    drawClouds(){
         let pass;
         switch (habitat.weather){
             case 'sunny':
-                aset = this.asets.sunny;
+                
             break;
             case 'cloudy':
-                aset = this.asets.cloudy;
                 pass = this.asets.cloudPass;
             break;    
             case 'rainy':
-                aset = this.asets.rainy;
                 pass = this.asets.rainCloudPass;
             break;
-        }
-        this.ctx.drawImage(aset, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale,)
-        requestAnimationFrame(this.drawDayAndWeather.bind(this))
+        } 
 
         if(pass){
             if(!this.graphData.weather.cloudPassingInterval){
@@ -764,8 +763,8 @@ class Canvas{
             this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
             this.ctx.restore()
 
-            // this.ctx.drawImage(pass, this.graphData.weather.cloudFrame, 0, 450, 172,  this.canvas.width/2 - 225  * this.graphData.asetScale, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         }
+        requestAnimationFrame(this.drawClouds.bind(this))
     }
 
     drawRain(){
