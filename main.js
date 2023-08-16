@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0025,
             cost: 0.03,
         };
-        this.assimilationPower = 10//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -515,6 +515,13 @@ class Canvas{
         this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
         this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
 
+        //background
+        this.ctx.save();
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+        this.ctx.fillRect(this.graphData.ui.posX -2 * canvas.graphData.asetScale, this.graphData.ui.posY  -2 * canvas.graphData.asetScale, this.graphData.ui.width +15,  2 *this.graphData.ui.barHeight +3 * canvas.graphData.asetScale)
+        this.ctx.restore();
+
+
         //carbohydrates bar
         this.ctx.save();
         const carboBarRange = (plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates; 
@@ -714,7 +721,7 @@ class Canvas{
     }
 
     drawMoon(){
-        const totalFrames = 16;
+        const totalFrames = 17;
         const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
         const width = 20;
         const height = 16;
