@@ -367,10 +367,7 @@ class Canvas{
         this.asets.imgBgMountains.src = './asets/pngs/mntns_450x106.png';
 
         this.asets.imgBgPlants = new Image(100, 100);
-        this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants96x106.png';
-
-        this.asets.imgBgPlantsRoots = new Image(100, 100);
-        this.asets.imgBgPlantsRoots.src = './asets/pngs/bg_plants_roots96x66.png';
+        this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants_roots_405x172.png';
 
         this.asets.imgBar = new Image(100, 100);
         this.asets.imgBar.src = './asets/pngs/bar4x32.png';
@@ -482,8 +479,8 @@ class Canvas{
         requestAnimationFrame(this.drawFlowers.bind(this))
         requestAnimationFrame(this.drawRain.bind(this))
         requestAnimationFrame(this.drawUI.bind(this));
-        requestAnimationFrame(this._drawDividers.bind(this));
-        requestAnimationFrame(this._drawInteractiveZone.bind(this));
+        //requestAnimationFrame(this._drawDividers.bind(this));
+        //requestAnimationFrame(this._drawInteractiveZone.bind(this));
         requestAnimationFrame(this._drawPauseGrid.bind(this));
         requestAnimationFrame(this._clearCanvas.bind(this));
     }
@@ -736,10 +733,10 @@ class Canvas{
             break;
             case 'cloudy':
                 pass = this.asets.rainCloudPass;
-                alpha = 0.4;
+                alpha = 0.5;
             break;    
             case 'rainy':
-                alpha = 0.7;
+                alpha = 0.6;
                 pass = this.asets.rainCloudPass;
             break;
         } 
@@ -837,15 +834,28 @@ class Canvas{
     }
 
     _drawBgPlants(){
+        
         //top
-        this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgPlants, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale)
-        this.ctx.restore()
+        this.ctx.save()
+        const patternCanvas = document.createElement("canvas");
+        const patternContext = patternCanvas.getContext("2d");
+        const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
 
-        //roots
-        this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgPlantsRoots, app.interactiveZoneC.posX, app.interactiveZoneC.botsideDivider, app.interactiveZoneC.width, this.graphData.plant.rootHeight  * this.graphData.asetScale)
-        this.ctx.restore()
+        patternCanvas.width = 450 * this.graphData.asetScale;
+        patternCanvas.height = 172 * this.graphData.asetScale +heightWtf;
+        patternCanvas.style.imageRendering = 'pixelated';
+        patternContext.imageSmoothingEnabled = false;
+        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, patternCanvas.height);
+
+        const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
+        this.ctx.fillStyle = pattern;
+        this.ctx.globalAlpha = 0.3;
+        this.ctx.fillRect(0, app.interactiveZoneC.posY +heightWtf, this.canvas.width, 172 *this.graphData.asetScale);
+
+        
+        this.ctx.restore();
+        
+        
         requestAnimationFrame(this._drawBgPlants.bind(this));
     }
 
