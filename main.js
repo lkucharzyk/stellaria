@@ -835,7 +835,6 @@ class Canvas{
 
     _drawBgPlants(){
         
-        //top
         this.ctx.save()
         const patternCanvas = document.createElement("canvas");
         const patternContext = patternCanvas.getContext("2d");
@@ -845,14 +844,12 @@ class Canvas{
         patternCanvas.height = 172 * this.graphData.asetScale +heightWtf;
         patternCanvas.style.imageRendering = 'pixelated';
         patternContext.imageSmoothingEnabled = false;
-        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, patternCanvas.height);
+        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, 172 * this.graphData.asetScale);
 
         const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
         this.ctx.fillStyle = pattern;
         this.ctx.globalAlpha = 0.3;
-        this.ctx.fillRect(0, app.interactiveZoneC.posY +heightWtf, this.canvas.width, 172 *this.graphData.asetScale);
-
-        
+        this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
         this.ctx.restore();
         
         
