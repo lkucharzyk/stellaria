@@ -978,15 +978,15 @@ class Sounds{
 
         this.root = new Audio('/asets/sounds/root.mp3');
         this.root.playbackRate = 7;
-        this.root.volume = 1;
+        this.root.volume =  0.8;
 
         this.leafs = new Audio('/asets/sounds/leafs.mp3');
         this.leafs.playbackRate = 7;
-        this.leafs.volume = 1;
+        this.leafs.volume = 0.8;
 
         this.flowers = new Audio('/asets/sounds/flowers.mp3');
         this.flowers.playbackRate = 7;
-        this.flowers.volume = 1;
+        this.flowers.volume =  0.8;
 
         this.music= {
             mp3 : new Audio('/asets/sounds/quercus.mp3'),
@@ -1082,7 +1082,7 @@ class App{
         }else{
             notification.innerText= `You died for lack of water.`;
         }
-        sounds.music.mp3.volume = 0.1;
+        sounds.music.mp3.volume = 0.05;
     }
 
     pauseGame(){
@@ -1111,7 +1111,7 @@ class App{
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
-        sounds.music.mp3.volume = 0.2;
+        sounds.music.mp3.volume = 0.08;
     }
     
     showCredits(){
@@ -1229,7 +1229,7 @@ class App{
                     canvas.graphData.plant.rootMaxAlert = false;
                     canvas.graphData.plant.flowerNotAllowedAlert = false;
                 }, 500);
-                sounds.stopSound();
+                sounds.stopSounds();
                 
             })
         }
