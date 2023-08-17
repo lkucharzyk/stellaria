@@ -1225,11 +1225,12 @@ class App{
                 clearInterval(this.grow);
                 canvas.graphData.ui.danger = false;
                 //pause feedback sounds
-                sounds.stopSound();
                 setTimeout(() => {
                     canvas.graphData.plant.rootMaxAlert = false;
                     canvas.graphData.plant.flowerNotAllowedAlert = false;
                 }, 500);
+                sounds.stopSound();
+                
             })
         }
         
