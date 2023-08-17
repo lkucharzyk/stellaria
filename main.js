@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 1.7
+ const przyspiesz = 1.0
 
 class Plant{
     constructor(){
@@ -231,6 +231,8 @@ class Habitat{
         }else{
             app.gameOver('time');
         }
+        //start play music -synchronzie with day pass
+        sounds.playMusic();
         
         if(this.day % 5 === 0){
             this._randomWeather();
@@ -509,14 +511,13 @@ class Canvas{
         this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
         this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
 
-        //background
-        // this.ctx.save();
-        // this.ctx.fillStyle = this.graphData.colors.skyblue;
-        // this.ctx.fillRect(this.graphData.ui.posX -2 * canvas.graphData.asetScale, this.graphData.ui.posY  -2 * canvas.graphData.asetScale, this.graphData.ui.width +15,  2 *this.graphData.ui.barHeight +3 * canvas.graphData.asetScale)
-        // this.ctx.restore();
-
-
         //carbohydrates bar
+
+        this.ctx.save();
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -0.5 +this.graphData.ui.barHeight)
+        this.ctx.restore();
+
         this.ctx.save();
         const carboBarRange = (plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates; 
         this.ctx.fillStyle = '#549c5d';
@@ -532,6 +533,11 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
         
         //water supply bar
+        this.ctx.save();
+        this.ctx.fillStyle = this.graphData.colors.skyblue;
+        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY  + this.graphData.ui.barHeight +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -0.5 +this.graphData.ui.barHeight)
+        this.ctx.restore();
+
         this.ctx.save();
         const waterBarRange = (plant.waterSupply * this.graphData.ui.barHeight) /plant.maxWaterSupply; 
         this.ctx.fillStyle = this.graphData.colors.waterBlue;
@@ -962,6 +968,21 @@ class Sounds{
         this.leafs.playbackRate = 3;
         this.creak = new Audio('/asets/sounds/creak.mp3');
         this.creak.playbackRate = 6;
+
+        this.music= {
+            mp3 : new Audio('/asets/sounds/quercus.mp3'),
+            musicPlaying : false,
+            loaded : false
+        }
+        this.music.mp3.addEventListener("canplaythrough", () => {
+            sounds.music.loaded = true;
+          });
+    }
+    playMusic(){
+        if(this.music.musicPlaying === false && this.music.loaded === true){
+            this.music.musicPlaying = true;
+            this.music.mp3.play();
+        }
     }
 }
 
@@ -1013,6 +1034,7 @@ class App{
         }else{
             notification.innerText= `You died for lack of water.`;
         }
+        sounds.music.mp3.volume = 0.2;
     }
 
     pauseGame(){
@@ -1020,10 +1042,12 @@ class App{
             clearInterval(habitat.dayInterval);
             app.pause.paused = true;
             app.pause.btn.innerHTML = '>';
+            sounds.music.mp3.pause();
         }else{
             habitat.dayInterval =setInterval( () =>habitat._dayPass(), 1000 /przyspiesz);
             app.pause.paused = false;
             app.pause.btn.innerHTML = '|| / ?';
+            sounds.music.mp3.play();
         }
     }
 
@@ -1038,6 +1062,8 @@ class App{
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
+        sounds.music.mp3.currentTime = 0;
+        sounds.music.mp3.volume = 0.5;
     }
 
     _adjustinteractiveZoneC(){
