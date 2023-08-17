@@ -485,6 +485,7 @@ class Canvas{
         //requestAnimationFrame(this._drawInteractiveZone.bind(this));
         requestAnimationFrame(this._drawPauseGrid.bind(this));
         requestAnimationFrame(this._clearCanvas.bind(this));
+        
     }
 
     setGrowPoints(){
@@ -503,6 +504,18 @@ class Canvas{
         this.graphData.plant.growPoints.push(new GrowPoint(209, 63, 77));
         this.graphData.plant.growPoints.push(new GrowPoint(209, 64, 47));
     }
+
+    drawCredits(){
+        //black bg for html credits
+        if(app.credits === true){
+            this.ctx.save();
+            this.ctx.fillStyle = 'black';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.restore();
+        }
+        requestAnimationFrame(this.drawCredits.bind(this))
+    }
+
 
     drawUI(){
         this.graphData.ui.width = 6 * canvas.graphData.asetScale;
@@ -964,10 +977,14 @@ class Canvas{
 class Sounds{
     constructor(){
         this.err = new Audio('/asets/sounds/erro.mp3');
+
         this.leafs = new Audio('/asets/sounds/leaves.mp3');
-        this.leafs.playbackRate = 3;
+        this.leafs.playbackRate = 2;
+        this.leafs.volume = 0.3;
+
         this.creak = new Audio('/asets/sounds/creak.mp3');
-        this.creak.playbackRate = 6;
+        this.creak.playbackRate = 3;
+        this.creak.volume = 0.3;
 
         this.music= {
             mp3 : new Audio('/asets/sounds/quercus.mp3'),
@@ -1013,6 +1030,7 @@ class App{
             paused: false,
             btn: document.querySelector('#pause-btn')
         }
+        this.credits = false;
         this._adjustinteractiveZoneC();
         this._adjustControls();
     }
@@ -1064,6 +1082,26 @@ class App{
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
         sounds.music.mp3.volume = 0.5;
+    }
+    
+    showCredits(){
+        this.credits = true;
+        requestAnimationFrame(canvas.drawCredits.bind(canvas));
+        const startMenu = document.querySelector('#start-menu');
+        startMenu.style.display = 'none';
+        
+        const credits = document.querySelector('#credits');
+        credits.style.display = 'flex';
+    }
+
+    returnToMenu(){
+        this.credits = false;
+        canvas.drawMenu()
+        const startMenu = document.querySelector('#start-menu');
+        startMenu.style.display = 'flex';
+        
+        const credits = document.querySelector('#credits');
+        credits.style.display = 'none';
     }
 
     _adjustinteractiveZoneC(){
@@ -1208,6 +1246,17 @@ function init(){
             DevOutput.renderOutput();
             startMenu.style.display = 'none';
         })
+
+        const creditsBtn = document.querySelector('.credits-btn');
+        creditsBtn.addEventListener('pointerdown', ()=>{
+            app.showCredits()
+        })
+
+        const returnBtn = document.querySelector('#return-btn');
+        returnBtn.addEventListener('pointerdown', ()=>{
+            app.returnToMenu()
+        })
+
         const pauseBtn = document.querySelector('#pause-btn');
         pauseBtn.style.top = app.interactiveZoneW.posY + 10 + 'px';
         pauseBtn.style.left = app.interactiveZoneW.posX + 10 + 'px';
