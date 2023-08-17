@@ -42,12 +42,11 @@ class Plant{
     growRoot(){
         if(this.root.size < this.root.maxSize){
             if(this.carbohydrates > 0.1){
-                sounds.leafs.play();
+                sounds.playSound('root');
                 this.carbohydrates -= this.root.cost;
                 this.root.size = this.root.size + this.root.growRate;
             }else{
-                sounds.creak.play();
-                sounds.leafs.pause();
+                sounds.playSound('bad');
                 canvas.graphData.ui.danger = true;
             }
         }else{
@@ -58,13 +57,12 @@ class Plant{
 
     growLeafs(){
         if(this.carbohydrates > 0.1){
-            sounds.leafs.play();
+            sounds.playSound('leafs');
             this.carbohydrates -= this.leafs.cost;
             this.leafs.size = this.leafs.size + +this.leafs.growRate;
         }else{
             canvas.graphData.ui.danger = true;
-            sounds.creak.play();
-            sounds.leafs.pause();
+            sounds.playSound('bad');
         }
         DevOutput.renderOutput();   
     }
@@ -73,18 +71,16 @@ class Plant{
         if(!canvas.graphData.plant.growPoints[0].ready || canvas.graphData.plant.activeFlowerGrowPoint === null){
             canvas.graphData.plant.flowerNotAllowedAlert = true;
             canvas.graphData.ui.danger = true;
-            sounds.creak.play();
-            sounds.leafs.pause();
+            sounds.playSound('bad');
         }else{
             if(this.carbohydrates > 0.1){
-                sounds.leafs.play();
+                sounds.playSound('flowers');
                 this.carbohydrates -= this.flowers.cost;
                 this.flowers.size = this.flowers.size + +this.flowers.growRate;
                 this.flowers.quantity = Math.floor(this.flowers.size); 
             }else{
                 canvas.graphData.ui.danger = true;
-                sounds.creak.play();
-                sounds.leafs.pause();
+                sounds.playSound('bad');
             }
         }
         DevOutput.renderOutput();   
@@ -539,7 +535,7 @@ class Canvas{
 
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
+            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
             this.ctx.restore();
         }
 
@@ -976,15 +972,21 @@ class Canvas{
 
 class Sounds{
     constructor(){
-        this.err = new Audio('/asets/sounds/erro.mp3');
+        this.bad = new Audio('/asets/sounds/bad.mp3');
+        this.bad.playbackRate = 7;
+        this.bad.volume = 1;
+
+        this.root = new Audio('/asets/sounds/root.mp3');
+        this.root.playbackRate = 7;
+        this.root.volume = 1;
 
         this.leafs = new Audio('/asets/sounds/leafs.mp3');
-        this.leafs.playbackRate = 3;
+        this.leafs.playbackRate = 7;
         this.leafs.volume = 1;
 
-        this.creak = new Audio('/asets/sounds/creak.mp3');
-        this.creak.playbackRate = 0.8;
-        this.creak.volume = 1;
+        this.flowers = new Audio('/asets/sounds/flowers.mp3');
+        this.flowers.playbackRate = 7;
+        this.flowers.volume = 1;
 
         this.music= {
             mp3 : new Audio('/asets/sounds/quercus.mp3'),
@@ -995,12 +997,40 @@ class Sounds{
             sounds.music.loaded = true;
           });
     }
+
     playMusic(){
         if(this.music.musicPlaying === false && this.music.loaded === true){
             this.music.musicPlaying = true;
             this.music.mp3.play();
         }
     }
+
+    playSound(sound){
+        let soundToPlay;
+        switch (sound) {
+            case 'root' :
+                soundToPlay = this.root;
+            break;
+            case 'leafs' : 
+                soundToPlay = this.leafs;
+            break;
+            case 'flowers':
+                soundToPlay = this.flowers;
+            break;
+            case 'bad':
+                soundToPlay = this.bad;
+            break;
+        }
+        soundToPlay.play();
+    }
+
+    stopSounds(){
+        sounds.bad.pause();
+        sounds.leafs.pause();
+        sounds.root.pause();
+        sounds.flowers.pause();
+    }
+
 }
 
 class App{
@@ -1195,8 +1225,7 @@ class App{
                 clearInterval(this.grow);
                 canvas.graphData.ui.danger = false;
                 //pause feedback sounds
-                sounds.leafs.pause();
-                sounds.creak.pause();
+                sounds.stopSound();
                 setTimeout(() => {
                     canvas.graphData.plant.rootMaxAlert = false;
                     canvas.graphData.plant.flowerNotAllowedAlert = false;
