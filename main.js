@@ -978,13 +978,13 @@ class Sounds{
     constructor(){
         this.err = new Audio('/asets/sounds/erro.mp3');
 
-        this.leafs = new Audio('/asets/sounds/leaves.mp3');
-        this.leafs.playbackRate = 2;
-        this.leafs.volume = 0.3;
+        this.leafs = new Audio('/asets/sounds/leafs.mp3');
+        this.leafs.playbackRate = 3;
+        this.leafs.volume = 1;
 
         this.creak = new Audio('/asets/sounds/creak.mp3');
-        this.creak.playbackRate = 3;
-        this.creak.volume = 0.3;
+        this.creak.playbackRate = 0.8;
+        this.creak.volume = 1;
 
         this.music= {
             mp3 : new Audio('/asets/sounds/quercus.mp3'),
@@ -1052,7 +1052,7 @@ class App{
         }else{
             notification.innerText= `You died for lack of water.`;
         }
-        sounds.music.mp3.volume = 0.2;
+        sounds.music.mp3.volume = 0.1;
     }
 
     pauseGame(){
@@ -1081,7 +1081,7 @@ class App{
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
-        sounds.music.mp3.volume = 0.5;
+        sounds.music.mp3.volume = 0.2;
     }
     
     showCredits(){
