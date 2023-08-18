@@ -16,8 +16,8 @@ class Plant{
         this.root = {
             size: 5,
             maxSize: 63,
-            growRate: 0.01,
-            cost: 0.008,
+            growRate: 0.012,
+            cost: 0.01,
         };
         this.leafs = {
             size: 1,
@@ -194,7 +194,6 @@ class Habitat{
             }
         }
         if(plant.waterSupply < 1){
-           // console.log('gameOver');
             app.gameOver('water');
         }
         
@@ -322,7 +321,6 @@ class Canvas{
             
         }
 
-
         this.preGameAsets ={}
 
         this.preGameAsetsPromises = [];
@@ -341,9 +339,7 @@ class Canvas{
             this.preGameAsetsPromises.push(promise);
         });
 
-        this.asets ={
-            
-        }
+        this.asets ={}
 
         this.asetsPromises = [];
 
@@ -448,12 +444,6 @@ class Canvas{
 
         this.ctx.drawImage(this.preGameAsets.menu, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
 
-        // this.ctx.save()
-        // this.ctx.font = "48px pixel";
-        // this.ctx.fillStyle = 'white';
-        // this.ctx.fillText("Stellaria", app.interactiveZoneC.posX, app.interactiveZoneC.posY +);
-        // this.ctx.restore()
-
         document.querySelector('#start-menu').style.display = 'flex';
     }
 
@@ -467,6 +457,7 @@ class Canvas{
         });
         this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
+
         requestAnimationFrame(this._drawHabitatTopside.bind(this));
         requestAnimationFrame(this._drawBgStars.bind(this));
         requestAnimationFrame(this.drawMoon.bind(this));
@@ -525,7 +516,6 @@ class Canvas{
         this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
 
         //carbohydrates bar
-
         this.ctx.save();
         this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -0.5 +this.graphData.ui.barHeight)
@@ -558,7 +548,6 @@ class Canvas{
         this.ctx.restore();
 
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5 + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
-
 
         requestAnimationFrame(this.drawUI.bind(this))
     }
@@ -624,7 +613,6 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgStalk1, frame < 208 ? frame *this.graphData.plant.stalkWidth : 208 *this.graphData.plant.stalkWidth, 0, this.graphData.plant.stalkWidth, this.graphData.plant.stalkHeight, app.interactiveZoneC.posX , app.interactiveZoneC.posY, app.interactiveZoneC.width, this.graphData.plant.stalkHeight * this.graphData.asetScale);
 
         //leaf
-        const yebnięcieMateusza = -4;
         let nowGrowingPoints = 0;
 
         this.graphData.plant.growPoints.forEach(growPoint => {
@@ -691,7 +679,6 @@ class Canvas{
 
     drawFlowers(){
         this.ctx.save();
-        const yebnięcieMateusza = -4;
 
         if(this.graphData.plant.flowerNotAllowedAlert){
             this.ctx.save()
@@ -777,7 +764,6 @@ class Canvas{
             const patternCanvas = document.createElement("canvas");
             const patternContext = patternCanvas.getContext("2d");
             const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-            
 
             patternCanvas.width = 450 * this.graphData.asetScale;
             patternCanvas.height = 172 * this.graphData.asetScale +heightWtf;
@@ -789,11 +775,9 @@ class Canvas{
             this.ctx.fillStyle = pattern;
             this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
             this.ctx.restore()
-
         }
         requestAnimationFrame(this.drawClouds.bind(this))
     }
-
 
     drawRain(){
         if(habitat.weather === 'rainy'){
@@ -873,7 +857,6 @@ class Canvas{
         this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
         this.ctx.restore();
         
-        
         requestAnimationFrame(this._drawBgPlants.bind(this));
     }
 
@@ -886,21 +869,21 @@ class Canvas{
 
     _drawBgStars(){
         this.ctx.save()
-            const patternCanvas = document.createElement("canvas");
-            const patternContext = patternCanvas.getContext("2d");
-            const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-            
-            patternCanvas.width = 450 * this.graphData.asetScale;
-            patternCanvas.height = 106 * this.graphData.asetScale + heightWtf
+        const patternCanvas = document.createElement("canvas");
+        const patternContext = patternCanvas.getContext("2d");
+        const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
+        
+        patternCanvas.width = 450 * this.graphData.asetScale;
+        patternCanvas.height = 106 * this.graphData.asetScale + heightWtf
 
-            patternCanvas.style.imageRendering = 'pixelated';
-            patternContext.imageSmoothingEnabled = false;
-            patternContext.drawImage(this.asets.imgBgStars, 0, heightWtf, patternCanvas.width, 106 * this.graphData.asetScale);
+        patternCanvas.style.imageRendering = 'pixelated';
+        patternContext.imageSmoothingEnabled = false;
+        patternContext.drawImage(this.asets.imgBgStars, 0, heightWtf, patternCanvas.width, 106 * this.graphData.asetScale);
 
-            const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
-            this.ctx.fillStyle = pattern;
-            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
-            this.ctx.restore()
+        const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
+        this.ctx.fillStyle = pattern;
+        this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
+        this.ctx.restore()
 
         requestAnimationFrame(this._drawBgStars.bind(this));
     }
@@ -933,7 +916,7 @@ class Canvas{
     }
 
     _drawDividers(){
-        //for dev needs and tutotrial
+        //for dev needs
         this.ctx.save()
         this.ctx.strokeStyle = "white";
         this.ctx.lineWidth = 3;
@@ -963,11 +946,6 @@ class Canvas{
         if(app.pause.paused){
             this.ctx.save()
             this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
-
-            // this.ctx.font = "48px pixel";
-            // this.ctx.fillStyle = 'black';
-            // this.ctx.fillText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", app.interactiveZoneC.posX +20, app.interactiveZoneC.posY + 220), 200;
-
             this.ctx.restore()
         }
 
@@ -1083,7 +1061,7 @@ class App{
             if(plant.flowers.quantity === 0){
                 notification.innerText= `Winter has come and you died. Sadly, didn't make any flowers, and your genes will not survive!`;
             }else{
-                notification.innerText= `Winter has come and you died. Hopefully, you managed to grow ${plant.flowers.quantity} flowers.`;
+                notification.innerText= `Winter has come and you died. Fortunately, you managed to grow ${plant.flowers.quantity} flowers.`;
             }
         }else{
             notification.innerText= `You died for lack of water.`;
@@ -1246,16 +1224,13 @@ class App{
 class MenusAndNotifications{
     constructor(){
         this.graphData = {
-            colors: {
-
-            }
+            colors: {}
         }
         const notification = document.querySelector('.notification');
         notification.querySelector('button').addEventListener('pointerdown', app.resetGame.bind(app));
         notification.style.maxWidth = `${app.interactiveZoneW.width}px`;
     }
 }
-
 
 let plant = new Plant;
 let habitat;
