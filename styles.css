@@ -150,14 +150,15 @@ button:active{
 #credits p{
     text-align: center;
     font-family: 'm3';
-    font-size: 30px;
-    line-height: 25px;
+    font-size: 25px;
+    line-height: 22px;
     margin: 0px;
+    margin-bottom: 5px;
 }
 
 #credits b{
     font-family: 'm3';
-    font-size: 30px;
+    font-size: 25px;
 }
 
 #return-btn{

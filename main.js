@@ -397,8 +397,9 @@ class Canvas{
         });
 
         this.adjustCanvasToScreen()
-
+ 
     }
+
     adjustCanvasToScreen(){
         //check if is need to add horizontal or vertical space to fill screen
         let fillScreen;
@@ -1230,7 +1231,7 @@ function init(){
     })
 
     Promise.all(canvas.asetsPromises)
-    .then( ()=>{
+    .then(()=>{
         const startMenu = document.querySelector('#start-menu');
         const startBtn = document.querySelector('#start-menu button');
 
