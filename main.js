@@ -458,24 +458,31 @@ class Canvas{
         this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
 
-        requestAnimationFrame(this._drawHabitatTopside.bind(this));
-        requestAnimationFrame(this._drawBgStars.bind(this));
-        requestAnimationFrame(this.drawMoon.bind(this));
-        requestAnimationFrame(this.drawClouds.bind(this));
-        requestAnimationFrame(this._drawBgMountains.bind(this));
-        requestAnimationFrame(this._drawHabitatBotside.bind(this));
-        requestAnimationFrame(this._drawBgPlants.bind(this));
-       //requestAnimationFrame(this._drawGrid.bind(this))
-        requestAnimationFrame(this.drawWaterLevel.bind(this));
-        requestAnimationFrame(this.drawLeafs.bind(this));
-        requestAnimationFrame(this.drawRoot.bind(this));
-        requestAnimationFrame(this.drawFlowers.bind(this))
-        requestAnimationFrame(this.drawRain.bind(this))
-        requestAnimationFrame(this.drawUI.bind(this));
-        //requestAnimationFrame(this._drawDividers.bind(this));
-        //requestAnimationFrame(this._drawInteractiveZone.bind(this));
-        requestAnimationFrame(this._drawPauseGrid.bind(this));
-        requestAnimationFrame(this._clearCanvas.bind(this));
+        requestAnimationFrame(this.drawGame.bind(this))
+    }
+
+    drawGame(){
+        this._clearCanvas();
+        this._drawHabitatTopside();
+        this._drawBgStars();
+        this.drawMoon();
+        this.drawClouds();
+        this._drawBgMountains();
+        this._drawHabitatBotside();
+        this._drawBgPlants();
+       //this._drawGrid()
+        this.drawWaterLevel();
+        this.drawLeafs();
+        this.drawRoot();
+        this.drawFlowers()
+        this.drawRain()
+        this.drawUI();
+        //this._drawDividers();
+        //this._drawInteractiveZone();
+        this._drawPauseGrid();
+        
+
+        requestAnimationFrame(this.drawGame.bind(this));
         
     }
 
@@ -504,7 +511,6 @@ class Canvas{
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.restore();
         }
-        requestAnimationFrame(this.drawCredits.bind(this))
     }
 
 
@@ -548,8 +554,6 @@ class Canvas{
         this.ctx.restore();
 
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5 + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
-
-        requestAnimationFrame(this.drawUI.bind(this))
     }
 
     drawWaterLevel(){
@@ -572,7 +576,6 @@ class Canvas{
         // if(plant.watered){
         //     this._drawHydrated();
         // }
-        requestAnimationFrame(this.drawWaterLevel.bind(canvas));
     };
 
     drawRoot(){
@@ -602,7 +605,6 @@ class Canvas{
             this.ctx.fillText(`maximum size!`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -50)
             this.ctx.restore()
         }
-        requestAnimationFrame(canvas.drawRoot.bind(canvas));
     }
 
     drawLeafs(){
@@ -661,7 +663,6 @@ class Canvas{
           }
 
         this.ctx.restore();  
-        requestAnimationFrame(canvas.drawLeafs.bind(canvas));
     }
 
     randomNextGrowPoint(){
@@ -718,8 +719,6 @@ class Canvas{
         })
 
         this.ctx.restore();  
-
-        requestAnimationFrame(this.drawFlowers.bind(this))
     }
 
     drawMoon(){
@@ -728,7 +727,6 @@ class Canvas{
         const width = 20;
         const height = 16;
         this.ctx.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale, 20* this.graphData.asetScale)
-        requestAnimationFrame(this.drawMoon.bind(this));
     }
 
     drawClouds(){
@@ -776,7 +774,6 @@ class Canvas{
             this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
             this.ctx.restore()
         }
-        requestAnimationFrame(this.drawClouds.bind(this))
     }
 
     drawRain(){
@@ -809,7 +806,6 @@ class Canvas{
             this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
             this.ctx.restore()
         }
-        requestAnimationFrame(this.drawRain.bind(this))
     }
 
     _clearCanvas(){
@@ -835,7 +831,6 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgBgTop, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
 
         this.ctx.restore()
-        requestAnimationFrame(this._drawHabitatTopside.bind(this));
     }
 
     _drawBgPlants(){
@@ -856,15 +851,12 @@ class Canvas{
         this.ctx.globalAlpha = 0.3;
         this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
         this.ctx.restore();
-        
-        requestAnimationFrame(this._drawBgPlants.bind(this));
     }
 
     _drawBgMountains(){
         this.ctx.save();
         this.ctx.drawImage(this.asets.imgBgMountains, this.canvas.width/2 - 225  * this.graphData.asetScale -120, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
         this.ctx.restore()
-        requestAnimationFrame(this._drawBgMountains.bind(this));
     }
 
     _drawBgStars(){
@@ -884,8 +876,6 @@ class Canvas{
         this.ctx.fillStyle = pattern;
         this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
         this.ctx.restore()
-
-        requestAnimationFrame(this._drawBgStars.bind(this));
     }
 
     _drawHabitatBotside(){
@@ -896,7 +886,6 @@ class Canvas{
         //draw minimal water level
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height);
-        requestAnimationFrame(this._drawHabitatBotside.bind(this))
         this.ctx.restore()
     }
     
@@ -912,7 +901,6 @@ class Canvas{
         }
         this.ctx.stroke();
         this.ctx.restore()
-        requestAnimationFrame(this._drawInteractiveZone.bind(this));
     }
 
     _drawDividers(){
@@ -932,14 +920,12 @@ class Canvas{
         this.ctx.lineTo(app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY);
         this.ctx.stroke();
         this.ctx.restore()
-        requestAnimationFrame(this._drawDividers.bind(this));
     }
 
     _drawGrid(){
         this.ctx.save()
         this.ctx.drawImage(this.asets.grid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
         this.ctx.restore()
-        requestAnimationFrame(this._drawGrid.bind(this));
     }
 
     _drawPauseGrid(){
@@ -948,32 +934,30 @@ class Canvas{
             this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
             this.ctx.restore()
         }
-
-        requestAnimationFrame(this._drawPauseGrid.bind(this));
     }
 
 }
 
 class Sounds{
     constructor(){
-        this.bad = new Audio('/asets/sounds/bad.mp3');
+        this.bad = new Audio('./asets/sounds/bad.mp3');
         this.bad.playbackRate = 7;
         this.bad.volume = 1;
 
-        this.root = new Audio('/asets/sounds/root.mp3');
+        this.root = new Audio('./asets/sounds/root.mp3');
         this.root.playbackRate = 7;
         this.root.volume =  0.8;
 
-        this.leafs = new Audio('/asets/sounds/leafs.mp3');
+        this.leafs = new Audio('./asets/sounds/leafs.mp3');
         this.leafs.playbackRate = 7;
         this.leafs.volume = 0.8;
 
-        this.flowers = new Audio('/asets/sounds/flowers.mp3');
+        this.flowers = new Audio('./asets/sounds/flowers.mp3');
         this.flowers.playbackRate = 7;
         this.flowers.volume =  0.8;
 
         this.music= {
-            mp3 : new Audio('/asets/sounds/quercus.mp3'),
+            mp3 : new Audio('./asets/sounds/quercus.mp3'),
             musicPlaying : false,
             loaded : false
         }
@@ -1100,7 +1084,7 @@ class App{
     
     showCredits(){
         this.credits = true;
-        requestAnimationFrame(canvas.drawCredits.bind(canvas));
+       requestAnimationFrame(canvas.drawCredits.bind(canvas));
         const startMenu = document.querySelector('#start-menu');
         startMenu.style.display = 'none';
         
