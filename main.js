@@ -16,19 +16,19 @@ class Plant{
         this.root = {
             size: 5,
             maxSize: 63,
-            growRate: 0.012,
-            cost: 0.01,
+            growRate: 0.06,//0.012,
+            cost: 0.05//0.01,
         };
         this.leafs = {
             size: 1,
-            growRate: 0.002,
-            cost: 0.015
+            growRate: 0.01,//0.002,
+            cost: 0.075//0.015
         };
         this.flowers = {
             size: 0,
             quantity: 0,
-            growRate: 0.0025,
-            cost: 0.03,
+            growRate: 0.0125,//0.0025,
+            cost: 0.15//0.03,
         };
         this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
@@ -1184,11 +1184,11 @@ class App{
                 clearInterval(this.grow);
             }
             if(e.clientY >= this.interactiveZoneW.botsideDivider){
-                this.grow = setInterval(plant.growRoot.bind(plant), 10 / przyspiesz);
+                this.grow = setInterval(plant.growRoot.bind(plant), 50 / przyspiesz);
             }else if(e.clientY < this.interactiveZoneW.botsideDivider && e.clientX >  this.interactiveZoneW.werticalDivider){
-                this.grow = setInterval(plant.growLeafs.bind(plant), 10 / przyspiesz);
+                this.grow = setInterval(plant.growLeafs.bind(plant), 50 / przyspiesz);
             }else{
-                this.grow = setInterval(plant.growFlowers.bind(plant), 10 / przyspiesz);
+                this.grow = setInterval(plant.growFlowers.bind(plant), 50 / przyspiesz);
             }
             canvas.canvas.addEventListener('pointerup', ()=>{
                 clearInterval(this.grow);
