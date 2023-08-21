@@ -39,28 +39,44 @@ canvas {
 }
 
 canvas#main{
-    z-index: 2;
+    z-index: 9;
 }
 
-canvas#moon{
-    z-index: 8;
+canvas.minor{
     position: absolute;
     top:0;
     left: 0;
 }
 
+canvas#moon{
+    z-index: 1;
+}
 
-#static-bg{
+canvas#bg-sky{
+    z-index: 2;
+}
+
+canvas#bg-soil{
+    z-index: 3;
+}
+
+
+
+.static-bg{
      position: absolute;
      top:0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    
+}
+
+#bg-soil{
+    z-index: 2;
 }
 
 button {
-    z-index: 9;
+    z-index: 99;
     border-radius: 0px;
     padding:7px;
     background-color: #507A74;

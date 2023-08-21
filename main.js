@@ -94,7 +94,7 @@ class Habitat{
 
         this.weather = 'rainy';
 
-        this.waterLevel = -2;
+        this.waterLevel = -50//-2;
         this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
@@ -279,8 +279,14 @@ class Canvas{
         this.moonCanvas = document.querySelector('canvas#moon');
         this.ctxMoon = this.moonCanvas.getContext('2d');
 
-        this.canvases = [this.canvas, this.moonCanvas]
-        this.canvasesCtx = [this.ctx, this.ctxMoon];
+        this.skyCanvas = document.querySelector('canvas#bg-sky');
+        this.ctxSky = this.skyCanvas.getContext('2d');
+
+        this.soilCanvas = document.querySelector('canvas#bg-soil');
+        this.ctxSoil = this.soilCanvas.getContext('2d');
+
+        this.canvases = [this.canvas, this.moonCanvas, this.skyCanvas, this.soilCanvas]
+        this.canvasesCtx = [this.ctx, this.ctxMoon, this.ctxSky, this.ctxSoil];
 
         this.graphData ={
             plant:{
@@ -362,7 +368,7 @@ class Canvas{
         this.asets.grid.src = './asets/pngs/sheet96x172.png';
 
         this.asets.imgBgBot = new Image(100, 100);
-        this.asets.imgBgBot.src = './asets/pngs/bckgrnddown96x66_1.png';
+        this.asets.imgBgBot.src = './asets/pngs/backgrnd-bot.png';
 
         this.asets.imgBgStars = new Image(100, 100);
         this.asets.imgBgStars.src = './asets/pngs/stars_3456x1376.png';
@@ -475,6 +481,7 @@ class Canvas{
     drawInit(){
         this.ctx.imageSmoothingEnabled = false;
         this.ctxMoon.imageSmoothingEnabled = false;
+        this.ctxSky.imageSmoothingEnabled = false;
 
         this.graphData.fontBg.load().then(font => {
             document.fonts.add(font);
@@ -484,6 +491,11 @@ class Canvas{
         });
         this.ctx.font = "normal 40px pixel"
         this.setGrowPoints(); 
+        
+        //draw statics
+        this._drawBgStars();
+        this._drawBgBot();
+        this._drawMinimalWaterLevel(); 
 
         requestAnimationFrame(this.drawGame.bind(this))
     }
@@ -491,12 +503,11 @@ class Canvas{
     drawGame(){
         this._clearCanvas();
         //this._drawHabitatTopside();
-        this._drawBgStars();
         this.drawMoon();
         this.drawClouds();
-        this._drawBgMountains();
-        this._drawHabitatBotside();
-        this._drawBgPlants();
+        //this._drawBgMountains();
+       // this._drawHabitatBotside();
+       // this._drawBgPlants();
        //this._drawGrid()
         this.drawWaterLevel();
         this.drawLeafs();
@@ -584,6 +595,7 @@ class Canvas{
 
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
     }
+
 
     drawWaterLevel(){
         this.ctx.save()
@@ -822,6 +834,13 @@ class Canvas{
         }
     }
 
+    _drawBgBot(){
+        this.ctxSoil.save()
+
+        this.ctxSoil.drawImage(this.asets.imgBgBot, this.canvas.width/2 - this.graphData.wideAsetWidth / 2 -250, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 -73 , this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+        this.ctxSoil.restore()
+    }
+
     _clearCanvas(){
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctxMoon.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -872,21 +891,24 @@ class Canvas{
     }
 
     _drawBgStars(){
-        this.ctxMoon.save()
+        this.ctxSky.save()
 
-        this.ctxMoon.drawImage(this.asets.imgBgStars, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
-        this.ctxMoon.restore()
+        this.ctxSky.drawImage(this.asets.imgBgStars, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+        this.ctxSky.restore()
     }
 
     _drawHabitatBotside(){
         this.ctx.save()
         this.ctx.fillStyle = this.graphData.colors.soilBrown;
         this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
-
-        //draw minimal water level
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.restore()
+    }
+
+    _drawMinimalWaterLevel(){
+        this.ctxSoil.save()
+        this.ctxSoil.fillStyle = '#000';
+        this.ctxSoil.fillRect(0, app.interactiveZoneC.botsideDivider - habitat.minWeterLevel * this.graphData.asetScale, this.canvas.width, this.canvas.height);
+        this.ctxSoil.restore()
     }
     
     _drawInteractiveZone(){
@@ -1075,7 +1097,7 @@ class App{
         canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +300;
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
@@ -1145,7 +1167,7 @@ class App{
 
         //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX ;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +300;
 
         console.log(this.interactiveZoneC);
     }
