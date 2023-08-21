@@ -16,21 +16,21 @@ class Plant{
         this.root = {
             size: 5,
             maxSize: 63,
-            growRate: 0.06,//0.012,
-            cost: 0.05//0.01,
+            growRate: 0.06,
+            cost: 0.05,
         };
         this.leafs = {
             size: 1,
-            growRate: 0.01,//0.002,
-            cost: 0.075//0.015
+            growRate: 0.01,
+            cost: 0.075
         };
         this.flowers = {
             size: 0,
             quantity: 0,
-            growRate: 0.0125,//0.0025,
-            cost: 0.15//0.03,
+            growRate: 0.0125,
+            cost: 0.15
         };
-        this.assimilationPower = 0.1;
+        this.assimilationPower = 10//0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -315,7 +315,7 @@ class Canvas{
                 plantGreen: '#447629',
                 waterBlue: '#4986ad'
             },
-            asetScale: null,
+            asetScale: 4,
             fontBg: new FontFace("pixel", "url(./asets/fonts/Pixel-Madness.ttf)"),
             fontSm: new FontFace("pixelSm", "url(./asets/fonts/m3x6.ttf)")
             
@@ -396,15 +396,16 @@ class Canvas{
             this.asetsPromises.push(promise);
         });
 
+        this.preRenders = {};
+
         this.adjustCanvasToScreen()
- 
     }
 
     adjustCanvasToScreen(){
         //check if is need to add horizontal or vertical space to fill screen
         let fillScreen;
 
-        if(window.screen.height * (9/16) < window.screen.width){
+        if(window.screen.height * (384/688) < window.screen.width){
             fillScreen = "horizontal";
         }else{
             fillScreen = "vertical";
@@ -412,15 +413,28 @@ class Canvas{
         
         if(fillScreen === "horizontal"){
             const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
-            this.ctx.canvas.height = 1280;
-            this.ctx.canvas.width  =  this.ctx.canvas.height *ratio;
-            this.canvas.style.height = `${document.querySelector('html').clientHeight}px`;
+            this.ctx.canvas.height = 688//1280;
+            this.ctx.canvas.width  =  (this.ctx.canvas.height *ratio).toFixed();
+            this.canvas.style.height = `${document.querySelector('html').clientHeight -30}px`;
         }else{
             const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
-            this.ctx.canvas.width  = 720;
-            this.ctx.canvas.height = this.ctx.canvas.width *ratio
+            this.ctx.canvas.width  =384 //720;
+            this.ctx.canvas.height =(this.ctx.canvas.width *ratio).toFixed();
             this.canvas.style.width = '100%'
         }
+        console.log(this.ctx.canvas.width , this.ctx.canvas.height);
+    }
+
+    preRenderImgs(){
+            this.preRenders.clouds = document.createElement("canvas");
+            const patternContext = this.preRenders.clouds.getContext("2d");
+            const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
+
+            this.preRenders.clouds.width = 450 * this.graphData.asetScale;
+            this.preRenders.clouds.height = 172 * this.graphData.asetScale +heightWtf;
+            this.preRenders.clouds.style.imageRendering = 'pixelated';
+            patternContext.imageSmoothingEnabled = false;
+            patternContext.drawImage(this.asets.rainCloudPass, 0, heightWtf, this.preRenders.clouds.width, this.preRenders.clouds.height);
     }
 
     drawStartingPanels(){
@@ -478,8 +492,8 @@ class Canvas{
         this.drawFlowers()
         this.drawRain()
         this.drawUI();
-        //this._drawDividers();
-        //this._drawInteractiveZone();
+        this._drawDividers();
+        this._drawInteractiveZone();
         this._drawPauseGrid();
         
 
@@ -519,42 +533,42 @@ class Canvas{
         this.graphData.ui.width = 6 * canvas.graphData.asetScale;
         this.graphData.ui.barHeight = 20 * canvas.graphData.asetScale;
         this.graphData.ui.barWidth = 4 * canvas.graphData.asetScale;
-        this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width;
+        this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width +1;
         this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
 
         //carbohydrates bar
         this.ctx.save();
         this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -0.5 +this.graphData.ui.barHeight)
+        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + 1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -1 +this.graphData.ui.barHeight)
         this.ctx.restore();
 
         this.ctx.save();
-        const carboBarRange = (plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates; 
+        const carboBarRange = +((plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates).toFixed(); 
         this.ctx.fillStyle = '#549c5d';
-        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + this.graphData.ui.barHeight - carboBarRange  +0.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, carboBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + canvas.graphData.asetScale + this.graphData.ui.barHeight - carboBarRange, 3 * canvas.graphData.asetScale, carboBarRange -1 * canvas.graphData.asetScale)
         this.ctx.restore();
 
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY +1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
+            this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY +1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
             this.ctx.restore();
         }
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
         
         //water supply bar
         this.ctx.save();
         this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY  + this.graphData.ui.barHeight +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -0.5 +this.graphData.ui.barHeight)
+        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY  + this.graphData.ui.barHeight +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -1 +this.graphData.ui.barHeight)
         this.ctx.restore();
 
         this.ctx.save();
         const waterBarRange = (plant.waterSupply * this.graphData.ui.barHeight) /plant.maxWaterSupply; 
         this.ctx.fillStyle = this.graphData.colors.waterBlue;
-        this.ctx.fillRect(this.graphData.ui.posX +0.5 * canvas.graphData.asetScale, this.graphData.ui.posY + 2* this.graphData.ui.barHeight - waterBarRange  +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange -0.5 * canvas.graphData.asetScale)
+        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + 2* this.graphData.ui.barHeight - waterBarRange  +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange)
         this.ctx.restore();
 
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY +5 + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
     }
 
     drawWaterLevel(){
@@ -739,12 +753,12 @@ class Canvas{
                 
             break;
             case 'cloudy':
-                pass = this.asets.rainCloudPass;
+                pass = true;
                 alpha = 0.5;
             break;    
             case 'rainy':
                 alpha = 0.6;
-                pass = this.asets.rainCloudPass;
+                pass = true;
             break;
         } 
 
@@ -760,17 +774,8 @@ class Canvas{
             // }
             this.ctx.save()
             this.ctx.globalAlpha = alpha;
-            const patternCanvas = document.createElement("canvas");
-            const patternContext = patternCanvas.getContext("2d");
-            const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
 
-            patternCanvas.width = 450 * this.graphData.asetScale;
-            patternCanvas.height = 172 * this.graphData.asetScale +heightWtf;
-            patternCanvas.style.imageRendering = 'pixelated';
-            patternContext.imageSmoothingEnabled = false;
-            patternContext.drawImage(pass, 0, heightWtf, patternCanvas.width, patternCanvas.height);
-
-            const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
+            const pattern = this.ctx.createPattern(this.preRenders.clouds, "repeat-x");
             this.ctx.fillStyle = pattern;
             this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
             this.ctx.restore()
@@ -894,11 +899,11 @@ class Canvas{
         this.ctx.save()
         this.ctx.beginPath();
         this.ctx.strokeStyle = "white";
-        this.ctx.lineWidth = 3;
+        this.ctx.lineWidth = 2;
         if(app.interactiveZoneC.rest === 'horizontal'){
-            this.ctx.rect(app.interactiveZoneC.posX +3, 3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
+            this.ctx.rect(app.interactiveZoneC.posX +1, 1, app.interactiveZoneC.width -1, app.interactiveZoneC.height -1);
         }else{
-            this.ctx.rect(3, app.interactiveZoneC.posY +3, app.interactiveZoneC.width -3, app.interactiveZoneC.height -3);
+            this.ctx.rect(1, app.interactiveZoneC.posY +1, app.interactiveZoneC.width -1, app.interactiveZoneC.height -1);
         }
         this.ctx.stroke();
         this.ctx.restore()
@@ -925,7 +930,7 @@ class Canvas{
 
     _drawGrid(){
         this.ctx.save()
-        this.ctx.drawImage(this.asets.grid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
+        this.ctx.drawImage(this.asets.grid, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height)
         this.ctx.restore()
     }
 
@@ -1018,8 +1023,8 @@ class App{
         this.interactiveZoneW = {
             posX : 0,
             posY :0,
-            width : 720,
-            height : 1280,
+            width : 0,
+            height : 0,
             rest : '',
             botsideDivider : 0,
             werticalDivider: 0,
@@ -1107,7 +1112,7 @@ class App{
                 //check if is need to add horizontal or vertical space to fill screen
                 let fillScreen;
 
-                if(window.screen.height * (9/16) < window.screen.width){
+                if(window.screen.height * (384/688) < window.screen.width){
                     fillScreen = "horizontal";
                 }else{
                     fillScreen = "vertical";
@@ -1115,40 +1120,40 @@ class App{
 
         if(fillScreen === 'horizontal'){
             this.interactiveZoneC.height = canvas.ctx.canvas.height; 
-            this.interactiveZoneC.width = this.interactiveZoneC.height * (9/16);
-            this.interactiveZoneC.posX = (canvas.ctx.canvas.width/2 - this.interactiveZoneC.width /2);
+            this.interactiveZoneC.width = +(this.interactiveZoneC.height * (384/688)).toFixed();
+            this.interactiveZoneC.posX = +(canvas.ctx.canvas.width/2 - this.interactiveZoneC.width /2).toFixed();
             this.interactiveZoneC.rest = 'horizontal';
 
             this.interactiveZoneW.height = window.innerHeight; //window.screen.height 
-            this.interactiveZoneW.width = this.interactiveZoneW.height * (9/16);
-            this.interactiveZoneW.posX = window.innerWidth /2 - this.interactiveZoneW.width /2;
+            this.interactiveZoneW.width = +(this.interactiveZoneW.height * (384/688)).toFixed();
+            this.interactiveZoneW.posX = +(window.innerWidth /2 - this.interactiveZoneW.width /2).toFixed();
             this.interactiveZoneW.rest = 'horizontal';
 
 
         }else{
             this.interactiveZoneC.width = canvas.ctx.canvas.width;
-            this.interactiveZoneC.height = this.interactiveZoneC.width * (16/ 9);
-            this.interactiveZoneC.posY = (canvas.ctx.canvas.height - this.interactiveZoneC.height) /2;
+            this.interactiveZoneC.height = +(this.interactiveZoneC.width * (688/384)).toFixed();
+            this.interactiveZoneC.posY = +((canvas.ctx.canvas.height - this.interactiveZoneC.height) /2).toFixed();
             this.interactiveZoneC.rest = 'vertical';
 
             this.interactiveZoneW.width = window.innerWidth;
-            this.interactiveZoneW.height = this.interactiveZoneW.width * (16/9);
-            this.interactiveZoneW.posY = window.innerHeight /2 - this.interactiveZoneW.height /2;
+            this.interactiveZoneW.height = +(this.interactiveZoneW.width * (688/384)).toFixed();
+            this.interactiveZoneW.posY = +(window.innerHeight /2 - this.interactiveZoneW.height /2).toFixed();
             this.interactiveZoneW.rest = 'vertical';
         }
 
 
-        this.interactiveZoneC.botsideDivider = this.interactiveZoneC.height / (172 / 106)  + this.interactiveZoneC.posY;
-        this.interactiveZoneC.werticalDivider = this.interactiveZoneC.width / 2 + this.interactiveZoneC.posX;
+        this.interactiveZoneC.botsideDivider = +(this.interactiveZoneC.height / (172 / 106)  + this.interactiveZoneC.posY).toFixed();
+        this.interactiveZoneC.werticalDivider = +(this.interactiveZoneC.width / 2 + this.interactiveZoneC.posX).toFixed();
 
-        this.interactiveZoneW.botsideDivider = this.interactiveZoneW.height / (172 / 106)  + this.interactiveZoneW.posY;
-        this.interactiveZoneW.werticalDivider = this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX;
+        this.interactiveZoneW.botsideDivider = +(this.interactiveZoneW.height / (172 / 106)  + this.interactiveZoneW.posY).toFixed();
+        this.interactiveZoneW.werticalDivider = +(this.interactiveZoneW.width / 2 + this.interactiveZoneW.posX).toFixed();
 
         //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX ;
         canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;;
 
-        canvas.graphData.asetScale = this.interactiveZoneC.width / canvas.graphData.plant.stalkWidth
+        console.log(this.interactiveZoneC);
     }
 
     _adjustControls(){
@@ -1232,6 +1237,7 @@ function init(){
 
     Promise.all(canvas.asetsPromises)
     .then(()=>{
+        canvas.preRenderImgs();
         const startMenu = document.querySelector('#start-menu');
         const startBtn = document.querySelector('#start-menu button');
 
