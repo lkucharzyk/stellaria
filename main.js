@@ -415,14 +415,20 @@ class Canvas{
             const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
             this.ctx.canvas.height = 688//1280;
             this.ctx.canvas.width  =  (this.ctx.canvas.height *ratio).toFixed();
-            this.canvas.style.height = `${document.querySelector('html').clientHeight}px`;
         }else{
             const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
             this.ctx.canvas.width  =384 //720;
             this.ctx.canvas.height =(this.ctx.canvas.width *ratio).toFixed();
-            this.canvas.style.width = '100%'
         }
-        console.log(this.ctx.canvas.width , this.ctx.canvas.height);
+        
+        const scaleX = window.document.querySelector('html').clientWidth / this.ctx.canvas.width;
+        const scaleY = window.document.querySelector('html').clientHeight / this.ctx.canvas.height;
+
+        const scaleToFit = Math.min(scaleX, scaleY);
+        const scaleToCover = Math.max(scaleX, scaleY);
+
+        this.canvas.style.transformOrigin = "0 0"; //scale from top left
+        this.canvas.style.transform = `scale(${scaleToFit})`;
     }
 
     preRenderImgs(){
