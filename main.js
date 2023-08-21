@@ -14,7 +14,7 @@ window.mobileCheck = function() {
 class Plant{
     constructor(){
         this.root = {
-            size: 5,
+            size: 63,//5,
             maxSize: 63,
             growRate: 0.06,
             cost: 0.05,
@@ -316,6 +316,9 @@ class Canvas{
                 waterBlue: '#4986ad'
             },
             asetScale: 4,
+            asetsMainWidth: 172,
+            asetsMainHeight: 96,
+        
             fontBg: new FontFace("pixel", "url(./asets/fonts/Pixel-Madness.ttf)"),
             fontSm: new FontFace("pixelSm", "url(./asets/fonts/m3x6.ttf)")
             
@@ -351,9 +354,6 @@ class Canvas{
 
         this.asets.imgBgBot = new Image(100, 100);
         this.asets.imgBgBot.src = './asets/pngs/bckgrnddown96x66_1.png';
-
-        this.asets.imgBgTop = new Image(100, 100);
-        this.asets.imgBgTop.src = './asets/pngs/bckgrndup96x106_1.png';
 
         this.asets.imgBgStars = new Image(100, 100);
         this.asets.imgBgStars.src = './asets/pngs/stars450x106.png';
@@ -415,7 +415,7 @@ class Canvas{
             const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
             this.ctx.canvas.height = 688//1280;
             this.ctx.canvas.width  =  (this.ctx.canvas.height *ratio).toFixed();
-            this.canvas.style.height = `${document.querySelector('html').clientHeight -30}px`;
+            this.canvas.style.height = `${document.querySelector('html').clientHeight}px`;
         }else{
             const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
             this.ctx.canvas.width  =384 //720;
@@ -431,7 +431,7 @@ class Canvas{
             const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
 
             this.preRenders.clouds.width = 450 * this.graphData.asetScale;
-            this.preRenders.clouds.height = 172 * this.graphData.asetScale +heightWtf;
+            this.preRenders.clouds.height = 172* this.graphData.asetScale +heightWtf;
             this.preRenders.clouds.style.imageRendering = 'pixelated';
             patternContext.imageSmoothingEnabled = false;
             patternContext.drawImage(this.asets.rainCloudPass, 0, heightWtf, this.preRenders.clouds.width, this.preRenders.clouds.height);
@@ -583,7 +583,7 @@ class Canvas{
         this.ctx.stroke();
 
         this.ctx.beginPath();
-        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *this.graphData.asetScale +5, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.rect(0, app.interactiveZoneC.botsideDivider - habitat.waterLevel *this.graphData.asetScale, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "rgba(56, 112, 217, 0.3)";
         this.ctx.fill();
         this.ctx.restore()
@@ -614,10 +614,10 @@ class Canvas{
         // }
         if(this.graphData.plant.rootMaxAlert){
             this.ctx.save()
-            this.ctx.font = "normal 60px pixelSm"
+            this.ctx.font = "normal 50px pixelSm"
             this.ctx.fillStyle = "#d15252";
-            this.ctx.fillText(`Root reached`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -83)
-            this.ctx.fillText(`maximum size!`, app.interactiveZoneC.werticalDivider + 40, app.interactiveZoneC.posY + app.interactiveZoneC.height -50)
+            this.ctx.fillText(`Root reached`, app.interactiveZoneC.werticalDivider , app.interactiveZoneC.posY + app.interactiveZoneC.height -83)
+            this.ctx.fillText(`maximum size!`, app.interactiveZoneC.werticalDivider, app.interactiveZoneC.posY + app.interactiveZoneC.height -50)
             this.ctx.restore()
         }
     }
@@ -699,9 +699,10 @@ class Canvas{
         if(this.graphData.plant.flowerNotAllowedAlert){
             this.ctx.save()
             this.ctx.fillStyle = "#d15252";
-            this.ctx.font = "normal 60px pixelSm"
-            this.ctx.fillText(`Grow more leafs before`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +330)
-            this.ctx.fillText(`start growing flowers!`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +365)
+            this.ctx.font = "normal 50px pixelSm"
+            this.ctx.fillText(`Grow more leafs`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +330)
+            this.ctx.fillText(`before start`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +365)
+            this.ctx.fillText(`growing flowers!`, app.interactiveZoneC.posX +20, app.interactiveZoneC.posY +395)
             this.ctx.restore()
         }
 
@@ -741,7 +742,7 @@ class Canvas{
         const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
         const width = 20;
         const height = 16;
-        this.ctx.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, 20 * this.graphData.asetScale, 16* this.graphData.asetScale, 20* this.graphData.asetScale)
+        this.ctx.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, width * this.graphData.asetScale, height* this.graphData.asetScale, width* this.graphData.asetScale)
     }
 
     drawClouds(){
@@ -777,7 +778,7 @@ class Canvas{
 
             const pattern = this.ctx.createPattern(this.preRenders.clouds, "repeat-x");
             this.ctx.fillStyle = pattern;
-            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, 172 *this.graphData.asetScale);
+            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, canvas.graphData.asetsMainWidth *this.graphData.asetScale);
             this.ctx.restore()
         }
     }
@@ -833,9 +834,6 @@ class Canvas{
         this.ctx.save();
        this.ctx.fillStyle = this.graphData.colors.skyblue;
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-        this.ctx.drawImage(this.asets.imgBgTop, 0, 0, 96, 106, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.botsideDivider)
-
         this.ctx.restore()
     }
 
@@ -847,10 +845,10 @@ class Canvas{
         const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
 
         patternCanvas.width = 450 * this.graphData.asetScale;
-        patternCanvas.height = 172 * this.graphData.asetScale +heightWtf;
+        patternCanvas.height = 172* this.graphData.asetScale +heightWtf;
         patternCanvas.style.imageRendering = 'pixelated';
         patternContext.imageSmoothingEnabled = false;
-        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, 172 * this.graphData.asetScale);
+        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, 172* this.graphData.asetScale);
 
         const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
         this.ctx.fillStyle = pattern;
@@ -937,7 +935,7 @@ class Canvas{
     _drawPauseGrid(){
         if(app.pause.paused){
             this.ctx.save()
-            this.ctx.drawImage(this.asets.pauseGrid, 0, 0, 96, 172, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
+            this.ctx.drawImage(this.asets.pauseGrid, app.interactiveZoneC.posX, app.interactiveZoneC.posY, app.interactiveZoneC.width, app.interactiveZoneC.height);
             this.ctx.restore()
         }
     }
