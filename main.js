@@ -14,7 +14,7 @@ window.mobileCheck = function() {
 class Plant{
     constructor(){
         this.root = {
-            size: 63,//5,
+            size: 5,
             maxSize: 63,
             growRate: 0.06,
             cost: 0.05,
@@ -30,7 +30,7 @@ class Plant{
             growRate: 0.0125,
             cost: 0.15
         };
-        this.assimilationPower = 10//0.1;
+        this.assimilationPower = 0.1;
         this.carbohydrates = 2.5;
         this.maxCarbohydrates = 10;
 
@@ -94,7 +94,7 @@ class Habitat{
 
         this.weather = 'rainy';
 
-        this.waterLevel = -50//-2;
+        this.waterLevel = -2;
         this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
@@ -373,12 +373,6 @@ class Canvas{
         this.asets.imgBgStars = new Image(100, 100);
         this.asets.imgBgStars.src = './asets/pngs/stars_3456x1376.png';
 
-        this.asets.imgBgMountains = new Image(100, 100);
-        this.asets.imgBgMountains.src = './asets/pngs/mntns_450x106.png';
-
-        this.asets.imgBgPlants = new Image(100, 100);
-        this.asets.imgBgPlants.src = './asets/pngs/bckgrndplants_roots_405x172.png';
-
         this.asets.imgBar = new Image(100, 100);
         this.asets.imgBar.src = './asets/pngs/bar4x32.png';
 
@@ -502,12 +496,8 @@ class Canvas{
 
     drawGame(){
         this._clearCanvas();
-        //this._drawHabitatTopside();
         this.drawMoon();
         this.drawClouds();
-        //this._drawBgMountains();
-       // this._drawHabitatBotside();
-       // this._drawBgPlants();
        //this._drawGrid()
         this.drawWaterLevel();
         this.drawLeafs();
@@ -519,11 +509,7 @@ class Canvas{
         this._drawInteractiveZone();
         this._drawPauseGrid();
 
-        
-        
-
         requestAnimationFrame(this.drawGame.bind(this));
-        
     }
 
     setGrowPoints(){
@@ -764,15 +750,13 @@ class Canvas{
     }
 
     drawMoon(){
-
         this.ctxMoon.save()
         const totalFrames = 15;
         const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
         const width = 20;
         const height = 16;
         this.ctxMoon.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, width * this.graphData.asetScale, height* this.graphData.asetScale, width* this.graphData.asetScale);
-        this.ctxMoon.restore()
-        
+        this.ctxMoon.restore()  
     }
 
     drawClouds(){
@@ -836,7 +820,6 @@ class Canvas{
 
     _drawBgBot(){
         this.ctxSoil.save()
-
         this.ctxSoil.drawImage(this.asets.imgBgBot, this.canvas.width/2 - this.graphData.wideAsetWidth / 2 -250, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 -73 , this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
         this.ctxSoil.restore()
     }
@@ -857,52 +840,13 @@ class Canvas{
         this.ctx.restore()
     }
 
-    _drawHabitatTopside(){
-        this.ctx.save();
-       this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.restore()
-    }
-
-    _drawBgPlants(){
-        
-        this.ctx.save()
-        const patternCanvas = document.createElement("canvas");
-        const patternContext = patternCanvas.getContext("2d");
-        const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-
-        patternCanvas.width = 450 * this.graphData.asetScale;
-        patternCanvas.height = 172* this.graphData.asetScale +heightWtf;
-        patternCanvas.style.imageRendering = 'pixelated';
-        patternContext.imageSmoothingEnabled = false;
-        patternContext.drawImage(this.asets.imgBgPlants, 0, heightWtf, patternCanvas.width, 172* this.graphData.asetScale);
-
-        const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
-        this.ctx.fillStyle = pattern;
-        this.ctx.globalAlpha = 0.3;
-        this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
-        this.ctx.restore();
-    }
-
-    _drawBgMountains(){
-        this.ctx.save();
-        this.ctx.drawImage(this.asets.imgBgMountains, this.canvas.width/2 - 225  * this.graphData.asetScale -120, app.interactiveZoneC.posY, 450* this.graphData.asetScale, this.graphData.plant.stalkHeight * this.graphData.asetScale)
-        this.ctx.restore()
-    }
 
     _drawBgStars(){
         this.ctxSky.save()
-
         this.ctxSky.drawImage(this.asets.imgBgStars, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
         this.ctxSky.restore()
     }
 
-    _drawHabitatBotside(){
-        this.ctx.save()
-        this.ctx.fillStyle = this.graphData.colors.soilBrown;
-        this.ctx.fillRect(0, app.interactiveZoneC.botsideDivider, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.restore()
-    }
 
     _drawMinimalWaterLevel(){
         this.ctxSoil.save()
