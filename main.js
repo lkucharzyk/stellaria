@@ -476,6 +476,8 @@ class Canvas{
         this.ctx.imageSmoothingEnabled = false;
         this.ctxMoon.imageSmoothingEnabled = false;
         this.ctxSky.imageSmoothingEnabled = false;
+        this.ctxSoil.imageSmoothingEnabled = false;
+        
 
         this.graphData.fontBg.load().then(font => {
             document.fonts.add(font);
@@ -778,11 +780,11 @@ class Canvas{
         } 
 
         if(pass){
-            this.ctxMoon.save()
-            this.ctxMoon.globalAlpha = alpha;
+            this.ctx.save()
+            this.ctx.globalAlpha = alpha;
 
-            this.ctxMoon.drawImage(this.asets.imgClouds, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
-            this.ctxMoon.restore()
+            tgthis.ctx.drawImage(this.asets.imgClouds, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+            this.ctx.restore()
         }
     }
 

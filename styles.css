@@ -129,6 +129,7 @@ button:active{
 }
 
 .overlay {
+    z-index: 9;
     display: none;
     position: fixed;
     top: 0;
