@@ -321,7 +321,10 @@ class Canvas{
                 plantGreen: '#447629',
                 waterBlue: '#4986ad'
             },
+
             asetScale: 4,
+            wideAsetWidth : 3456,
+            wideAsetHeight : 1276,
             asetsMainWidth: 172,
             asetsMainHeight: 96,
         
@@ -362,7 +365,7 @@ class Canvas{
         this.asets.imgBgBot.src = './asets/pngs/bckgrnddown96x66_1.png';
 
         this.asets.imgBgStars = new Image(100, 100);
-        this.asets.imgBgStars.src = './asets/pngs/stars450x106.png';
+        this.asets.imgBgStars.src = './asets/pngs/stars_3456x1376.png';
 
         this.asets.imgBgMountains = new Image(100, 100);
         this.asets.imgBgMountains.src = './asets/pngs/mntns_450x106.png';
@@ -388,8 +391,8 @@ class Canvas{
         this.asets.moon = new Image(100, 100);
         this.asets.moon.src = './asets/pngs/mooncycles20x16.png';
 
-        this.asets.rainCloudPass = new Image(100, 100);
-        this.asets.rainCloudPass.src = './asets/pngs/rain_clouds450x172.png';
+        this.asets.imgClouds = new Image(100, 100);
+        this.asets.imgClouds.src = './asets/pngs/clouds3456x1376.png';
 
         this.asets.rain = new Image(100, 100);
         this.asets.rain.src = './asets/pngs/rain450x172.png';
@@ -441,15 +444,7 @@ class Canvas{
     }
 
     preRenderImgs(){
-            this.preRenders.clouds = document.createElement("canvas");
-            const patternContext = this.preRenders.clouds.getContext("2d");
-            const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-
-            this.preRenders.clouds.width = 450 * this.graphData.asetScale;
-            this.preRenders.clouds.height = 172* this.graphData.asetScale +heightWtf;
-            this.preRenders.clouds.style.imageRendering = 'pixelated';
-            patternContext.imageSmoothingEnabled = false;
-            patternContext.drawImage(this.asets.rainCloudPass, 0, heightWtf, this.preRenders.clouds.width, this.preRenders.clouds.height);
+     
     }
 
     drawStartingPanels(){
@@ -512,6 +507,8 @@ class Canvas{
         this._drawDividers();
         this._drawInteractiveZone();
         this._drawPauseGrid();
+
+        
         
 
         requestAnimationFrame(this.drawGame.bind(this));
@@ -755,12 +752,14 @@ class Canvas{
     }
 
     drawMoon(){
-        this.ctxMoon.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        this.ctxMoon.save()
         const totalFrames = 15;
         const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
         const width = 20;
         const height = 16;
         this.ctxMoon.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, width * this.graphData.asetScale, height* this.graphData.asetScale, width* this.graphData.asetScale);
+        this.ctxMoon.restore()
         
     }
 
@@ -783,22 +782,11 @@ class Canvas{
         } 
 
         if(pass){
-            // if(!this.graphData.weather.cloudPassingInterval){
-            //     this.graphData.weather.cloudPassingInterval = setInterval(() => {
-            //         if(this.graphData.weather.cloudFrame > 300){
-            //             this.graphData.weather.cloudFrame =0;
-            //         }else{
-            //             this.graphData.weather.cloudFrame ++;
-            //         }   
-            //     }, 10);
-            // }
-            this.ctx.save()
-            this.ctx.globalAlpha = alpha;
+            this.ctxMoon.save()
+            this.ctxMoon.globalAlpha = alpha;
 
-            const pattern = this.ctx.createPattern(this.preRenders.clouds, "repeat-x");
-            this.ctx.fillStyle = pattern;
-            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, canvas.graphData.asetsMainWidth *this.graphData.asetScale);
-            this.ctx.restore()
+            this.ctxMoon.drawImage(this.asets.imgClouds, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+            this.ctxMoon.restore()
         }
     }
 
@@ -836,6 +824,7 @@ class Canvas{
 
     _clearCanvas(){
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctxMoon.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
     _drawHydrated(){
@@ -883,22 +872,10 @@ class Canvas{
     }
 
     _drawBgStars(){
-        this.ctx.save()
-        const patternCanvas = document.createElement("canvas");
-        const patternContext = patternCanvas.getContext("2d");
-        const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-        
-        patternCanvas.width = 450 * this.graphData.asetScale;
-        patternCanvas.height = 106 * this.graphData.asetScale + heightWtf
+        this.ctxMoon.save()
 
-        patternCanvas.style.imageRendering = 'pixelated';
-        patternContext.imageSmoothingEnabled = false;
-        patternContext.drawImage(this.asets.imgBgStars, 0, heightWtf, patternCanvas.width, 106 * this.graphData.asetScale);
-
-        const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
-        this.ctx.fillStyle = pattern;
-        this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
-        this.ctx.restore()
+        this.ctxMoon.drawImage(this.asets.imgBgStars, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+        this.ctxMoon.restore()
     }
 
     _drawHabitatBotside(){
