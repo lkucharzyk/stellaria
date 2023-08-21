@@ -273,8 +273,14 @@ class GrowPoint{
 
 class Canvas{
     constructor() {
-        this.canvas = document.querySelector('canvas');
+        this.canvas = document.querySelector('canvas#main');
         this.ctx = this.canvas.getContext('2d');
+
+        this.moonCanvas = document.querySelector('canvas#moon');
+        this.ctxMoon = this.moonCanvas.getContext('2d');
+
+        this.canvases = [this.canvas, this.moonCanvas]
+        this.canvasesCtx = [this.ctx, this.ctxMoon];
 
         this.graphData ={
             plant:{
@@ -398,7 +404,7 @@ class Canvas{
 
         this.preRenders = {};
 
-        this.adjustCanvasToScreen()
+        this.adjustCanvasToScreen();
     }
 
     adjustCanvasToScreen(){
@@ -410,25 +416,28 @@ class Canvas{
         }else{
             fillScreen = "vertical";
         }
-        
-        if(fillScreen === "horizontal"){
-            const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
-            this.ctx.canvas.height = 688//1280;
-            this.ctx.canvas.width  =  (this.ctx.canvas.height *ratio).toFixed();
-        }else{
-            const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
-            this.ctx.canvas.width  =384 //720;
-            this.ctx.canvas.height =(this.ctx.canvas.width *ratio).toFixed();
-        }
-        
-        const scaleX = window.document.querySelector('html').clientWidth / this.ctx.canvas.width;
-        const scaleY = window.document.querySelector('html').clientHeight / this.ctx.canvas.height;
+           
+        this.canvasesCtx.forEach(canvas =>{
+            if(fillScreen === "horizontal"){
+                const ratio = document.querySelector('html').clientWidth / document.querySelector('html').clientHeight
+                canvas.canvas.getContext('2d').canvas.height = 688//1280;
+                canvas.canvas.getContext('2d').canvas.width  =  (canvas.canvas.getContext('2d').canvas.height *ratio).toFixed();
+            }else{
+                const ratio = document.querySelector('html').clientHeight / document.querySelector('html').clientWidth;
+                canvas.canvas.getContext('2d').canvas.width  =384 //720;
+                canvas.canvas.getContext('2d').canvas.height =(canvas.canvas.getContext('2d').canvas.width *ratio).toFixed();
+            }
+            
+            const scaleX = window.document.querySelector('html').clientWidth / canvas.canvas.getContext('2d').canvas.width;
+            const scaleY = window.document.querySelector('html').clientHeight / canvas.canvas.getContext('2d').canvas.height;
 
-        const scaleToFit = Math.min(scaleX, scaleY);
-        const scaleToCover = Math.max(scaleX, scaleY);
+            const scaleToFit = Math.min(scaleX, scaleY);
+            const scaleToCover = Math.max(scaleX, scaleY);
 
-        this.canvas.style.transformOrigin = "0 0"; //scale from top left
-        this.canvas.style.transform = `scale(${scaleToFit})`;
+            canvas.canvas.style.transformOrigin = "0 0"; //scale from top left
+            canvas.canvas.style.transform = `scale(${scaleToFit})`;
+        })
+
     }
 
     preRenderImgs(){
@@ -470,6 +479,8 @@ class Canvas{
 
     drawInit(){
         this.ctx.imageSmoothingEnabled = false;
+        this.ctxMoon.imageSmoothingEnabled = false;
+
         this.graphData.fontBg.load().then(font => {
             document.fonts.add(font);
         });
@@ -484,7 +495,7 @@ class Canvas{
 
     drawGame(){
         this._clearCanvas();
-        this._drawHabitatTopside();
+        //this._drawHabitatTopside();
         this._drawBgStars();
         this.drawMoon();
         this.drawClouds();
@@ -744,11 +755,13 @@ class Canvas{
     }
 
     drawMoon(){
+        this.ctxMoon.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         const totalFrames = 15;
         const frame = (habitat.day/habitat.maxDay * totalFrames).toFixed(0); 
         const width = 20;
         const height = 16;
-        this.ctx.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, width * this.graphData.asetScale, height* this.graphData.asetScale, width* this.graphData.asetScale)
+        this.ctxMoon.drawImage(this.asets.moon, frame * width, 0, width, height, this.graphData.weather.posX, this.graphData.weather.posY, width * this.graphData.asetScale, height* this.graphData.asetScale, width* this.graphData.asetScale);
+        
     }
 
     drawClouds(){
@@ -1085,7 +1098,7 @@ class App{
         canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
@@ -1155,7 +1168,7 @@ class App{
 
         //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX ;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +450;;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;;
 
         console.log(this.interactiveZoneC);
     }
