@@ -786,7 +786,6 @@ class Canvas{
                         this.graphData.weather.rainFrame ++;
                        
                     }  
-                    console.log(this.graphData.wideAsetWidth); 
                 }, 100);
             }
 
@@ -909,6 +908,11 @@ class Sounds{
         this.music.mp3.addEventListener("canplaythrough", () => {
             sounds.music.loaded = true;
           });
+
+        this.soudData = {
+            soundIntervalDuration: 500,
+            soundPlaying : false
+        }
     }
 
     playMusic(){
@@ -934,10 +938,13 @@ class Sounds{
                 soundToPlay = this.bad;
             break;
         }
-        if(soundToPlay.paused){
-            
+
+        if(this.soudData.soundPlaying === false){
+            this.soudData.soundPlaying = true
             soundToPlay.play();
-            console.log('play');
+            setTimeout(() => {
+                this.soudData.soundPlaying = false
+            }, this.soudData.soundIntervalDuration);
         }
         
         
