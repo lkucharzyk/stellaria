@@ -95,7 +95,7 @@ class Habitat{
         this.weather = 'rainy';
 
         this.waterLevel = -2;
-        this.minWeterLevel = -2//-63;
+        this.minWeterLevel = -63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
