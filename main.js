@@ -374,7 +374,7 @@ class Canvas{
         this.asets.imgBgStars.src = './asets/pngs/stars_3456x1376.png';
 
         this.asets.imgBar = new Image(100, 100);
-        this.asets.imgBar.src = './asets/pngs/bar24x136.png';
+        this.asets.imgBar.src = './asets/pngs/bar24x100.png';
 
         this.asets.imgRoot = new Image(100, 100);
         this.asets.imgRoot.src = './asets/pngs/root_96x66.png';
@@ -554,15 +554,14 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight)
         
         this.ctx.save();
-        const carboBarRange = +((plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates).toFixed(); 
+        const carboBarRange = +((plant.carbohydrates * (this.graphData.ui.barHeight - 16)) /plant.maxCarbohydrates).toFixed(); 
         this.ctx.fillStyle = '#549c5d';
-        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + this.graphData.ui.barHeight - carboBarRange + 6, this.graphData.ui.barWidth - 16, carboBarRange - 12)
+        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + this.graphData.ui.barHeight - carboBarRange -8, this.graphData.ui.barWidth - 16, carboBarRange)
         this.ctx.restore();
-
         
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + 6, this.graphData.ui.barWidth - 16, this.graphData.ui.barHeight - 12)
+            this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY +8, this.graphData.ui.barWidth - 16, this.graphData.ui.barHeight - 16)
             this.ctx.restore();
         }
         
@@ -571,9 +570,9 @@ class Canvas{
         this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 4, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
 
         this.ctx.save();
-        const waterBarRange = (plant.waterSupply * this.graphData.ui.barHeight) /plant.maxWaterSupply; 
+        const waterBarRange = (plant.waterSupply * (this.graphData.ui.barHeight -16)) /plant.maxWaterSupply; 
         this.ctx.fillStyle = '#3b74ad';
-        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + 2 * this.graphData.ui.barHeight - waterBarRange + 10, this.graphData.ui.barWidth - 16, waterBarRange - 12)
+        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + 2 * this.graphData.ui.barHeight - waterBarRange - 4, this.graphData.ui.barWidth - 16, waterBarRange)
         this.ctx.restore();
     }
 
@@ -950,9 +949,8 @@ class Sounds{
                 soundToPlay = this.bad;
             break;
         }
-        if(soundToPlay.paused){
-            soundToPlay.play();
-        }
+        soundToPlay.play();
+        
     }
 
     stopSounds(){
