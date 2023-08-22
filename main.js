@@ -442,10 +442,11 @@ class Canvas{
 
     }
 
+    //this.ctxSoil.drawImage(this.asets.imgBgBot, this.canvas.width/2 - this.graphData.wideAsetWidth / 2 -250, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 -73 , this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
 
     drawStartingPanels(){
         this.ctx.imageSmoothingEnabled = false;
-        this.ctx.drawImage(this.preGameAsets.lilChiefPanel, -1500 + canvas.canvas.width /2,  -1216 + canvas.canvas.height /2, 3000, 2432);
+        this.ctx.drawImage(this.preGameAsets.lilChiefPanel,  canvas.canvas.width /2 - 1500 /2,  canvas.canvas.height /2 -1216 /2, 1500, 1216);
         
         setTimeout(() => {
             this.drawMenu();
@@ -885,19 +886,19 @@ class Canvas{
 class Sounds{
     constructor(){
         this.bad = new Audio('./asets/sounds/bad.mp3');
-        this.bad.playbackRate = 3;
+        this.bad.playbackRate = 2.8;
         this.bad.volume = 1;
 
         this.root = new Audio('./asets/sounds/root.mp3');
-        this.root.playbackRate = 3;
+        this.root.playbackRate = 2.8;
         this.root.volume =  0.8;
 
         this.leafs = new Audio('./asets/sounds/leafs.mp3');
-        this.leafs.playbackRate = 3;
+        this.leafs.playbackRate = 2.8;
         this.leafs.volume = 0.8;
 
         this.flowers = new Audio('./asets/sounds/flowers.mp3');
-        this.flowers.playbackRate = 3;
+        this.flowers.playbackRate = 2.8;
         this.flowers.volume =  0.8;
 
         this.music= {
