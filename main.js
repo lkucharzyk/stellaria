@@ -949,7 +949,12 @@ class Sounds{
                 soundToPlay = this.bad;
             break;
         }
-        soundToPlay.play();
+        if(soundToPlay.paused){
+            
+            soundToPlay.play();
+            console.log('play');
+        }
+        
         
     }
 
