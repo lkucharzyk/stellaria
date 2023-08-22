@@ -885,19 +885,19 @@ class Canvas{
 class Sounds{
     constructor(){
         this.bad = new Audio('./asets/sounds/bad.mp3');
-        this.bad.playbackRate = 7;
+        this.bad.playbackRate = 3;
         this.bad.volume = 1;
 
         this.root = new Audio('./asets/sounds/root.mp3');
-        this.root.playbackRate = 7;
+        this.root.playbackRate = 3;
         this.root.volume =  0.8;
 
         this.leafs = new Audio('./asets/sounds/leafs.mp3');
-        this.leafs.playbackRate = 7;
+        this.leafs.playbackRate = 3;
         this.leafs.volume = 0.8;
 
         this.flowers = new Audio('./asets/sounds/flowers.mp3');
-        this.flowers.playbackRate = 7;
+        this.flowers.playbackRate = 3;
         this.flowers.volume =  0.8;
 
         this.music= {
@@ -1033,7 +1033,7 @@ class App{
         canvas.graphData.plant.lastFlowerQuanity = 0;
         canvas.graphData.plant.activeFlowerGrowPoint = 0;
         canvas.graphData.weather.posX = this.interactiveZoneC.posX;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +300;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;
         app.pause.btn.style.display = 'block';
         DevOutput.renderOutput();
         sounds.music.mp3.currentTime = 0;
@@ -1103,7 +1103,7 @@ class App{
 
         //set addtional values for canvas
         canvas.graphData.weather.posX = this.interactiveZoneC.posX ;
-        canvas.graphData.weather.posY = this.interactiveZoneC.posY +300;
+        canvas.graphData.weather.posY = this.interactiveZoneC.posY +250;
 
         console.log(this.interactiveZoneC);
     }
@@ -1155,7 +1155,6 @@ class App{
                     canvas.graphData.plant.rootMaxAlert = false;
                     canvas.graphData.plant.flowerNotAllowedAlert = false;
                 }, 500);
-                sounds.stopSounds();
                 
             })
         }
