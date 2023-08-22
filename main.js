@@ -280,7 +280,7 @@ class Canvas{
         this.ctxMoon = this.moonCanvas.getContext('2d');
 
         this.skyCanvas = document.querySelector('canvas#bg-sky');
-        this.ctxSky = this.skyCanvas.getContext('2d');
+        this.ctxSky = this.skyCanvas.getContext('2d' , { alpha: false });
 
         this.soilCanvas = document.querySelector('canvas#bg-soil');
         this.ctxSoil = this.soilCanvas.getContext('2d');
@@ -331,8 +331,8 @@ class Canvas{
             asetScale: 4,
             wideAsetWidth : 3456,
             wideAsetHeight : 1276,
-            asetsMainWidth: 172,
-            asetsMainHeight: 96,
+            asetsMainWidth: 384,
+            asetsMainHeight: 688,
         
             fontBg: new FontFace("pixel", "url(./asets/fonts/Pixel-Madness.ttf)"),
             fontSm: new FontFace("pixelSm", "url(./asets/fonts/m3x6.ttf)")
@@ -374,7 +374,7 @@ class Canvas{
         this.asets.imgBgStars.src = './asets/pngs/stars_3456x1376.png';
 
         this.asets.imgBar = new Image(100, 100);
-        this.asets.imgBar.src = './asets/pngs/bar4x32.png';
+        this.asets.imgBar.src = './asets/pngs/bar24x136.png';
 
         this.asets.imgRoot = new Image(100, 100);
         this.asets.imgRoot.src = './asets/pngs/root_96x66.png';
@@ -543,45 +543,38 @@ class Canvas{
 
 
     drawUI(){
-        this.graphData.ui.width = 6 * canvas.graphData.asetScale;
-        this.graphData.ui.barHeight = 20 * canvas.graphData.asetScale;
-        this.graphData.ui.barWidth = 4 * canvas.graphData.asetScale;
-        this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.plant.stalkWidth * canvas.graphData.asetScale - this.graphData.ui.width +1;
-        this.graphData.ui.posY = app.interactiveZoneC.posY + 3 * canvas.graphData.asetScale;
+        this.graphData.ui.barHeight = 100;
+        this.graphData.ui.barWidth = 24;
+        this.graphData.ui.width = this.graphData.ui.barWidth + 4;
+        this.graphData.ui.posX = app.interactiveZoneC.posX + this.graphData.asetsMainWidth - this.graphData.ui.width;
+        this.graphData.ui.posY = app.interactiveZoneC.posY + 12;
 
         //carbohydrates bar
-        this.ctx.save();
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + 1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -1 +this.graphData.ui.barHeight)
-        this.ctx.restore();
 
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight)
+        
         this.ctx.save();
         const carboBarRange = +((plant.carbohydrates * this.graphData.ui.barHeight) /plant.maxCarbohydrates).toFixed(); 
         this.ctx.fillStyle = '#549c5d';
-        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + canvas.graphData.asetScale + this.graphData.ui.barHeight - carboBarRange, 3 * canvas.graphData.asetScale, carboBarRange -1 * canvas.graphData.asetScale)
+        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + this.graphData.ui.barHeight - carboBarRange + 6, this.graphData.ui.barWidth - 16, carboBarRange - 12)
         this.ctx.restore();
 
+        
         if(this.graphData.ui.danger){
             this.ctx.fillStyle = 'rgba(209, 82, 82, 1)';
-            this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY +1* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, this.graphData.ui.barHeight -1* canvas.graphData.asetScale)
+            this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + 6, this.graphData.ui.barWidth - 16, this.graphData.ui.barHeight - 12)
             this.ctx.restore();
         }
-
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
         
-        //water supply bar
-        this.ctx.save();
-        this.ctx.fillStyle = this.graphData.colors.skyblue;
-        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY  + this.graphData.ui.barHeight +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, -1 +this.graphData.ui.barHeight)
-        this.ctx.restore();
+        // //water supply bar
+
+        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 4, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
 
         this.ctx.save();
         const waterBarRange = (plant.waterSupply * this.graphData.ui.barHeight) /plant.maxWaterSupply; 
-        this.ctx.fillStyle = this.graphData.colors.waterBlue;
-        this.ctx.fillRect(this.graphData.ui.posX +1 * canvas.graphData.asetScale, this.graphData.ui.posY + 2* this.graphData.ui.barHeight - waterBarRange  +2.5* canvas.graphData.asetScale, 3 * canvas.graphData.asetScale, waterBarRange)
+        this.ctx.fillStyle = '#3b74ad';
+        this.ctx.fillRect(this.graphData.ui.posX +8, this.graphData.ui.posY + 2 * this.graphData.ui.barHeight - waterBarRange + 10, this.graphData.ui.barWidth - 16, waterBarRange - 12)
         this.ctx.restore();
-
-        this.ctx.drawImage(this.asets.imgBar, this.graphData.ui.posX, this.graphData.ui.posY + this.graphData.ui.barHeight + 2 * canvas.graphData.asetScale, this.graphData.ui.barWidth, this.graphData.ui.barHeight);
     }
 
 
@@ -783,7 +776,7 @@ class Canvas{
             this.ctx.save()
             this.ctx.globalAlpha = alpha;
 
-            tgthis.ctx.drawImage(this.asets.imgClouds, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+            this.ctx.drawImage(this.asets.imgClouds, this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 - 20, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
             this.ctx.restore()
         }
     }
@@ -957,7 +950,9 @@ class Sounds{
                 soundToPlay = this.bad;
             break;
         }
-        soundToPlay.play();
+        if(soundToPlay.paused){
+            soundToPlay.play();
+        }
     }
 
     stopSounds(){
