@@ -910,7 +910,7 @@ class Sounds{
           });
 
         this.soudData = {
-            soundIntervalDuration: 500,
+            soundIntervalDuration: 250,
             soundPlaying : false
         }
     }
