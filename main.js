@@ -9,7 +9,7 @@ window.mobileCheck = function() {
     return check;
   };
 
- const przyspiesz = 1.0
+ const przyspiesz = 2.0
 
 class Plant{
     constructor(){
@@ -95,7 +95,7 @@ class Habitat{
         this.weather = 'rainy';
 
         this.waterLevel = -2;
-        this.minWeterLevel = -63;
+        this.minWeterLevel = -2//-63;
 
        this.dayInterval =setInterval( () =>this._dayPass(), 1000 /przyspiesz ); // one day - 1s
     }
@@ -196,29 +196,29 @@ class Habitat{
         if(plant.waterSupply < 1){
             app.gameOver('water');
         }
-        
+        console.log(habitat.day);
 
         //data for drawing weather marker
             if(habitat.day < habitat.maxDay /7){
-                canvas.graphData.weather.posX += 3;
-                canvas.graphData.weather.posY -= 2;
-            }else if((habitat.day < (habitat.maxDay /7) *2 )){
-                canvas.graphData.weather.posX += 4;
-                canvas.graphData.weather.posY -= 2;
-            }else if((habitat.day < (habitat.maxDay /7) *3 )){
-                canvas.graphData.weather.posX += 3;
+                canvas.graphData.weather.posX += 1.5;
                 canvas.graphData.weather.posY -= 1;
-            }else if((habitat.day < (habitat.maxDay /7) *4 )){
+            }else if((habitat.day < (habitat.maxDay /7) *2 )){
                 canvas.graphData.weather.posX += 2;
+                canvas.graphData.weather.posY -= 1;
+            }else if((habitat.day < (habitat.maxDay /7) *3 )){
+                canvas.graphData.weather.posX += 1.5;
+                canvas.graphData.weather.posY -= 0.5;
+            }else if((habitat.day < (habitat.maxDay /7) *4 )){
+                canvas.graphData.weather.posX += 1;
             }else if((habitat.day < (habitat.maxDay /7) *5 )){
-                canvas.graphData.weather.posX += 3;
-                canvas.graphData.weather.posY += 1;
+                canvas.graphData.weather.posX += 1.5;
+                canvas.graphData.weather.posY += 0.5;
             }else if((habitat.day < (habitat.maxDay /7) *6 )){
-                canvas.graphData.weather.posX += 4;
-                canvas.graphData.weather.posY += 2;
+                canvas.graphData.weather.posX += 2;
+                canvas.graphData.weather.posY += 1;
             }else if((habitat.day < (habitat.maxDay /7) *7 )){
-                canvas.graphData.weather.posX += 3;
-                canvas.graphData.weather.posY += 2;
+                canvas.graphData.weather.posX += 1.5;
+                canvas.graphData.weather.posY += 1;
             }
         
         if (this.day < this.maxDay){
