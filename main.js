@@ -504,8 +504,8 @@ class Canvas{
         this.drawFlowers()
         this.drawRain()
         this.drawUI();
-        this._drawDividers();
-        this._drawInteractiveZone();
+        //this._drawDividers();
+       // this._drawInteractiveZone();
         this._drawPauseGrid();
 
         requestAnimationFrame(this.drawGame.bind(this));
@@ -792,7 +792,7 @@ class Canvas{
 
             this.ctx.save()
             this.ctx.globalAlpha = 0.3;
-            this.ctx.drawImage(this.asets.rain, this.graphData.weather.rainFrame * this.graphData.wideAsetWidth, 0, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight,  this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 , this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
+            this.ctx.drawImage(this.asets.rain, this.graphData.weather.rainFrame * this.graphData.wideAsetWidth, 0, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight,  this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
             this.ctx.restore()
         }
     }
