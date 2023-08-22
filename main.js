@@ -395,7 +395,7 @@ class Canvas{
         this.asets.imgClouds.src = './asets/pngs/clouds3456x1376.png';
 
         this.asets.rain = new Image(100, 100);
-        this.asets.rain.src = './asets/pngs/rain450x172.png';
+        this.asets.rain.src = './asets/pngs/rain3456x1376.png';
 
         Object.values(this.asets).forEach(img => {
             const promise = new Promise((resolve, reject) => {
@@ -405,7 +405,6 @@ class Canvas{
             this.asetsPromises.push(promise);
         });
 
-        this.preRenders = {};
 
         this.adjustCanvasToScreen();
     }
@@ -443,9 +442,6 @@ class Canvas{
 
     }
 
-    preRenderImgs(){
-     
-    }
 
     drawStartingPanels(){
         this.ctx.imageSmoothingEnabled = false;
@@ -788,26 +784,15 @@ class Canvas{
                         this.graphData.weather.rainFrame =0;
                     }else{
                         this.graphData.weather.rainFrame ++;
-                    }   
+                       
+                    }  
+                    console.log(this.graphData.wideAsetWidth); 
                 }, 100);
             }
 
             this.ctx.save()
             this.ctx.globalAlpha = 0.3;
-
-            const heightWtf = (this.canvas.height - app.interactiveZoneC.height) /2;
-            const patternCanvas = document.createElement("canvas");
-            const patternContext = patternCanvas.getContext("2d");
-
-            patternCanvas.width = 450 * this.graphData.asetScale;
-            patternCanvas.height = 106 * this.graphData.asetScale +heightWtf;
-            patternCanvas.style.imageRendering = 'pixelated';
-            patternContext.imageSmoothingEnabled = false;
-            patternContext.drawImage(this.asets.rain, this.graphData.weather.rainFrame * 450, 0, 450, 106, 0, heightWtf, patternCanvas.width, patternCanvas.height);
-
-            const pattern = this.ctx.createPattern(patternCanvas, "repeat-x");
-            this.ctx.fillStyle = pattern;
-            this.ctx.fillRect(0, app.interactiveZoneC.posY, this.canvas.width, app.interactiveZoneC.height);
+            this.ctx.drawImage(this.asets.rain, this.graphData.weather.rainFrame * this.graphData.wideAsetWidth, 0, this.graphData.wideAsetWidth, this.graphData.wideAsetHeight,  this.canvas.width/2 - this.graphData.wideAsetWidth / 2, this.canvas.height/2 - this.graphData.wideAsetHeight / 2 , this.graphData.wideAsetWidth, this.graphData.wideAsetHeight)
             this.ctx.restore()
         }
     }
@@ -1197,7 +1182,6 @@ function init(){
 
     Promise.all(canvas.asetsPromises)
     .then(()=>{
-        canvas.preRenderImgs();
         const startMenu = document.querySelector('#start-menu');
         const startBtn = document.querySelector('#start-menu button');
 
